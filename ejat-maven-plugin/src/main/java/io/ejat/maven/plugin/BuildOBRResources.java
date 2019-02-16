@@ -3,6 +3,7 @@ package io.ejat.maven.plugin;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
+import java.net.URI;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -33,6 +34,11 @@ requiresDependencyCollection = ResolutionScope.COMPILE,
 requiresDependencyResolution = ResolutionScope.COMPILE)
 public class BuildOBRResources extends AbstractMojo
 {
+	
+	public enum OBR_URL_TYPE {
+		file,
+		mvn
+	}
 
 	@Parameter( defaultValue = "${project}", readonly = true )
 	private MavenProject project;
@@ -45,9 +51,16 @@ public class BuildOBRResources extends AbstractMojo
 
 	@Parameter( defaultValue = "${project.build.directory}", property = "outputDir", required = true )
 	private File outputDirectory;
+	
+	@Parameter(defaultValue = "${ejat.obr.url.type}", property = "obrUrlType", required = false)
+	private OBR_URL_TYPE obrUrlType;
 
 	public void execute() throws MojoExecutionException, MojoFailureException {
-
+		
+		if (obrUrlType == null) {
+			obrUrlType = OBR_URL_TYPE.file;
+		}
+		
 		DataModelHelper obrDataModelHelper = new DataModelHelperImpl();
 
 		if (!outputDirectory.exists()) {
@@ -120,14 +133,23 @@ public class BuildOBRResources extends AbstractMojo
 		try {
 			ResourceImpl newResource = (ResourceImpl)obrDataModelHelper.createResource(artifact.getFile().toURI().toURL());
 
-			URL name = artifact.getFile().toURI().toURL();
+			URI name = null;
+			switch(obrUrlType) {
+			case mvn:
+				name = new URI("mvn:" + artifact.getGroupId() + "/" + artifact.getArtifactId() + "/" + artifact.getVersion() + "/" + artifact.getType());
+				break;
+			case file:
+			default:
+				name = artifact.getFile().toURI();
+				break;
+			}
 			newResource.put(Resource.URI, name);
 
 			repository.addResource(newResource);
 
 			getLog().info("BuildOBRResources: Added bundle " + newResource.getPresentationName() + " - " + newResource.getId() + " to repository");
 		} catch (Exception e) {
-			throw new MojoExecutionException("Failed to process dependency " + artifact.getGroupId() + ":" + artifact.getArtifactId() + ":" + artifact.getVersion());
+			throw new MojoExecutionException("Failed to process dependency " + artifact.getGroupId() + ":" + artifact.getArtifactId() + ":" + artifact.getVersion(),e);
 		}
 	}
 

@@ -11,6 +11,9 @@
 
 	<artifactId>ejat-testcatalog</artifactId>
 	<version>0.2.0-SNAPSHOT</version>
+	<packaging>bundle</packaging>
+	
+	<name>eJAT Test Catalog POJOs</name>
 
 	<build>
 		<plugins>

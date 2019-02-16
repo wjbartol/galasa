@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.net.URI;
-import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
@@ -19,13 +18,11 @@ import org.apache.maven.artifact.DefaultArtifact;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
-import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.project.MavenProject;
-import org.apache.maven.project.MavenProjectHelper;
 
 @Mojo(name = "obrresources", 
 defaultPhase = LifecyclePhase.PROCESS_RESOURCES , 
@@ -42,12 +39,6 @@ public class BuildOBRResources extends AbstractMojo
 
 	@Parameter( defaultValue = "${project}", readonly = true )
 	private MavenProject project;
-
-	@Component
-	private MavenProjectHelper projectHelper;
-
-	@Parameter( defaultValue = "${basedir}", property = "basedir", required = true )
-	private File baseDirectory;
 
 	@Parameter( defaultValue = "${project.build.directory}", property = "outputDir", required = true )
 	private File outputDirectory;
@@ -116,7 +107,7 @@ public class BuildOBRResources extends AbstractMojo
 			DataModelHelper obrDataModelHelper) throws MojoExecutionException {
 		
 		try (FileReader fr = new FileReader(artifact.getFile())) {
-			Repository mergeRepository = (Repository) obrDataModelHelper.readRepository(fr);
+			Repository mergeRepository = obrDataModelHelper.readRepository(fr);
 			
 			for(Resource resource : mergeRepository.getResources()) {
 				newRepository.addResource(resource);

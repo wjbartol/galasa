@@ -181,7 +181,6 @@ public class KarafTest {
 
 		String featureXml = FileUtils.readFileToString(featureXmlFile);
 		Assert.assertEquals("Does not contain <features ", 1, StringUtils.countMatches(featureXml, "<features xmlns=\"http://karaf.apache.org/xmlns/features/v1.3.0\" name=\"" + PROJECT_ID + "-" + PROJECT_VERSION + "\">"));
-		System.out.println(featureXml);
 		Assert.assertEquals("Should contain 2 <feature name=", 2, StringUtils.countMatches(featureXml, "<feature name="));
 		Assert.assertTrue("Should default feature name", StringUtils.contains(featureXml, "<feature name=\"feature1\""));
 		Assert.assertEquals("Should contain 0 <feature>", 0, StringUtils.countMatches(featureXml, "<feature>"));

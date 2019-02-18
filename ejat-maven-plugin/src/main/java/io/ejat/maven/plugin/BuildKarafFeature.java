@@ -21,6 +21,14 @@ import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.project.MavenProject;
 
+/**
+ *  This goal will take a set of OBRs and create the equivalent Karaf Feature XML file.
+ * 
+ *  It will create a feature per OBR and a feature containing all resources from each of the OBRs. 
+ * 
+ * @author Michael Baylis
+ *
+ */
 @Mojo(name = "karaffeature", 
 defaultPhase = LifecyclePhase.PROCESS_RESOURCES , 
 threadSafe = true,
@@ -34,8 +42,17 @@ public class BuildKarafFeature extends AbstractMojo
 	@Parameter( defaultValue = "${project.build.directory}", property = "outputDir", required = true )
 	private File outputDirectory;
 	
+	/**
+	 * Contains the name to be used for the uber feature
+	 */
 	@Parameter( property = "featureName", required = false )
 	private String featureName;
+
+	/**
+	 * What features are required for our features.   will be added to each of our generated features
+	 */
+	@Parameter( property = "requiredFeatures", required = false )
+	private String[] requiredFeatures;
 
 	public void execute() throws MojoExecutionException, MojoFailureException {
 
@@ -48,35 +65,42 @@ public class BuildKarafFeature extends AbstractMojo
 		File featureFile = new File(outputDirectory, "feature.xml");
 		project.getArtifact().setFile(featureFile);
 		
+		
+		//*** If no feature name provided,  use the artifact id
 		if (featureName == null || featureName.isEmpty()) {
 			featureName = project.getArtifactId();
 		}
+		
+		if (requiredFeatures == null) {
+			requiredFeatures = new String[0];
+		}
 
 		Features newFeatures = new Features(project.getArtifactId() + "-" + project.getVersion());
-		Feature uberFeature = new Feature(this.featureName, project.getVersion());
-		newFeatures.addFeature(uberFeature);
+		Feature uberFeature = new Feature(this.featureName, project.getVersion(), requiredFeatures);
 
+		//** Go through all the dependencies and only use those that are:-
+		//** Resolved,  scope=compile and is an OBR
 		for(Object dependency : project.getDependencyArtifacts()) {
 			if (dependency instanceof DefaultArtifact) {
 				DefaultArtifact artifact = (DefaultArtifact)dependency;
 				if (artifact.isResolved() 
-						&& artifact.getScope().equals("compile")
-						&& artifact.getFile().getName().endsWith(".obr")) {
+						&& "compile".equals(artifact.getScope())
+						&& "obr".equals(artifact.getType())) {
 					processObr(artifact, newFeatures, uberFeature, obrDataModelHelper);
 				}
 			}
 		}
 
+		//** Must find atleast 1 OBR
 		if (newFeatures.getFeatures().isEmpty()) {
-			throw new MojoFailureException("No resources have been added to the feature");
+			throw new MojoExecutionException("No resources have been added to the feature");
 		}
+		newFeatures.addFeature(uberFeature);
 
-		try {
-			FileWriter fw = new FileWriter(featureFile);
+		try(FileWriter fw = new FileWriter(featureFile)) {
 			fw.write(newFeatures.toXml());
-			fw.close();
 		} catch(Exception e) {
-			throw new MojoExecutionException("Problem with writing repository.xml", e);
+			throw new MojoExecutionException("Problem with writing feature.xml", e);
 		}
 
 		getLog().info("BuildKarafFeature: Karaf feature.xml created with " + newFeatures.getFeatures().size() + " features and " + uberFeature.getBundles().size() + " bundles");
@@ -87,7 +111,7 @@ public class BuildKarafFeature extends AbstractMojo
 			Feature uberFeature,
 			DataModelHelper obrDataModelHelper) throws MojoExecutionException {
 		
-		Feature obrFeature = new Feature(artifact.getArtifactId(), artifact.getVersion());
+		Feature obrFeature = new Feature(artifact.getArtifactId(), artifact.getVersion(), requiredFeatures);
 		newFeatures.addFeature(obrFeature);
 
 		try (FileReader fr = new FileReader(artifact.getFile())) {
@@ -140,15 +164,21 @@ public class BuildKarafFeature extends AbstractMojo
 	public static class Feature {
 		private final String name;
 		private final String version;
+		private final String[] features;
 		private final ArrayList<Bundle> bundles = new ArrayList<>();
 		
-		public Feature(String name, String version) {
+		public Feature(String name, String version, String[] features) {
 			this.name = name;
 			this.version = version;
+			this.features = features;
 		}
 
 		public void toXml(StringBuilder sb) {
 			sb.append("    <feature name=\"" + this.name + "\" version=\"" + this.version + "\">\n");
+			
+			for(String feature : features) {
+				sb.append("        <feature>" + feature + "</feature>\n");
+			}
 			
 			for(Bundle bundle : bundles) {
 				bundle.toXml(sb);

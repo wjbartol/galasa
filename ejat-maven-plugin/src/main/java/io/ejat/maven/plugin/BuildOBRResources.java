@@ -37,7 +37,7 @@ public class BuildOBRResources extends AbstractMojo
 		mvn
 	}
 
-	@Parameter( defaultValue = "${projexxct}", readonly = true )
+	@Parameter( defaultValue = "${project}", readonly = true )
 	private MavenProject project;
 
 	@Parameter( defaultValue = "${project.build.directory}", property = "outputDir", required = true )

@@ -121,7 +121,7 @@ public class BuildKarafFeature extends AbstractMojo
 				Bundle bundle = new Bundle(resource.getURI());
 				obrFeature.addBundle(bundle);
 				uberFeature.addBundle(bundle);
-				getLog().info("BuildKarafFeature: Merged bundle " + resource.getPresentationName() + " - " + resource.getId() + " to feature");
+				getLog().info("BuildKarafFeature: Merged OBR " + resource.getPresentationName() + " - " + resource.getId() + " to feature");
 			}
 		} catch(Exception e) {
 			throw new MojoExecutionException("Unable to read existing OBR", e);

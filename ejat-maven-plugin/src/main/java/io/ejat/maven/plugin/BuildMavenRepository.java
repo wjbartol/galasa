@@ -50,7 +50,7 @@ public class BuildMavenRepository extends AbstractMojo
 
     @Parameter( defaultValue = "${build.number}", property = "buildNumber", required = false )
     private int buildNumber;
-    
+
     private final SimpleDateFormat sdf = new SimpleDateFormat("yyyMMdd.HHmmss");
     private final SimpleDateFormat sdfUpdated = new SimpleDateFormat("yyyMMddHHmmss");
 
@@ -59,13 +59,13 @@ public class BuildMavenRepository extends AbstractMojo
         if (buildNumber <= 0) {
             buildNumber = 1;
         }
-        
+
         GregorianCalendar gregorianCalendar = new GregorianCalendar();
         String snapshotVersionPrefix = sdf.format(gregorianCalendar.getTime());
         String updated = sdfUpdated.format(gregorianCalendar.getTime());
-        
+
         MetadataXpp3Writer writer = new MetadataXpp3Writer();
-        
+
         MessageDigest digest;
         try {
             digest = MessageDigest.getInstance("SHA-1");
@@ -85,7 +85,7 @@ public class BuildMavenRepository extends AbstractMojo
         for(Artifact artifact : artifacts) {
             if (artifact.getScope().equals(Artifact.SCOPE_COMPILE)) {                
                 Path artifactFile = Paths.get(artifact.getFile().toURI());
-                
+
                 //*** Calculate the directory structure
                 String[] groupSplit = artifact.getGroupId().split("\\.");
                 Path groupPath = Paths.get("repository", groupSplit);
@@ -95,7 +95,7 @@ public class BuildMavenRepository extends AbstractMojo
 
                 Path targetArtifactMetadata = targetArtifactDirectory.resolve("maven-metadata.xml");
                 Path targetVersionMetadata = targetVersionDirectory.resolve("maven-metadata.xml");
-                
+
 
                 //*** Calculate the target artifact and pom filenames
                 String targetArtifactFileName;
@@ -107,7 +107,7 @@ public class BuildMavenRepository extends AbstractMojo
                     targetArtifactVersion = artifact.getBaseVersion();
                     targetArtifactFileName = artifact.getArtifactId() + "-" + artifact.getBaseVersion();
                 }
-                
+
                 if (artifact.hasClassifier()) {
                     targetArtifactFileName = targetArtifactFileName + "-" + artifact.getClassifier();
                 }
@@ -121,7 +121,7 @@ public class BuildMavenRepository extends AbstractMojo
                 Path targetArtifactFile = targetVersionDirectory.resolve(targetArtifactFileName);
                 Path targetPomFile = targetVersionDirectory.resolve(targetPomFilename);
 
-           
+
                 //*** Write 
                 try {
                     Files.createDirectories(targetVersionDirectory);
@@ -130,12 +130,12 @@ public class BuildMavenRepository extends AbstractMojo
                     if (Files.exists(originalPomFile)) {
                         Files.copy(originalPomFile, targetPomFile, StandardCopyOption.REPLACE_EXISTING);
                     }
-                    
+
                     {
                         Metadata metadata = new Metadata();
                         metadata.setGroupId(artifact.getGroupId());
                         metadata.setArtifactId(artifact.getArtifactId());
-                        
+
                         Versioning versioning = new Versioning();
                         metadata.setVersioning(versioning);
                         versioning.setLatest(artifact.getBaseVersion());
@@ -147,22 +147,22 @@ public class BuildMavenRepository extends AbstractMojo
 
                         writer.write(Files.newOutputStream(targetArtifactMetadata), metadata);
                     }
-                    
+
                     if (artifact.isSnapshot()) {
                         Metadata metadata = new Metadata();
                         metadata.setGroupId(artifact.getGroupId());
                         metadata.setArtifactId(artifact.getArtifactId());
                         metadata.setVersion(artifact.getBaseVersion());
-                        
+
                         Versioning versioning = new Versioning();
                         metadata.setVersioning(versioning);
                         versioning.setLastUpdatedTimestamp(gregorianCalendar.getTime());
-                        
+
                         Snapshot snapshot = new Snapshot();
                         versioning.setSnapshot(snapshot);
                         snapshot.setBuildNumber(buildNumber);
                         snapshot.setTimestamp(snapshotVersionPrefix);
-                        
+
                         SnapshotVersion sv = new SnapshotVersion();
                         versioning.addSnapshotVersion(sv);
                         sv.setExtension(artifact.getType());
@@ -178,10 +178,16 @@ public class BuildMavenRepository extends AbstractMojo
 
                 Path artifactHash = artifactFile.resolveSibling(targetArtifactFile.getFileName() + ".sha1");
                 Path pomHash = originalPomFile.resolveSibling(targetPomFile.getFileName() + ".sha1");
+                Path metaVersionHash = artifactFile.resolveSibling(targetVersionMetadata.getFileName() + ".sha1");
+                Path metaArtifactHash = originalPomFile.resolveSibling(targetArtifactMetadata.getFileName() + ".sha1");
 
                 createHash(artifactFile, artifactHash, targetVersionDirectory, digest);
                 createHash(originalPomFile, pomHash, targetVersionDirectory, digest);
-                
+                createHash(targetArtifactMetadata, metaArtifactHash, targetArtifactDirectory, digest);
+                if (artifact.isSnapshot()) {
+                    createHash(targetVersionMetadata, metaVersionHash, targetVersionDirectory, digest);
+                }
+
                 System.out.println("Copied artifact " + artifact.toString());
             }
         }

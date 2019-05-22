@@ -27,12 +27,12 @@ import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.project.MavenProject;
 
-@Mojo(name = "dockerobr", 
+@Mojo(name = "obrembedded", 
 defaultPhase = LifecyclePhase.PROCESS_RESOURCES , 
 threadSafe = true,
 requiresDependencyCollection = ResolutionScope.COMPILE,
 requiresDependencyResolution = ResolutionScope.COMPILE)
-public class BuildDockerObrRepository extends AbstractMojo {
+public class BuildObrEmbeddedRepository extends AbstractMojo {
 
 	@Parameter( defaultValue = "${project}", readonly = true )
 	private MavenProject project;
@@ -111,7 +111,7 @@ public class BuildDockerObrRepository extends AbstractMojo {
 
 			Files.copy(artifactFile, targetFile, StandardCopyOption.REPLACE_EXISTING);
 			
-			URI uri = new URI("file:/" + targetFile.getFileName());
+			URI uri = new URI("file:" + targetFile.getFileName());
 			newResource.put(Resource.URI, uri);
 			
 			newRepository.addResource(newResource);

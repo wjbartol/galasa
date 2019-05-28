@@ -118,6 +118,9 @@ public class BuildKarafFeature extends AbstractMojo
 			Repository mergeRepository = obrDataModelHelper.readRepository(fr);
 
 			for(Resource resource : mergeRepository.getResources()) {
+				if (resource.getSymbolicName().startsWith("org.apache.felix")) {
+					continue;
+				}
 				Bundle bundle = new Bundle(resource.getURI());
 				obrFeature.addBundle(bundle);
 				uberFeature.addBundle(bundle);

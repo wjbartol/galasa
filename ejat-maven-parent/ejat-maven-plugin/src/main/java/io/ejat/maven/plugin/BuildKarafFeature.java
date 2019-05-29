@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
 import org.apache.felix.bundlerepository.DataModelHelper;
@@ -41,7 +42,7 @@ public class BuildKarafFeature extends AbstractMojo
 
 	@Parameter( defaultValue = "${project.build.directory}", property = "outputDir", required = true )
 	private File outputDirectory;
-	
+
 	/**
 	 * Contains the name to be used for the uber feature
 	 */
@@ -54,6 +55,14 @@ public class BuildKarafFeature extends AbstractMojo
 	@Parameter( property = "requiredFeatures", required = false )
 	private String[] requiredFeatures;
 
+	/**
+	 * What bundles to exclude 
+	 */
+	@Parameter( property = "excludes", required = false )
+	private String[] excludes;
+
+	private HashSet<String> actualExcludes = new HashSet<>();
+
 	public void execute() throws MojoExecutionException, MojoFailureException {
 
 		DataModelHelper obrDataModelHelper = new DataModelHelperImpl();
@@ -64,15 +73,24 @@ public class BuildKarafFeature extends AbstractMojo
 
 		File featureFile = new File(outputDirectory, "feature.xml");
 		project.getArtifact().setFile(featureFile);
-		
-		
+
+
 		//*** If no feature name provided,  use the artifact id
 		if (featureName == null || featureName.isEmpty()) {
 			featureName = project.getArtifactId();
 		}
-		
+
 		if (requiredFeatures == null) {
 			requiredFeatures = new String[0];
+		}
+
+		if (excludes != null) {
+			for(String exclude : excludes) {
+				exclude = exclude.trim();
+				if (!exclude.isEmpty()) {
+					actualExcludes.add(exclude);
+				}
+			}
 		}
 
 		Features newFeatures = new Features(project.getArtifactId() + "-" + project.getVersion());
@@ -110,7 +128,7 @@ public class BuildKarafFeature extends AbstractMojo
 			Features newFeatures, 
 			Feature uberFeature,
 			DataModelHelper obrDataModelHelper) throws MojoExecutionException {
-		
+
 		Feature obrFeature = new Feature(artifact.getArtifactId(), artifact.getVersion(), requiredFeatures);
 		newFeatures.addFeature(obrFeature);
 
@@ -118,9 +136,13 @@ public class BuildKarafFeature extends AbstractMojo
 			Repository mergeRepository = obrDataModelHelper.readRepository(fr);
 
 			for(Resource resource : mergeRepository.getResources()) {
-				if (resource.getSymbolicName().startsWith("org.apache.felix")) {
+				System.out.println(resource.getSymbolicName());
+				if (actualExcludes.contains(resource.getSymbolicName())) {
+					getLog().info("BuildKarafFeature: Excluding OBR " + resource.getPresentationName() + " - " + resource.getId() + " from feature");
 					continue;
 				}
+
+
 				Bundle bundle = new Bundle(resource.getURI());
 				obrFeature.addBundle(bundle);
 				uberFeature.addBundle(bundle);
@@ -130,12 +152,12 @@ public class BuildKarafFeature extends AbstractMojo
 			throw new MojoExecutionException("Unable to read existing OBR", e);
 		}
 	}
-	
-	
+
+
 	public static class Features {
 		private final String name;
 		private final ArrayList<Feature> features = new ArrayList<>();
-		
+
 		public Features(String name) {
 			this.name = name;
 		}
@@ -146,30 +168,30 @@ public class BuildKarafFeature extends AbstractMojo
 
 		public String toXml() {
 			StringBuilder sb = new StringBuilder();
-			
+
 			sb.append("<features xmlns=\"http://karaf.apache.org/xmlns/features/v1.3.0\" name=\"" + this.name + "\">\n");
-			
+
 			for(Feature feature : features) {
 				feature.toXml(sb);
 			}
-					
+
 			sb.append("</features>");
-			
+
 			return sb.toString();
 		}
 
 		public List<Feature> getFeatures() {
 			return features;
 		}
-		
+
 	}
-	
+
 	public static class Feature {
 		private final String name;
 		private final String version;
 		private final String[] features;
 		private final ArrayList<Bundle> bundles = new ArrayList<>();
-		
+
 		public Feature(String name, String version, String[] features) {
 			this.name = name;
 			this.version = version;
@@ -178,30 +200,30 @@ public class BuildKarafFeature extends AbstractMojo
 
 		public void toXml(StringBuilder sb) {
 			sb.append("    <feature name=\"" + this.name + "\" version=\"" + this.version + "\">\n");
-			
+
 			for(String feature : features) {
 				sb.append("        <feature>" + feature + "</feature>\n");
 			}
-			
+
 			for(Bundle bundle : bundles) {
 				bundle.toXml(sb);
 			}
-					
+
 			sb.append("    </feature>\n");
 		}
 
 		public void addBundle(Bundle bundle) {
 			this.bundles.add(bundle);
 		}
-		
+
 		public List<Bundle> getBundles() {
 			return bundles;
 		}
 	}
-	
+
 	public static class Bundle {
 		private final String uri;
-		
+
 		public Bundle(String uri) {
 			this.uri = uri;
 		}
@@ -210,5 +232,5 @@ public class BuildKarafFeature extends AbstractMojo
 			sb.append("        <bundle>" + this.uri + "</bundle>\n");
 		}
 	}
-	
+
 }

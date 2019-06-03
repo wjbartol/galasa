@@ -57,7 +57,7 @@ public class BuildOBRResources extends AbstractMojo
 		
 		getLog().info("BuildOBRResources: Building project " + project.getName() + ". includeSelf="+ includeSelf);
 		if (obrUrlType == null) {
-			obrUrlType = OBR_URL_TYPE.file;
+			obrUrlType = OBR_URL_TYPE.mvn;
 		}
 		
 		DataModelHelper obrDataModelHelper = new DataModelHelperImpl();

@@ -4,16 +4,16 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
-		<groupId>ejat</groupId>
-		<artifactId>ejat-maven-parent</artifactId>
-		<version>0.2.0-SNAPSHOT</version>
+		<groupId>dev.voras</groupId>
+		<artifactId>voras-maven-parent</artifactId>
+		<version>0.3.0-SNAPSHOT</version>
 	</parent>
 
-	<artifactId>ejat-testcatalog</artifactId>
-	<version>0.2.0-SNAPSHOT</version>
+	<artifactId>voras-testcatalog</artifactId>
+	<version>0.3.0-SNAPSHOT</version>
 	<packaging>bundle</packaging>
 	
-	<name>eJAT Test Catalog POJOs</name>
+	<name>Voras Test Catalog POJOs</name>
 
 	<build>
 		<plugins>
@@ -27,7 +27,7 @@
 					<supportedProjectTypes>bundle</supportedProjectTypes>
 					<instructions>
 						<Bundle-Version>$[versionmask;===;$[maven_version;${project.version}]].${maven.build.timestamp}</Bundle-Version>
-						<Bundle-SymbolicName>io.ejat.testcatalog</Bundle-SymbolicName>
+						<Bundle-SymbolicName>dev.voras.testcatalog</Bundle-SymbolicName>
 					</instructions>
 				</configuration>
 			</plugin>

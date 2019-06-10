@@ -1,4 +1,4 @@
-package io.ejat.maven.plugin;
+package dev.voras.maven.plugin;
 
 import java.io.File;
 import java.nio.file.Files;

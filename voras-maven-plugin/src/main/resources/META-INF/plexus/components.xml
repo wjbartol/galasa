@@ -12,7 +12,7 @@
 						<id>default</id>
 						<phases>
 							<process-resources>
-								voras:voras-maven-plugin:obrresources
+								dev.voras:voras-maven-plugin:obrresources
 							</process-resources>
 							<install>
 								org.apache.maven.plugins:maven-install-plugin:2.4:install
@@ -53,7 +53,7 @@
 						<id>default</id>
 						<phases>
 							<process-resources>
-								voras:voras-maven-plugin:karaffeature
+								dev.voras:voras-maven-plugin:karaffeature
 							</process-resources>
 							<install>
 								org.apache.maven.plugins:maven-install-plugin:2.4:install

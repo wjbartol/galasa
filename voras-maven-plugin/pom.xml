@@ -21,6 +21,17 @@
 		<maven.version>3.3.9</maven.version>
 	</properties>
 
+	<distributionManagement>
+		<repository>
+			<id>voras.repo</id>
+			<url>${voras.distribution.repo}</url>
+		</repository>
+		<snapshotRepository>
+			<id>voras.repo</id>
+			<url>${voras.distribution.repo}</url>
+		</snapshotRepository>
+	</distributionManagement>
+
 	<dependencies>
 		<dependency>
 			<groupId>org.apache.maven.plugin-tools</groupId>

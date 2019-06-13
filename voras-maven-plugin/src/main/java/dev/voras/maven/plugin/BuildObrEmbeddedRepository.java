@@ -73,7 +73,7 @@ public class BuildObrEmbeddedRepository extends AbstractMojo {
 			}
 		}
 		
-		Path repositoryFile = outputRepositoryDirectory.resolve("cirillo.obr");
+		Path repositoryFile = outputRepositoryDirectory.resolve("voras.obr");
 		try (FileWriter fw = new FileWriter(repositoryFile.toFile())) {
 			obrDataModelHelper.writeRepository(newRepository, fw);
 		} catch(Exception e) {

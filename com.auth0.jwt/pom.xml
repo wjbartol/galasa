@@ -35,6 +35,7 @@
 						<Bundle-SymbolicName>com.auth0.jwt</Bundle-SymbolicName>
 						<Embed-Dependency>*;scope=compile</Embed-Dependency>
 						<Export-Package>com.auth0.jwt,
+              com.auth0.jwt.JWT,
               com.auth0.jwt.algorithms,
               com.auth0.jwt.exceptions,
               com.auth0.jwt.interfaces

@@ -4,12 +4,12 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-	<groupId>dev.voras</groupId>
-	<artifactId>voras-maven-plugin</artifactId>
+	<groupId>dev.galasa</groupId>
+	<artifactId>galasa-maven-plugin</artifactId>
 	<packaging>maven-plugin</packaging>
 	<version>0.3.0</version>
 
-	<name>Voras Maven Plugin</name>
+	<name>Galasa Maven Plugin</name>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -23,12 +23,12 @@
 
 	<distributionManagement>
 		<repository>
-			<id>voras.repo</id>
-			<url>${voras.distribution.repo}</url>
+			<id>galasa.repo</id>
+			<url>${galasa.distribution.repo}</url>
 		</repository>
 		<snapshotRepository>
-			<id>voras.repo</id>
-			<url>${voras.distribution.repo}</url>
+			<id>galasa.repo</id>
+			<url>${galasa.distribution.repo}</url>
 		</snapshotRepository>
 	</distributionManagement>
 

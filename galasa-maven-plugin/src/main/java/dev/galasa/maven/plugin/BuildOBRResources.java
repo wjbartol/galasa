@@ -1,4 +1,4 @@
-package dev.voras.maven.plugin;
+package dev.galasa.maven.plugin;
 
 import java.io.File;
 import java.io.FileReader;
@@ -47,7 +47,7 @@ public class BuildOBRResources extends AbstractMojo
 	@Parameter(defaultValue = "${project.build.directory}", property = "targerDir", required = true)
 	private File projectTargetDirectory;
 	
-	@Parameter(defaultValue = "${ejat.obr.url.type}", property = "obrUrlType", required = false)
+	@Parameter(defaultValue = "${galasa.obr.url.type}", property = "obrUrlType", required = false)
 	private OBR_URL_TYPE obrUrlType;
 	
 	@Parameter(defaultValue = "false", property = "includeSelf", required = false)

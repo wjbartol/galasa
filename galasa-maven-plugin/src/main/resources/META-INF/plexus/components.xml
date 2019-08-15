@@ -2,7 +2,7 @@
 	<components>
 		<component>
 			<role>org.apache.maven.lifecycle.mapping.LifecycleMapping</role>
-			<role-hint>voras-obr</role-hint>
+			<role-hint>galasa-obr</role-hint>
 			<implementation>
 				org.apache.maven.lifecycle.mapping.DefaultLifecycleMapping
 			</implementation>
@@ -12,7 +12,7 @@
 						<id>default</id>
 						<phases>
 							<process-resources>
-								dev.voras:voras-maven-plugin:obrresources
+								dev.galasa:galasa-maven-plugin:obrresources
 							</process-resources>
 							<install>
 								org.apache.maven.plugins:maven-install-plugin:2.4:install
@@ -27,23 +27,23 @@
 		</component>
 		<component>
 			<role>org.apache.maven.artifact.handler.ArtifactHandler</role>
-			<role-hint>voras-obr</role-hint>
+			<role-hint>galasa-obr</role-hint>
 			<implementation>
 				org.apache.maven.artifact.handler.DefaultArtifactHandler
 			</implementation>
 			<configuration>
 				<extension>obr</extension>
 				<type>obr</type>
-				<packaging>voras-obr</packaging>
+				<packaging>galasa-obr</packaging>
 			</configuration>
 		</component>
 		
 		<!--
-			Create a Karaf Feature from the voras-obrs		
+			Create a Karaf Feature from the galasa-obrs		
 		 -->
 		<component>
 			<role>org.apache.maven.lifecycle.mapping.LifecycleMapping</role>
-			<role-hint>voras-karaffeature</role-hint>
+			<role-hint>galasa-karaffeature</role-hint>
 			<implementation>
 				org.apache.maven.lifecycle.mapping.DefaultLifecycleMapping
 			</implementation>
@@ -53,7 +53,7 @@
 						<id>default</id>
 						<phases>
 							<process-resources>
-								dev.voras:voras-maven-plugin:karaffeature
+								dev.galasa:galasa-maven-plugin:karaffeature
 							</process-resources>
 							<install>
 								org.apache.maven.plugins:maven-install-plugin:2.4:install
@@ -68,14 +68,14 @@
 		</component>
 		<component>
 			<role>org.apache.maven.artifact.handler.ArtifactHandler</role>
-			<role-hint>voras-karaffeature</role-hint>
+			<role-hint>galasa-karaffeature</role-hint>
 			<implementation>
 				org.apache.maven.artifact.handler.DefaultArtifactHandler
 			</implementation>
 			<configuration>
 				<extension>xml</extension>
 				<type>xml</type>
-				<packaging>voras-karaffeature</packaging>
+				<packaging>galasa-karaffeature</packaging>
 			</configuration>
 		</component>
 	</components>

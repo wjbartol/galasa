@@ -1,4 +1,4 @@
-package dev.voras.maven.plugin;
+package dev.galasa.maven.plugin;
 
 import java.io.File;
 import java.io.FileReader;
@@ -73,7 +73,7 @@ public class BuildObrEmbeddedRepository extends AbstractMojo {
 			}
 		}
 		
-		Path repositoryFile = outputRepositoryDirectory.resolve("voras.obr");
+		Path repositoryFile = outputRepositoryDirectory.resolve("galasa.obr");
 		try (FileWriter fw = new FileWriter(repositoryFile.toFile())) {
 			obrDataModelHelper.writeRepository(newRepository, fw);
 		} catch(Exception e) {

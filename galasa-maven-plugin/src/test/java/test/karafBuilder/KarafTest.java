@@ -37,7 +37,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.osgi.framework.Constants;
 
-import dev.voras.maven.plugin.BuildKarafFeature;
+import dev.galasa.maven.plugin.BuildKarafFeature;
 
 public class KarafTest {
 

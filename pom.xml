@@ -8,6 +8,7 @@
   
   <modules>
   	<module>com.jcraft.jsch</module>
+    <module>com.auth0.jwt</module>
   </modules>
   	<distributionManagement>
 		<repository>

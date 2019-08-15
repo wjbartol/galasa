@@ -1,4 +1,4 @@
-package dev.voras.maven.plugin;
+package dev.galasa.maven.plugin;
 
 import java.io.File;
 import java.io.FileReader;

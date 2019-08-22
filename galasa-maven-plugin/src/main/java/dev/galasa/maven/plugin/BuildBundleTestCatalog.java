@@ -109,6 +109,14 @@ public class BuildBundleTestCatalog extends AbstractMojo
 			Class<?> annotationTest             = ReflectionUtils.forName("dev.galasa.Test", load);
 			Class<?> annotationBuilder          = ReflectionUtils.forName("dev.galasa.framework.spi.TestCatalogBuilder", load);
 			Class<?> annotationBuilderInterface = ReflectionUtils.forName("dev.galasa.framework.spi.ITestCatalogBuilder", load);
+			
+			if (annotationTest == null || annotationBuilder == null || annotationBuilderInterface == null) {
+				getLog().warn("Ignoring bundle for test catalog processing because the annotations are missing on the classpath");
+				getLog().warn("dev.galasa.Test=" + annotationTest);
+				getLog().warn("dev.galasa.framework.spi.TestCatalogBuilder=" + annotationBuilder);
+				getLog().warn("dev.galasa.framework.spi.ITestCatalogBuilder=" + annotationBuilderInterface);
+				return;
+			}
 
 			//*** Set up reflections
 			ConfigurationBuilder configuration = new ConfigurationBuilder();

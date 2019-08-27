@@ -44,7 +44,7 @@ import com.google.gson.JsonObject;
  *
  */
 @Mojo(name = "bundletestcat", 
-defaultPhase = LifecyclePhase.PROCESS_RESOURCES , 
+defaultPhase = LifecyclePhase.PACKAGE , 
 threadSafe = true,
 requiresDependencyCollection = ResolutionScope.COMPILE_PLUS_RUNTIME,
 requiresDependencyResolution = ResolutionScope.COMPILE_PLUS_RUNTIME)

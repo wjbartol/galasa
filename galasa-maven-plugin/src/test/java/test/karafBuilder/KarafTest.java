@@ -57,6 +57,7 @@ public class KarafTest {
 
 	private MavenProject project;
 	private DefaultArtifact depArtifactObr;
+	private DefaultArtifact depArtifactJar;
 
 	/**
 	 * Setup a golden path Maven project with dependencies to exercise logic in the goa;
@@ -72,7 +73,7 @@ public class KarafTest {
 		DefaultArtifact artifact = new DefaultArtifact("group1", PROJECT_ID, "1.2.3", "compile", "xml", "xml", null);
 
 		//*** Setup invalid deps, to ensure they are ignored
-		DefaultArtifact depArtifactJar        = new DefaultArtifact("group1", "jar1",        "1.2.4",     "compile",  "jar", "jar", null);
+		depArtifactJar        = new DefaultArtifact("group1", "jar1",        "1.2.4",     "compile",  "jar", "jar", null);
 		DefaultArtifact depArtifactUnresolved = new DefaultArtifact("group2", "unresolved1", "1.2.5",     "compile",  "xml", "xml", null);
 		DefaultArtifact depArtifactProvided   = new DefaultArtifact("group2", "provided1",   "1.2.5",     "provided", "obr", "obr", null);
 
@@ -215,6 +216,7 @@ public class KarafTest {
 	public void testNoFeaturesProduced() throws Exception {
 		
 		depArtifactObr.setResolved(false);
+		depArtifactJar.setResolved(false);
 
 		try {
 			buildKarafFeature.execute();

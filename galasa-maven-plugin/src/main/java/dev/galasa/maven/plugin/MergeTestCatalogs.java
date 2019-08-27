@@ -35,7 +35,7 @@ import com.google.gson.JsonObject;
  *
  */
 @Mojo(name = "mergetestcat", 
-defaultPhase = LifecyclePhase.PROCESS_RESOURCES , 
+defaultPhase = LifecyclePhase.PACKAGE , 
 threadSafe = true,
 requiresDependencyCollection = ResolutionScope.COMPILE_PLUS_RUNTIME,
 requiresDependencyResolution = ResolutionScope.COMPILE_PLUS_RUNTIME)
@@ -68,6 +68,7 @@ public class MergeTestCatalogs extends AbstractMojo
 
 		if (!"galasa-obr".equals(project.getPackaging())) {
 			getLog().info("Skipping Bundle Test Catalog merge, not a galasa-obr project");
+			return;
 		}
 
 		if (!outputDirectory.exists()) {

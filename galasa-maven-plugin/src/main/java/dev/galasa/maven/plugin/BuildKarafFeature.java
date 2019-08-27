@@ -3,6 +3,7 @@ package dev.galasa.maven.plugin;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -101,16 +102,18 @@ public class BuildKarafFeature extends AbstractMojo
 		for(Object dependency : project.getDependencyArtifacts()) {
 			if (dependency instanceof DefaultArtifact) {
 				DefaultArtifact artifact = (DefaultArtifact)dependency;
-				if (artifact.isResolved() 
-						&& "compile".equals(artifact.getScope())
-						&& "obr".equals(artifact.getType())) {
-					processObr(artifact, newFeatures, uberFeature, obrDataModelHelper);
+				if (artifact.isResolved() && "compile".equals(artifact.getScope())) {
+					if ("obr".equals(artifact.getType())) {
+						processObr(artifact, newFeatures, uberFeature, obrDataModelHelper);
+					} else if ("jar".equals(artifact.getType())) {
+						processJar(artifact, uberFeature);
+					}
 				}
 			}
 		}
 
-		//** Must find atleast 1 OBR
-		if (newFeatures.getFeatures().isEmpty()) {
+		//** Must find atleast 1 OBR or JAR
+		if (newFeatures.getFeatures().isEmpty() && uberFeature.getBundles().isEmpty()) {
 			throw new MojoExecutionException("No resources have been added to the feature");
 		}
 		newFeatures.addFeature(uberFeature);
@@ -122,6 +125,11 @@ public class BuildKarafFeature extends AbstractMojo
 		}
 
 		getLog().info("BuildKarafFeature: Karaf feature.xml created with " + newFeatures.getFeatures().size() + " features and " + uberFeature.getBundles().size() + " bundles");
+	}
+
+	private void processJar(DefaultArtifact artifact, Feature uberFeature) {
+		String uri = "mvn:" + artifact.getGroupId() + "/" + artifact.getArtifactId() + "/" + artifact.getVersion() + "/" + artifact.getType();
+		uberFeature.getBundles().add(new Bundle(uri));		
 	}
 
 	private void processObr(Artifact artifact, 

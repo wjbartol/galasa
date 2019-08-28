@@ -3,6 +3,8 @@ package dev.galasa.maven.plugin;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.URLConnection;
+import java.util.Properties;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
@@ -35,13 +37,26 @@ public class DeployTestCatalog extends AbstractMojo
 	@Parameter( defaultValue = "${galasa.skip.deploytestcatatlog}", readonly = true, required = false )
 	private boolean skipDeploy;
 
-	@Parameter( defaultValue = "${galasa.test.stream}", readonly = true, required = true )
+	@Parameter( defaultValue = "${galasa.test.stream}", readonly = true, required = false )
 	private String testStream;
+
+	@Parameter( defaultValue = "${galasa.bootstrap}", readonly = true, required = false )
+	private URL bootstrapUrl;
 
 	public void execute() throws MojoExecutionException, MojoFailureException {
 
 		if (skip || skipDeploy) {
 			getLog().info("Skipping Deploy Test Catalog");
+			return;
+		}
+
+		if (testStream == null) {
+			getLog().info("Skipping Deploy Test Catalog - test stream name is missing");
+			return;
+		}
+
+		if (bootstrapUrl == null) {
+			getLog().info("Skipping Deploy Test Catalog - Bootstrap URL is missing");
 			return;
 		}
 
@@ -67,11 +82,33 @@ public class DeployTestCatalog extends AbstractMojo
 
 
 			//*** Get the bootstrap
+			Properties bootstrapProperties = new Properties();
+			try {
+				URLConnection connection = bootstrapUrl.openConnection();
+				bootstrapProperties.load(connection.getInputStream());
+			} catch(Exception e) {
+				throw new MojoExecutionException("Unable to load the bootstrap properties", e);
+			}
+			
+			//*** Calculate the testcatalog url
+			String sTestcatalogUrl = bootstrapProperties.getProperty("framework.testcatalog.url");
+			if (sTestcatalogUrl == null || sTestcatalogUrl.trim().isEmpty()) {
+				String sBootstrapUrl = bootstrapUrl.toString();
+				if (!sBootstrapUrl.endsWith("/bootstrap")) {
+					throw new MojoExecutionException("Unable to calculate the test catalog url, the bootstrap url does not end with /bootstrap, need a framework.testcatalog.url property in the bootstrap");
+				}
+				
+				sTestcatalogUrl = sBootstrapUrl.substring(0, sBootstrapUrl.length() - 10) + "/testcatalog";
+			}
+
+			//*** Check to see if we need authentication
+			String sAuthenticationUrl = bootstrapProperties.getProperty("framework.authentication.url");
+			if (sAuthenticationUrl != null) {
+				throw new MojoExecutionException("Unable to support Galasa authentication at the moment");
+			}
 
 			//*** Get the test catalog url
-			URL testCatalogUrl = new URL("http://127.0.0.1:8181/testcatalog" + "/" + testStream);
-
-			//*** authenticate
+			URL testCatalogUrl = new URL(sTestcatalogUrl + "/" + testStream);
 
 			HttpURLConnection conn = (HttpURLConnection)testCatalogUrl.openConnection();
 			conn.setDoOutput(true);
@@ -109,7 +146,7 @@ public class DeployTestCatalog extends AbstractMojo
 				throw new MojoExecutionException("Deploy to Test Catalog Store failed");
 			}
 
-			
+
 			getLog().info("Test Catalog successfully deployed to " + testCatalogUrl.toString());
 
 		} catch(Throwable t) {

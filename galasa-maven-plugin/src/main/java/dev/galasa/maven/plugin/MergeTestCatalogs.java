@@ -1,6 +1,7 @@
 package dev.galasa.maven.plugin;
 
 import java.io.File;
+import java.time.Instant;
 import java.util.List;
 import java.util.Map.Entry;
 
@@ -59,6 +60,9 @@ public class MergeTestCatalogs extends AbstractMojo
 	@Parameter( defaultValue = "${galasa.skip.bundletestcatatlog}", readonly = true, required = false )
 	private boolean skip;
 
+	@Parameter( defaultValue = "${galasa.build.job}", readonly = true, required = false )
+	private String buildJob;
+
 	public void execute() throws MojoExecutionException, MojoFailureException {
 
 		if (skip) {
@@ -86,6 +90,19 @@ public class MergeTestCatalogs extends AbstractMojo
 			jsonRoot.add("packages", jsonPackages);
 			JsonObject jsonBundles = new JsonObject();
 			jsonRoot.add("bundles", jsonBundles);
+			
+			jsonRoot.addProperty("name", project.getName());
+			
+			Instant now = Instant.now();
+			
+			if (buildJob == null || buildJob.trim().isEmpty()) {
+				buildJob = project.getGroupId() + ":" + project.getArtifactId() + ":" + project.getVersion() + " - " + now.toString(); 
+			}
+			
+			jsonRoot.addProperty("build", buildJob);
+			jsonRoot.addProperty("version", project.getVersion());
+			jsonRoot.addProperty("built", now.toString());
+			
 			
 			List<Dependency> dependencies = project.getDependencies();
 			for(Dependency dependency : dependencies) {

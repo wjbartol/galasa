@@ -69,11 +69,7 @@ pipeline {
 // Build the wrapping repository
       stage('wrapping') {
          steps {
-            dir('git/wrapping') {
-               git credentialsId: 'df028cc4-778d-4f90-ab52-e2a0db283c9f', url: 'git@github.ibm.com:galasa/wrapping.git', branch: "${gitBranch}"
-         
-               sh "mvn --settings ${workspace}/settings.xml -Dmaven.repo.local=${workspace}/repository -P ${mvnProfile} -B -e -fae ${mvnGoal}"
-            }
+            sh "mvn --settings ${workspace}/settings.xml -Dmaven.repo.local=${workspace}/repository -P ${mvnProfile} -B -e -fae ${mvnGoal}"
          }
       }
    }

@@ -1,5 +1,4 @@
-def mvnProfile    = 'unknown'
-def gitBranch     = 'unknown'
+def mvnProfile    = 'galasa-dev'
 
 pipeline {
 // Initially run on any agent
@@ -21,8 +20,6 @@ pipeline {
          }
          steps {
             script {
-               mvnProfile    = 'galasa-dev'
-               gitBranch     = 'master'
                mvnGoal       = 'deploy'
             }
          }
@@ -35,8 +32,6 @@ pipeline {
 //         steps {
 //            script {
 //               mvnProfile    = 'galasa-preprod'
-//               dockerVersion = 'preprod'
-//               gitBranch     = 'testpreprod'
 //            }
 //         }
 //     }
@@ -45,7 +40,6 @@ pipeline {
       stage('report') {
          steps {
             echo "Branch/Tag         : ${env.GIT_BRANCH}"
-            echo "Repo Branches      : ${gitBranch}"
             echo "Workspace directory: ${workspace}"
             echo "Maven Goal         : ${mvnGoal}"
             echo "Maven profile      : ${mvnProfile}"

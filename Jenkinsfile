@@ -20,7 +20,7 @@ pipeline {
          }
          steps {
             script {
-               mvnGoal       = 'deploy'
+               mvnGoal       = 'deploy sonar:sonar'
             }
          }
       }
@@ -63,8 +63,10 @@ pipeline {
 // Build the wrapping repository
       stage('maven') {
          steps {
-            dir('galasa-maven-plugin') {
-               sh "mvn --settings ${workspace}/settings.xml -Dmaven.repo.local=${workspace}/repository -P ${mvnProfile} -B -e -fae ${mvnGoal}"
+            withSonarQubeEnv('GalasaSonarQube') {
+               dir('galasa-maven-plugin') {
+                  sh "mvn --settings ${workspace}/settings.xml -Dmaven.repo.local=${workspace}/repository -P ${mvnProfile} -B -e -fae ${mvnGoal}"
+               }
             }
          }
       }

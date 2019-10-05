@@ -2,8 +2,10 @@ package dev.galasa.maven.plugin;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.maven.model.Resource;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -27,7 +29,7 @@ public class StoreGitCommitHash extends AbstractMojo
     @Parameter( defaultValue = "${project}", readonly = true )
     private MavenProject project;
 
-    @Parameter( defaultValue = "${project.build.outputDirectory}", property = "outputDir", required = true )
+    @Parameter( defaultValue = "${project.build.directory}", property = "outputDir", required = true )
     private File outputDirectory;
 
     @Parameter( defaultValue = "${env.GIT_COMMIT}", property = "gitCommitHash", required = false )
@@ -40,13 +42,17 @@ public class StoreGitCommitHash extends AbstractMojo
                 !"eclipse-plugin".equals(project.getPackaging())) {
             return;
         }
+        
+//        project.addResource(null);
+        List<Resource> resources = project.getResources();
 
         if (hash == null || hash.trim().isEmpty()) {
             hash = "unknown";
         }
         hash = hash.trim();
 
-        File metaInf = new File(outputDirectory, "META-INF");
+        File galasaFile = new File(outputDirectory, "galasa");
+        File metaInf = new File(galasaFile, "META-INF");
         File hashFile = new File(metaInf, "git.hash");
 
         if (!metaInf.exists()) {
@@ -55,9 +61,15 @@ public class StoreGitCommitHash extends AbstractMojo
 
         try {
             FileUtils.write(hashFile, hash, "UTF-8");
+            getLog().info("Written git hash " + hash + " to META-INF/git.hash");
         } catch(IOException e) {
             throw new MojoExecutionException("Unable to write hash", e);
         }
+        
+        Resource resource = new Resource();
+        resource.setDirectory(galasaFile.getAbsolutePath());
+        project.addResource(resource);
+        
     }
 
 }

@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.IOException;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.IOUtils;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -37,7 +36,8 @@ public class StoreGitCommitHash extends AbstractMojo
     public void execute() throws MojoExecutionException, MojoFailureException {
 
         if (!"bundle".equals(project.getPackaging()) && 
-                !"jar".equals(project.getPackaging())) {
+                !"jar".equals(project.getPackaging()) && 
+                !"eclipse-plugin".equals(project.getPackaging())) {
             return;
         }
 

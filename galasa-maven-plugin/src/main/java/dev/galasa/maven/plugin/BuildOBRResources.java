@@ -146,7 +146,7 @@ public class BuildOBRResources extends AbstractMojo
 			URI name = null;
 			switch(obrUrlType) {
 			case mvn:
-				name = new URI("mvn:" + artifact.getGroupId() + "/" + artifact.getArtifactId() + "/" + artifact.getVersion() + "/" + artifact.getType());
+				name = new URI("mvn:" + artifact.getGroupId() + "/" + artifact.getArtifactId() + "/" + artifact.getBaseVersion() + "/" + artifact.getType());
 				break;
 			case file:
 			default:

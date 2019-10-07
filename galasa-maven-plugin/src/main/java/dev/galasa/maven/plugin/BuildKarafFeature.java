@@ -3,8 +3,8 @@ package dev.galasa.maven.plugin;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
-import java.net.URI;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 
@@ -50,11 +50,17 @@ public class BuildKarafFeature extends AbstractMojo
 	@Parameter( property = "featureName", required = false )
 	private String featureName;
 
-	/**
-	 * What features are required for our features.   will be added to each of our generated features
-	 */
-	@Parameter( property = "requiredFeatures", required = false )
-	private String[] requiredFeatures;
+    /**
+     * What features are required for our features.   will be added to each of our generated features
+     */
+    @Parameter( property = "requiredFeatures", required = false )
+    private String[] requiredFeatures;
+
+    /**
+     * Overrides for the bundle start levels
+     */
+    @Parameter( property = "startLevels", required = false )
+    private String[] startLevels;
 
 	/**
 	 * What bundles to exclude 
@@ -63,6 +69,8 @@ public class BuildKarafFeature extends AbstractMojo
 	private String[] excludes;
 
 	private HashSet<String> actualExcludes = new HashSet<>();
+	
+	private HashMap<String, Integer> mapStartLevels = new HashMap<>();
 
 	public void execute() throws MojoExecutionException, MojoFailureException {
 
@@ -93,6 +101,17 @@ public class BuildKarafFeature extends AbstractMojo
 				}
 			}
 		}
+		
+		if (startLevels != null) {
+		    for(String startLevel : startLevels) {
+		        int posEquals = startLevel.indexOf('=');
+		        String bundle = startLevel.substring(0, posEquals);
+		        Integer level = Integer.valueOf(startLevel.substring(posEquals + 1));
+		        mapStartLevels.put(bundle, level);
+		    }
+		}
+		
+		
 
 		Features newFeatures = new Features(project.getArtifactId() + "-" + project.getVersion());
 		Feature uberFeature = new Feature(this.featureName, project.getVersion(), requiredFeatures);
@@ -128,8 +147,14 @@ public class BuildKarafFeature extends AbstractMojo
 	}
 
 	private void processJar(DefaultArtifact artifact, Feature uberFeature) {
+	    int startLevel = 0;
+	    String bundle = artifact.getGroupId() + ":" + artifact.getArtifactId();
+	    if (mapStartLevels.containsKey(bundle)) {
+	        startLevel = mapStartLevels.get(bundle);
+	    }
+	    
 		String uri = "mvn:" + artifact.getGroupId() + "/" + artifact.getArtifactId() + "/" + artifact.getVersion() + "/" + artifact.getType();
-		uberFeature.getBundles().add(new Bundle(uri));		
+		uberFeature.getBundles().add(new Bundle(uri, startLevel));		
 	}
 
 	private void processObr(Artifact artifact, 
@@ -150,8 +175,12 @@ public class BuildKarafFeature extends AbstractMojo
 					continue;
 				}
 
+		        int startLevel = 0;
+		        if (mapStartLevels.containsKey(resource.getSymbolicName())) {
+		            startLevel = mapStartLevels.get(resource.getSymbolicName());
+		        }
 
-				Bundle bundle = new Bundle(resource.getURI());
+				Bundle bundle = new Bundle(resource.getURI(), startLevel);
 				obrFeature.addBundle(bundle);
 				uberFeature.addBundle(bundle);
 				getLog().info("BuildKarafFeature: Merged OBR " + resource.getPresentationName() + " - " + resource.getId() + " to feature");
@@ -231,13 +260,23 @@ public class BuildKarafFeature extends AbstractMojo
 
 	public static class Bundle {
 		private final String uri;
+		private final int    startLevel;
 
-		public Bundle(String uri) {
+		public Bundle(String uri, int startLevel) {
 			this.uri = uri;
+			this.startLevel = startLevel;
 		}
 
 		public void toXml(StringBuilder sb) {
-			sb.append("        <bundle>" + this.uri + "</bundle>\n");
+            sb.append("        <bundle");
+            if (startLevel > 0) {
+                sb.append(" start-level=\"");
+                sb.append(Integer.toString(startLevel));
+                sb.append("\"");
+            }
+            sb.append(">");
+            sb.append(this.uri);
+            sb.append("</bundle>\n");
 		}
 	}
 

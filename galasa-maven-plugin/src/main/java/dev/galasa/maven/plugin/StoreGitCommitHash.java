@@ -1,3 +1,8 @@
+/*
+ * Licensed Materials - Property of IBM
+ * 
+ * (c) Copyright IBM Corp. 2019.
+ */
 package dev.galasa.maven.plugin;
 
 import java.io.File;
@@ -15,34 +20,29 @@ import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 
 /**
- *  Store a git commit hash into the META-INF folder 
+ * Store a git commit hash into the META-INF folder
  * 
  * @author Michael Baylis
  *
  */
-@Mojo(name = "gitcommithash", 
-defaultPhase = LifecyclePhase.PROCESS_RESOURCES, 
-threadSafe = true,
-requiresProject = true)
-public class StoreGitCommitHash extends AbstractMojo
-{
-    @Parameter( defaultValue = "${project}", readonly = true )
+@Mojo(name = "gitcommithash", defaultPhase = LifecyclePhase.PROCESS_RESOURCES, threadSafe = true, requiresProject = true)
+public class StoreGitCommitHash extends AbstractMojo {
+    @Parameter(defaultValue = "${project}", readonly = true)
     private MavenProject project;
 
-    @Parameter( defaultValue = "${project.build.directory}", property = "outputDir", required = true )
-    private File outputDirectory;
+    @Parameter(defaultValue = "${project.build.directory}", property = "outputDir", required = true)
+    private File         outputDirectory;
 
-    @Parameter( defaultValue = "${env.GIT_COMMIT}", property = "gitCommitHash", required = false )
-    private String hash;
+    @Parameter(defaultValue = "${env.GIT_COMMIT}", property = "gitCommitHash", required = false)
+    private String       hash;
 
     public void execute() throws MojoExecutionException, MojoFailureException {
 
-        if (!"bundle".equals(project.getPackaging()) && 
-                !"jar".equals(project.getPackaging()) && 
-                !"eclipse-plugin".equals(project.getPackaging())) {
+        if (!"bundle".equals(project.getPackaging()) && !"jar".equals(project.getPackaging())
+                && !"eclipse-plugin".equals(project.getPackaging())) {
             return;
         }
-        
+
 //        project.addResource(null);
         List<Resource> resources = project.getResources();
 
@@ -62,14 +62,14 @@ public class StoreGitCommitHash extends AbstractMojo
         try {
             FileUtils.write(hashFile, hash, "UTF-8");
             getLog().info("Written git hash " + hash + " to META-INF/git.hash");
-        } catch(IOException e) {
+        } catch (IOException e) {
             throw new MojoExecutionException("Unable to write hash", e);
         }
-        
+
         Resource resource = new Resource();
         resource.setDirectory(galasaFile.getAbsolutePath());
         project.addResource(resource);
-        
+
     }
 
 }

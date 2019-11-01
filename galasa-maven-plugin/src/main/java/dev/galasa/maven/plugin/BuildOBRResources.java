@@ -1,3 +1,8 @@
+/*
+ * Licensed Materials - Property of IBM
+ * 
+ * (c) Copyright IBM Corp. 2019.
+ */
 package dev.galasa.maven.plugin;
 
 import java.io.File;
@@ -25,142 +30,146 @@ import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.project.MavenProject;
 
-@Mojo(name = "obrresources", 
-defaultPhase = LifecyclePhase.PROCESS_RESOURCES , 
-threadSafe = true,
-requiresDependencyCollection = ResolutionScope.COMPILE,
-requiresDependencyResolution = ResolutionScope.COMPILE)
-public class BuildOBRResources extends AbstractMojo
-{
-	
-	public enum OBR_URL_TYPE {
-		file,
-		mvn
-	}
+@Mojo(name = "obrresources", defaultPhase = LifecyclePhase.PROCESS_RESOURCES, threadSafe = true, requiresDependencyCollection = ResolutionScope.COMPILE, requiresDependencyResolution = ResolutionScope.COMPILE)
+public class BuildOBRResources extends AbstractMojo {
 
-	@Parameter(defaultValue = "${project}", readonly = true)
-	private MavenProject project;
+    public enum OBR_URL_TYPE {
+        file,
+        mvn
+    }
 
-	@Parameter(defaultValue = "${project.build.directory}", property = "outputDir", required = true)
-	private File outputDirectory;
+    @Parameter(defaultValue = "${project}", readonly = true)
+    private MavenProject project;
 
-	@Parameter(defaultValue = "${project.build.directory}", property = "targerDir", required = true)
-	private File projectTargetDirectory;
-	
-	@Parameter(defaultValue = "${galasa.obr.url.type}", property = "obrUrlType", required = false)
-	private OBR_URL_TYPE obrUrlType;
-	
-	@Parameter(defaultValue = "false", property = "includeSelf", required = false)
-	private boolean includeSelf;
+    @Parameter(defaultValue = "${project.build.directory}", property = "outputDir", required = true)
+    private File         outputDirectory;
 
-	public void execute() throws MojoExecutionException, MojoFailureException {
-		
-		getLog().info("BuildOBRResources: Building project " + project.getName() + ". includeSelf="+ includeSelf);
-		if (obrUrlType == null) {
-			obrUrlType = OBR_URL_TYPE.mvn;
-		}
-		
-		DataModelHelper obrDataModelHelper = new DataModelHelperImpl();
+    @Parameter(defaultValue = "${project.build.directory}", property = "targerDir", required = true)
+    private File         projectTargetDirectory;
 
-		if (!outputDirectory.exists()) {
-			outputDirectory.mkdirs();
-		}
+    @Parameter(defaultValue = "${galasa.obr.url.type}", property = "obrUrlType", required = false)
+    private OBR_URL_TYPE obrUrlType;
 
-		File repositoryFile = new File(outputDirectory, "repository.obr");
-		project.getArtifact().setFile(repositoryFile);
+    @Parameter(defaultValue = "false", property = "includeSelf", required = false)
+    private boolean      includeSelf;
 
-		if (includeSelf) {
-			Artifact selfArtifact = new DefaultArtifact(project.getGroupId(), project.getArtifactId(), project.getVersion(), Artifact.SCOPE_COMPILE, "jar", null, project.getArtifact().getArtifactHandler());
-			getLog().info("BuildOBRResources: Adding artifact " + selfArtifact.getId() + "as a dependency to " + project.getName());
-			selfArtifact.setResolved(true);
-			selfArtifact.setFile(new File(projectTargetDirectory.getAbsolutePath() + "/" + project.getArtifactId() + "-" + project.getVersion() + ".jar"));
-			Set<Artifact> dependencyArtifacts = project.getDependencyArtifacts();
-			dependencyArtifacts.add(selfArtifact);
-			project.setDependencyArtifacts(dependencyArtifacts);
-		}
-		
-		RepositoryImpl newRepository = new RepositoryImpl();
+    public void execute() throws MojoExecutionException, MojoFailureException {
 
-		for(Object dependency : project.getDependencyArtifacts()) {
-			if (dependency instanceof DefaultArtifact) {
-				DefaultArtifact artifact = (DefaultArtifact)dependency;
-				if (artifact.isResolved() && artifact.getScope().equals("compile")) {
-					if (artifact.getFile().getName().endsWith(".jar")) {
-						processBundle(artifact, newRepository, obrDataModelHelper);
-					} else if (artifact.getFile().getName().endsWith(".obr")) {
-						processObr(artifact, newRepository, obrDataModelHelper);
-					} 
-				}
-			}
-		}
+        getLog().info("BuildOBRResources: Building project " + project.getName() + ". includeSelf=" + includeSelf);
+        if (obrUrlType == null) {
+            obrUrlType = OBR_URL_TYPE.mvn;
+        }
 
-		if (newRepository.getResources() == null 
-				|| newRepository.getResources().length == 0) {
-			throw new MojoFailureException("No resources have been added to the repository");
-		}
+        DataModelHelper obrDataModelHelper = new DataModelHelperImpl();
 
-		getLog().info("BuildOBRResources: OBR Artifact ID is " + project.getArtifact().getId());
+        if (!outputDirectory.exists()) {
+            outputDirectory.mkdirs();
+        }
 
-		newRepository.setName(project.getGroupId() + ":" + project.getArtifactId() + ":" + project.getVersion());
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd-HHmmss");
-		newRepository.setLastModified(sdf.format(Calendar.getInstance().getTime()));
+        File repositoryFile = new File(outputDirectory, "repository.obr");
+        project.getArtifact().setFile(repositoryFile);
 
-		try {
-			FileWriter fw = new FileWriter(repositoryFile);
-			obrDataModelHelper.writeRepository(newRepository, fw);
-			fw.close();
-		} catch(Exception e) {
-			throw new MojoExecutionException("Problem with writing repository.xml", e);
-		}
+        if (includeSelf) {
+            Artifact selfArtifact = new DefaultArtifact(project.getGroupId(), project.getArtifactId(),
+                    project.getVersion(), Artifact.SCOPE_COMPILE, "jar", null,
+                    project.getArtifact().getArtifactHandler());
+            getLog().info("BuildOBRResources: Adding artifact " + selfArtifact.getId() + "as a dependency to "
+                    + project.getName());
+            selfArtifact.setResolved(true);
+            selfArtifact.setFile(new File(projectTargetDirectory.getAbsolutePath() + "/" + project.getArtifactId() + "-"
+                    + project.getVersion() + ".jar"));
+            Set<Artifact> dependencyArtifacts = project.getDependencyArtifacts();
+            dependencyArtifacts.add(selfArtifact);
+            project.setDependencyArtifacts(dependencyArtifacts);
+        }
 
-		if (newRepository.getResources().length == 1) {
-			getLog().info("BuildOBRResources: Repository created with " + newRepository.getResources().length + " resource stored in " + repositoryFile.getAbsolutePath());
-		} else {
-			getLog().info("BuildOBRResources: Repository created with " + newRepository.getResources().length + " resources stored in " + repositoryFile.getAbsolutePath());
-		} 
-	}
+        RepositoryImpl newRepository = new RepositoryImpl();
 
-	private void processObr(Artifact artifact, 
-			RepositoryImpl newRepository,
-			DataModelHelper obrDataModelHelper) throws MojoExecutionException {
-		
-		try (FileReader fr = new FileReader(artifact.getFile())) {
-			Repository mergeRepository = obrDataModelHelper.readRepository(fr);
-			
-			for(Resource resource : mergeRepository.getResources()) {
-				newRepository.addResource(resource);
-				getLog().info("BuildOBRResources: Merged bundle " + resource.getPresentationName() + " - " + resource.getId() + " to repository");
-			}
-		} catch(Exception e) {
-			throw new MojoExecutionException("Unable to read existing OBR", e);
-		}
-	}
+        for (Object dependency : project.getDependencyArtifacts()) {
+            if (dependency instanceof DefaultArtifact) {
+                DefaultArtifact artifact = (DefaultArtifact) dependency;
+                if (artifact.isResolved() && artifact.getScope().equals("compile")) {
+                    if (artifact.getFile().getName().endsWith(".jar")) {
+                        processBundle(artifact, newRepository, obrDataModelHelper);
+                    } else if (artifact.getFile().getName().endsWith(".obr")) {
+                        processObr(artifact, newRepository, obrDataModelHelper);
+                    }
+                }
+            }
+        }
 
-	private void processBundle(DefaultArtifact artifact, 
-			RepositoryImpl repository, DataModelHelper obrDataModelHelper) throws MojoExecutionException {
+        if (newRepository.getResources() == null || newRepository.getResources().length == 0) {
+            throw new MojoFailureException("No resources have been added to the repository");
+        }
 
-		try {
-			getLog().info("BuildOBRResources: Processing artifact " + artifact.getId());
-			ResourceImpl newResource = (ResourceImpl)obrDataModelHelper.createResource(artifact.getFile().toURI().toURL());
+        getLog().info("BuildOBRResources: OBR Artifact ID is " + project.getArtifact().getId());
 
-			URI name = null;
-			switch(obrUrlType) {
-			case mvn:
-				name = new URI("mvn:" + artifact.getGroupId() + "/" + artifact.getArtifactId() + "/" + artifact.getBaseVersion() + "/" + artifact.getType());
-				break;
-			case file:
-			default:
-				name = artifact.getFile().toURI();
-				break;
-			}
-			newResource.put(Resource.URI, name);
+        newRepository.setName(project.getGroupId() + ":" + project.getArtifactId() + ":" + project.getVersion());
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd-HHmmss");
+        newRepository.setLastModified(sdf.format(Calendar.getInstance().getTime()));
 
-			repository.addResource(newResource);
+        try {
+            FileWriter fw = new FileWriter(repositoryFile);
+            obrDataModelHelper.writeRepository(newRepository, fw);
+            fw.close();
+        } catch (Exception e) {
+            throw new MojoExecutionException("Problem with writing repository.xml", e);
+        }
 
-			getLog().info("BuildOBRResources: Added bundle " + newResource.getPresentationName() + " - " + newResource.getId() + " to repository");
-		} catch (Exception e) {
-			throw new MojoExecutionException("Failed to process dependency " + artifact.getGroupId() + ":" + artifact.getArtifactId() + ":" + artifact.getVersion(),e);
-		}
-	}
+        if (newRepository.getResources().length == 1) {
+            getLog().info("BuildOBRResources: Repository created with " + newRepository.getResources().length
+                    + " resource stored in " + repositoryFile.getAbsolutePath());
+        } else {
+            getLog().info("BuildOBRResources: Repository created with " + newRepository.getResources().length
+                    + " resources stored in " + repositoryFile.getAbsolutePath());
+        }
+    }
+
+    private void processObr(Artifact artifact, RepositoryImpl newRepository, DataModelHelper obrDataModelHelper)
+            throws MojoExecutionException {
+
+        try (FileReader fr = new FileReader(artifact.getFile())) {
+            Repository mergeRepository = obrDataModelHelper.readRepository(fr);
+
+            for (Resource resource : mergeRepository.getResources()) {
+                newRepository.addResource(resource);
+                getLog().info("BuildOBRResources: Merged bundle " + resource.getPresentationName() + " - "
+                        + resource.getId() + " to repository");
+            }
+        } catch (Exception e) {
+            throw new MojoExecutionException("Unable to read existing OBR", e);
+        }
+    }
+
+    private void processBundle(DefaultArtifact artifact, RepositoryImpl repository, DataModelHelper obrDataModelHelper)
+            throws MojoExecutionException {
+
+        try {
+            getLog().info("BuildOBRResources: Processing artifact " + artifact.getId());
+            ResourceImpl newResource = (ResourceImpl) obrDataModelHelper
+                    .createResource(artifact.getFile().toURI().toURL());
+
+            URI name = null;
+            switch (obrUrlType) {
+                case mvn:
+                    name = new URI("mvn:" + artifact.getGroupId() + "/" + artifact.getArtifactId() + "/"
+                            + artifact.getBaseVersion() + "/" + artifact.getType());
+                    break;
+                case file:
+                default:
+                    name = artifact.getFile().toURI();
+                    break;
+            }
+            newResource.put(Resource.URI, name);
+
+            repository.addResource(newResource);
+
+            getLog().info("BuildOBRResources: Added bundle " + newResource.getPresentationName() + " - "
+                    + newResource.getId() + " to repository");
+        } catch (Exception e) {
+            throw new MojoExecutionException("Failed to process dependency " + artifact.getGroupId() + ":"
+                    + artifact.getArtifactId() + ":" + artifact.getVersion(), e);
+        }
+    }
 
 }

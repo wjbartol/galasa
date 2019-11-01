@@ -1,3 +1,8 @@
+/*
+ * Licensed Materials - Property of IBM
+ * 
+ * (c) Copyright IBM Corp. 2019.
+ */
 package dev.galasa.maven.plugin;
 
 import java.io.File;
@@ -29,29 +34,27 @@ import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.project.MavenProject;
 
 /**
- *  This goal will take a set of OBRs and create the equivalent Karaf Feature XML file.
+ * This goal will take a set of OBRs and create the equivalent Karaf Feature XML
+ * file.
  * 
- *  It will create a feature per OBR and a feature containing all resources from each of the OBRs. 
+ * It will create a feature per OBR and a feature containing all resources from
+ * each of the OBRs.
  * 
  * @author Michael Baylis
  *
  */
-@Mojo(name = "mavenrepository", 
-defaultPhase = LifecyclePhase.PROCESS_RESOURCES , 
-requiresDependencyResolution = ResolutionScope.COMPILE,
-threadSafe = true)
-public class BuildMavenRepository extends AbstractMojo
-{
-    @Parameter( defaultValue = "${project}", readonly = true )
-    private MavenProject project;
+@Mojo(name = "mavenrepository", defaultPhase = LifecyclePhase.PROCESS_RESOURCES, requiresDependencyResolution = ResolutionScope.COMPILE, threadSafe = true)
+public class BuildMavenRepository extends AbstractMojo {
+    @Parameter(defaultValue = "${project}", readonly = true)
+    private MavenProject           project;
 
-    @Parameter( defaultValue = "${project.build.directory}", property = "outputDir", required = true )
-    private File outputDirectory;
+    @Parameter(defaultValue = "${project.build.directory}", property = "outputDir", required = true)
+    private File                   outputDirectory;
 
-    @Parameter( defaultValue = "${build.number}", property = "buildNumber", required = false )
-    private int buildNumber;
+    @Parameter(defaultValue = "${build.number}", property = "buildNumber", required = false)
+    private int                    buildNumber;
 
-    private final SimpleDateFormat sdf = new SimpleDateFormat("yyyMMdd.HHmmss");
+    private final SimpleDateFormat sdf        = new SimpleDateFormat("yyyMMdd.HHmmss");
     private final SimpleDateFormat sdfUpdated = new SimpleDateFormat("yyyMMddHHmmss");
 
     @Override
@@ -77,16 +80,16 @@ public class BuildMavenRepository extends AbstractMojo
         try {
             targetDirectory = Paths.get(outputDirectory.toURI());
             Files.createDirectories(targetDirectory);
-        } catch(Exception e) {
+        } catch (Exception e) {
             throw new MojoExecutionException("Unable to create the target repository directory", e);
         }
 
         Set<Artifact> artifacts = project.getArtifacts();
-        for(Artifact artifact : artifacts) {
-            if (artifact.getScope().equals(Artifact.SCOPE_COMPILE)) {                
+        for (Artifact artifact : artifacts) {
+            if (artifact.getScope().equals(Artifact.SCOPE_COMPILE)) {
                 Path artifactFile = Paths.get(artifact.getFile().toURI());
 
-                //*** Calculate the directory structure
+                // *** Calculate the directory structure
                 String[] groupSplit = artifact.getGroupId().split("\\.");
                 Path groupPath = Paths.get("repository", groupSplit);
                 Path targetGroupDirectory = targetDirectory.resolve(groupPath);
@@ -96,12 +99,12 @@ public class BuildMavenRepository extends AbstractMojo
                 Path targetArtifactMetadata = targetArtifactDirectory.resolve("maven-metadata.xml");
                 Path targetVersionMetadata = targetVersionDirectory.resolve("maven-metadata.xml");
 
-
-                //*** Calculate the target artifact and pom filenames
+                // *** Calculate the target artifact and pom filenames
                 String targetArtifactFileName;
                 String targetArtifactVersion;
                 if (artifact.isSnapshot()) {
-                    targetArtifactVersion = artifact.getBaseVersion().replace("SNAPSHOT", snapshotVersionPrefix) + "-" + Integer.toString(buildNumber);
+                    targetArtifactVersion = artifact.getBaseVersion().replace("SNAPSHOT", snapshotVersionPrefix) + "-"
+                            + Integer.toString(buildNumber);
                     targetArtifactFileName = artifact.getArtifactId() + "-" + targetArtifactVersion;
                 } else {
                     targetArtifactVersion = artifact.getBaseVersion();
@@ -114,15 +117,15 @@ public class BuildMavenRepository extends AbstractMojo
                 targetArtifactFileName = targetArtifactFileName + "." + artifact.getType();
                 String targetPomFilename = artifact.getArtifactId() + "-" + targetArtifactVersion + ".pom";
 
-                //*** Calculate the original pom file
-                Path originalPomFile = artifactFile.resolveSibling(artifact.getArtifactId() + "-" + artifact.getBaseVersion() + ".pom");
+                // *** Calculate the original pom file
+                Path originalPomFile = artifactFile
+                        .resolveSibling(artifact.getArtifactId() + "-" + artifact.getBaseVersion() + ".pom");
 
-                //*** Get the target artifact and pom paths
+                // *** Get the target artifact and pom paths
                 Path targetArtifactFile = targetVersionDirectory.resolve(targetArtifactFileName);
                 Path targetPomFile = targetVersionDirectory.resolve(targetPomFilename);
 
-
-                //*** Write 
+                // *** Write
                 try {
                     Files.createDirectories(targetVersionDirectory);
 
@@ -171,10 +174,9 @@ public class BuildMavenRepository extends AbstractMojo
 
                         writer.write(Files.newOutputStream(targetVersionMetadata), metadata);
                     }
-                } catch(Exception e) {
+                } catch (Exception e) {
                     throw new MojoExecutionException("Unable to copy artifact " + artifact, e);
                 }
-
 
                 Path artifactHash = artifactFile.resolveSibling(targetArtifactFile.getFileName() + ".sha1");
                 Path pomHash = originalPomFile.resolveSibling(targetPomFile.getFileName() + ".sha1");
@@ -193,15 +195,17 @@ public class BuildMavenRepository extends AbstractMojo
         }
     }
 
-    private void createHash(Path file, Path hash, Path targetDirectory, MessageDigest digest) throws MojoExecutionException {
+    private void createHash(Path file, Path hash, Path targetDirectory, MessageDigest digest)
+            throws MojoExecutionException {
         try {
             if (Files.exists(hash)) {
                 Files.copy(hash, targetDirectory.resolve(hash.getFileName()), StandardCopyOption.REPLACE_EXISTING);
             } else {
                 String hex = Hex.encodeHexString(digest.digest(Files.readAllBytes(file)));
-                Files.write(targetDirectory.resolve(hash.getFileName()), hex.getBytes("utf-8"), StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
+                Files.write(targetDirectory.resolve(hash.getFileName()), hex.getBytes("utf-8"),
+                        StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
             }
-        } catch(Exception e) {
+        } catch (Exception e) {
             throw new MojoExecutionException("Unable to create/copy the hash file", e);
         }
     }

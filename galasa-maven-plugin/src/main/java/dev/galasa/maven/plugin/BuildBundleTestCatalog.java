@@ -1,3 +1,8 @@
+/*
+ * Licensed Materials - Property of IBM
+ * 
+ * (c) Copyright IBM Corp. 2019.
+ */
 package dev.galasa.maven.plugin;
 
 import java.io.File;
@@ -38,189 +43,191 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
 /**
- *  Build a test catalog of all the tests within the bundle.  The Test Class type needs @Test to be included 
+ * Build a test catalog of all the tests within the bundle. The Test Class type
+ * needs @Test to be included
  * 
  * @author Michael Baylis
  *
  */
-@Mojo(name = "bundletestcat", 
-defaultPhase = LifecyclePhase.PACKAGE , 
-threadSafe = true,
-requiresDependencyCollection = ResolutionScope.COMPILE_PLUS_RUNTIME,
-requiresDependencyResolution = ResolutionScope.COMPILE_PLUS_RUNTIME)
-public class BuildBundleTestCatalog extends AbstractMojo
-{
-	@Parameter( defaultValue = "${project}", readonly = true )
-	private MavenProject project;
-	
-	@Component
-	private MavenProjectHelper projectHelper;
+@Mojo(name = "bundletestcat", defaultPhase = LifecyclePhase.PACKAGE, threadSafe = true, requiresDependencyCollection = ResolutionScope.COMPILE_PLUS_RUNTIME, requiresDependencyResolution = ResolutionScope.COMPILE_PLUS_RUNTIME)
+public class BuildBundleTestCatalog extends AbstractMojo {
+    @Parameter(defaultValue = "${project}", readonly = true)
+    private MavenProject       project;
 
-	@Parameter( defaultValue = "${project.build.directory}", property = "outputDir", required = true )
-	private File outputDirectory;
+    @Component
+    private MavenProjectHelper projectHelper;
 
-	@Parameter( defaultValue = "${project.compileClasspathElements}", readonly = true, required = true )
-	private List<String> classpathElements;
+    @Parameter(defaultValue = "${project.build.directory}", property = "outputDir", required = true)
+    private File               outputDirectory;
 
-	@Parameter( defaultValue = "${galasa.skip.bundletestcatatlog}", readonly = true, required = false )
-	private boolean skip;
+    @Parameter(defaultValue = "${project.compileClasspathElements}", readonly = true, required = true)
+    private List<String>       classpathElements;
 
-	public void execute() throws MojoExecutionException, MojoFailureException {
+    @Parameter(defaultValue = "${galasa.skip.bundletestcatatlog}", readonly = true, required = false)
+    private boolean            skip;
 
-		if (skip) {
-			getLog().info("Skipping Bundle Test Catalog build");
-			return;
-		}
+    public void execute() throws MojoExecutionException, MojoFailureException {
 
-		if (!"bundle".equals(project.getPackaging())) {
-			getLog().info("Skipping Bundle Test Catalog build, not a bundle project");
-			return;
-		}
+        if (skip) {
+            getLog().info("Skipping Bundle Test Catalog build");
+            return;
+        }
 
-		if (!outputDirectory.exists()) {
-			outputDirectory.mkdirs();
-		}
+        if (!"bundle".equals(project.getPackaging())) {
+            getLog().info("Skipping Bundle Test Catalog build, not a bundle project");
+            return;
+        }
 
-		Path manifestPath = Paths.get(outputDirectory.toURI()).resolve("classes").resolve("META-INF").resolve("MANIFEST.MF");
-		if (!Files.exists(manifestPath)) {
-			throw new MojoExecutionException("Unable to build Test Catalog as the META-INF/MANIFEST.MF file is missing");
-		}
+        if (!outputDirectory.exists()) {
+            outputDirectory.mkdirs();
+        }
 
-		try {
-			Manifest manifest = new Manifest(Files.newInputStream(manifestPath));
-			
-			String bundleName = manifest.getMainAttributes().getValue("Bundle-SymbolicName");
-			if (bundleName == null || bundleName.trim().isEmpty()) {
-				throw new MojoExecutionException("Unable to determine the Bundle-SymbolicName in the META-INF/MANIFEST.MF file");
-			}
-			
-			//*** Calculate the classpath
-			ArrayList<URL> classpathURLs = new ArrayList<URL>();
-			getLog().debug("Classpath elements:-");
-			for(String element : classpathElements) {
-				File file = new File(element);
-				classpathURLs.add(file.toURI().toURL());
-				getLog().debug("  " + file.toURI().toURL());
-			}
-			
-			ClassLoader thisLoad = getClass().getClassLoader();
-			ClassLoader load = new URLClassLoader(classpathURLs.toArray(new URL[classpathURLs.size()]), thisLoad);
-			
-			Class<?> annotationTest             = ReflectionUtils.forName("dev.galasa.Test", load);
-			Class<?> annotationBuilder          = ReflectionUtils.forName("dev.galasa.framework.spi.TestCatalogBuilder", load);
-			Class<?> annotationBuilderInterface = ReflectionUtils.forName("dev.galasa.framework.spi.ITestCatalogBuilder", load);
-			
-			if (annotationTest == null || annotationBuilder == null || annotationBuilderInterface == null) {
-				getLog().warn("Ignoring bundle for test catalog processing because the annotations are missing on the classpath");
-				getLog().warn("dev.galasa.Test=" + annotationTest);
-				getLog().warn("dev.galasa.framework.spi.TestCatalogBuilder=" + annotationBuilder);
-				getLog().warn("dev.galasa.framework.spi.ITestCatalogBuilder=" + annotationBuilderInterface);
-				return;
-			}
+        Path manifestPath = Paths.get(outputDirectory.toURI()).resolve("classes").resolve("META-INF")
+                .resolve("MANIFEST.MF");
+        if (!Files.exists(manifestPath)) {
+            throw new MojoExecutionException(
+                    "Unable to build Test Catalog as the META-INF/MANIFEST.MF file is missing");
+        }
 
-			//*** Set up reflections
-			ConfigurationBuilder configuration = new ConfigurationBuilder();
-			configuration.addClassLoaders(load);
-			configuration.addUrls(classpathURLs);
-			configuration.addScanners(new SubTypesScanner(), new TypeAnnotationsScanner());
-			
-			Reflections reflections = new Reflections(configuration);
-			
-			
-			//*** Locate all the Test Catalog Builders on the classpath
-			HashMap<Object, Method> catalogBuilders = new HashMap<>();
-			@SuppressWarnings("unchecked")
-			Set<Class<?>> testCatalogBuilderClasses = reflections.getTypesAnnotatedWith((Class<? extends Annotation>) annotationBuilder);
-			for(Class<?> klass : testCatalogBuilderClasses) {
-				//*** Have to do reflection here, becuase of the different classpaths
-				if (annotationBuilderInterface.isAssignableFrom(klass)) {
-					try {
-						catalogBuilders.put(klass.newInstance(), klass.getMethod("appendTestCatalog", JsonObject.class, JsonObject.class, Class.class));
-						getLog().debug("Found test catalog builder class " + klass.getName());
-					} catch(Exception e) {
-						getLog().warn("Ignoring test catalog builder class " + klass.getName(), e);
-					}
-				}
-			}
+        try {
+            Manifest manifest = new Manifest(Files.newInputStream(manifestPath));
 
-			//*** Locate all the test classes on the classpath
-			@SuppressWarnings("unchecked")
-			Set<Class<?>> sourceTestClasses = reflections.getTypesAnnotatedWith((Class<? extends Annotation>) annotationTest);
-			
-			//*** Create the JSON Template
-			JsonObject jsonRoot = new JsonObject();
-			JsonObject jsonClasses = new JsonObject();
-			jsonRoot.add("classes", jsonClasses);
-			JsonObject jsonPackages = new JsonObject();
-			jsonRoot.add("packages", jsonPackages);
-			JsonObject jsonBundles = new JsonObject();
-			jsonRoot.add("bundles", jsonBundles);
-			
-			
-			JsonObject jsonBundle = new JsonObject();
-			jsonBundles.add(bundleName, jsonBundle);
-			JsonObject jsonBundlePackages = new JsonObject();
-			jsonBundle.add("packages", jsonBundlePackages);
-			
-			getLog().info("Building the Test Catalog for this bundle:-");
-			int testCount = 0; 
-			for(Class<?> sourceTestClass : sourceTestClasses) {
-				testCount++;
-				String fullName = bundleName + "/" + sourceTestClass.getName();
-				String testClassName = sourceTestClass.getName();
-				String packageName = sourceTestClass.getPackage().getName();
-				getLog().info("     " + testClassName);
+            String bundleName = manifest.getMainAttributes().getValue("Bundle-SymbolicName");
+            if (bundleName == null || bundleName.trim().isEmpty()) {
+                throw new MojoExecutionException(
+                        "Unable to determine the Bundle-SymbolicName in the META-INF/MANIFEST.MF file");
+            }
 
-				//*** Create the main test class descriptor
-				JsonObject jsonTestClass = new JsonObject();
-				jsonTestClass.addProperty("name", testClassName);
-				jsonTestClass.addProperty("bundle", bundleName);
-				jsonTestClass.addProperty("shortName", sourceTestClass.getSimpleName());
-				jsonTestClass.addProperty("package", packageName);
-				jsonClasses.add(fullName, jsonTestClass);
-				
-				//*** Add to the package list
-				JsonArray jsonPackage = jsonPackages.getAsJsonArray(packageName);
-				if (jsonPackage == null) {
-					jsonPackage = new JsonArray();
-					jsonPackages.add(packageName, jsonPackage);
-				}
-				jsonPackage.add(fullName);
-				
-				//*** Add to the bundle package list
-				jsonPackage = jsonBundlePackages.getAsJsonArray(packageName);
-				if (jsonPackage == null) {
-					jsonPackage = new JsonArray();
-					jsonBundlePackages.add(packageName, jsonPackage);
-				}
-				jsonPackage.add(fullName);
-				
-				
-				//*** Call each Catalog Builder in turn to append data to the root and the class
-				for(Entry<Object, Method> builder : catalogBuilders.entrySet()) {
-					builder.getValue().invoke(builder.getKey(), jsonRoot, jsonTestClass, sourceTestClass);
-				}
-			}
-			
-			Gson gson = new GsonBuilder().setPrettyPrinting().create();
-			String testCatlog = gson.toJson(jsonRoot);
-			
-			File fileTestCatalog = new File(outputDirectory, "testcatalog.json");
-			FileUtils.writeStringToFile(fileTestCatalog, testCatlog, "utf-8");
-			
-			projectHelper.attachArtifact(project, "json", "testcatalog", fileTestCatalog);
-			
-			if (testCount == 0) {
-				getLog().info("Test catalog built with no test classes defined");
-			} else if (testCount == 1) {
-				getLog().info("Test catalog built with 1 test class");
-			} else {
-				getLog().info("Test catalog built with " + testCount + " test classes");
-			}
-		} catch(Throwable t) {
-			throw new MojoExecutionException("Problem processing the test catalog for the bundle", t);
-		}
+            // *** Calculate the classpath
+            ArrayList<URL> classpathURLs = new ArrayList<URL>();
+            getLog().debug("Classpath elements:-");
+            for (String element : classpathElements) {
+                File file = new File(element);
+                classpathURLs.add(file.toURI().toURL());
+                getLog().debug("  " + file.toURI().toURL());
+            }
 
-	}
+            ClassLoader thisLoad = getClass().getClassLoader();
+            ClassLoader load = new URLClassLoader(classpathURLs.toArray(new URL[classpathURLs.size()]), thisLoad);
+
+            Class<?> annotationTest = ReflectionUtils.forName("dev.galasa.Test", load);
+            Class<?> annotationBuilder = ReflectionUtils.forName("dev.galasa.framework.spi.TestCatalogBuilder", load);
+            Class<?> annotationBuilderInterface = ReflectionUtils
+                    .forName("dev.galasa.framework.spi.ITestCatalogBuilder", load);
+
+            if (annotationTest == null || annotationBuilder == null || annotationBuilderInterface == null) {
+                getLog().warn(
+                        "Ignoring bundle for test catalog processing because the annotations are missing on the classpath");
+                getLog().warn("dev.galasa.Test=" + annotationTest);
+                getLog().warn("dev.galasa.framework.spi.TestCatalogBuilder=" + annotationBuilder);
+                getLog().warn("dev.galasa.framework.spi.ITestCatalogBuilder=" + annotationBuilderInterface);
+                return;
+            }
+
+            // *** Set up reflections
+            ConfigurationBuilder configuration = new ConfigurationBuilder();
+            configuration.addClassLoaders(load);
+            configuration.addUrls(classpathURLs);
+            configuration.addScanners(new SubTypesScanner(), new TypeAnnotationsScanner());
+
+            Reflections reflections = new Reflections(configuration);
+
+            // *** Locate all the Test Catalog Builders on the classpath
+            HashMap<Object, Method> catalogBuilders = new HashMap<>();
+            @SuppressWarnings("unchecked")
+            Set<Class<?>> testCatalogBuilderClasses = reflections
+                    .getTypesAnnotatedWith((Class<? extends Annotation>) annotationBuilder);
+            for (Class<?> klass : testCatalogBuilderClasses) {
+                // *** Have to do reflection here, becuase of the different classpaths
+                if (annotationBuilderInterface.isAssignableFrom(klass)) {
+                    try {
+                        catalogBuilders.put(klass.newInstance(),
+                                klass.getMethod("appendTestCatalog", JsonObject.class, JsonObject.class, Class.class));
+                        getLog().debug("Found test catalog builder class " + klass.getName());
+                    } catch (Exception e) {
+                        getLog().warn("Ignoring test catalog builder class " + klass.getName(), e);
+                    }
+                }
+            }
+
+            // *** Locate all the test classes on the classpath
+            @SuppressWarnings("unchecked")
+            Set<Class<?>> sourceTestClasses = reflections
+                    .getTypesAnnotatedWith((Class<? extends Annotation>) annotationTest);
+
+            // *** Create the JSON Template
+            JsonObject jsonRoot = new JsonObject();
+            JsonObject jsonClasses = new JsonObject();
+            jsonRoot.add("classes", jsonClasses);
+            JsonObject jsonPackages = new JsonObject();
+            jsonRoot.add("packages", jsonPackages);
+            JsonObject jsonBundles = new JsonObject();
+            jsonRoot.add("bundles", jsonBundles);
+
+            JsonObject jsonBundle = new JsonObject();
+            jsonBundles.add(bundleName, jsonBundle);
+            JsonObject jsonBundlePackages = new JsonObject();
+            jsonBundle.add("packages", jsonBundlePackages);
+
+            getLog().info("Building the Test Catalog for this bundle:-");
+            int testCount = 0;
+            for (Class<?> sourceTestClass : sourceTestClasses) {
+                testCount++;
+                String fullName = bundleName + "/" + sourceTestClass.getName();
+                String testClassName = sourceTestClass.getName();
+                String packageName = sourceTestClass.getPackage().getName();
+                getLog().info("     " + testClassName);
+
+                // *** Create the main test class descriptor
+                JsonObject jsonTestClass = new JsonObject();
+                jsonTestClass.addProperty("name", testClassName);
+                jsonTestClass.addProperty("bundle", bundleName);
+                jsonTestClass.addProperty("shortName", sourceTestClass.getSimpleName());
+                jsonTestClass.addProperty("package", packageName);
+                jsonClasses.add(fullName, jsonTestClass);
+
+                // *** Add to the package list
+                JsonArray jsonPackage = jsonPackages.getAsJsonArray(packageName);
+                if (jsonPackage == null) {
+                    jsonPackage = new JsonArray();
+                    jsonPackages.add(packageName, jsonPackage);
+                }
+                jsonPackage.add(fullName);
+
+                // *** Add to the bundle package list
+                jsonPackage = jsonBundlePackages.getAsJsonArray(packageName);
+                if (jsonPackage == null) {
+                    jsonPackage = new JsonArray();
+                    jsonBundlePackages.add(packageName, jsonPackage);
+                }
+                jsonPackage.add(fullName);
+
+                // *** Call each Catalog Builder in turn to append data to the root and the
+                // class
+                for (Entry<Object, Method> builder : catalogBuilders.entrySet()) {
+                    builder.getValue().invoke(builder.getKey(), jsonRoot, jsonTestClass, sourceTestClass);
+                }
+            }
+
+            Gson gson = new GsonBuilder().setPrettyPrinting().create();
+            String testCatlog = gson.toJson(jsonRoot);
+
+            File fileTestCatalog = new File(outputDirectory, "testcatalog.json");
+            FileUtils.writeStringToFile(fileTestCatalog, testCatlog, "utf-8");
+
+            projectHelper.attachArtifact(project, "json", "testcatalog", fileTestCatalog);
+
+            if (testCount == 0) {
+                getLog().info("Test catalog built with no test classes defined");
+            } else if (testCount == 1) {
+                getLog().info("Test catalog built with 1 test class");
+            } else {
+                getLog().info("Test catalog built with " + testCount + " test classes");
+            }
+        } catch (Throwable t) {
+            throw new MojoExecutionException("Problem processing the test catalog for the bundle", t);
+        }
+
+    }
 
 }

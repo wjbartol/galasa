@@ -10,14 +10,65 @@
 	<version>0.3.0</version>
 
 	<name>Galasa Maven Plugin</name>
+	<description>Maven plugin for build Galasa artifacts such as the OBR, Test Catalog and Karaf Features</description>
+	<url>https://galasa.dev</url>
+
+	<licenses>
+		<license>
+			<name>Eclipse Public License - v 2.0</name>
+			<url>https://www.eclipse.org/legal/epl-2.0/t</url>
+		</license>
+	</licenses>
+
+	<developers>
+		<developer>
+			<name>Michael Baylis</name>
+			<email>Michael.Baylis@uk.ibm.com</email>
+			<organization>IBM</organization>
+			<organizationUrl>https://www.ibm.com</organizationUrl>
+		</developer>
+		<developer>
+			<name>William Yates</name>
+			<email>wyates@uk.ibm.com</email>
+			<organization>IBM</organization>
+			<organizationUrl>https://www.ibm.com</organizationUrl>
+		</developer>
+		<developer>
+			<name>David Roberts</name>
+			<email>david.roberts@uk.ibm.com</email>
+			<organization>IBM</organization>
+			<organizationUrl>https://www.ibm.com</organizationUrl>
+		</developer>
+		<developer>
+			<name>James Davies</name>
+			<email>james.davies@ibm.com</email>
+			<organization>IBM</organization>
+			<organizationUrl>https://www.ibm.com</organizationUrl>
+		</developer>
+	</developers>
+
+	<scm>
+		<url>https://github.com/galasa-dev/maven</url>
+		<connection>scm:git:git:://github.com/galasa-dev/maven</connection>
+		<developerConnection>scm:git:git:://github.com/galasa-dev/maven</developerConnection>
+	</scm>
+
+	<issueManagement>
+		<url>https://github.com/galasa-dev/maven/issues</url>
+		<system>GitHub</system>
+	</issueManagement>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<java.version>1.8</java.version>
-		<maven.compiler.source>1.8</maven.compiler.source>
-		<maven.compiler.target>1.8</maven.compiler.target>
+		<maven.compiler.source>${java.version}</maven.compiler.source>
+		<maven.compiler.target>${java.version}</maven.compiler.target>
 		<maven.build.timestamp.format>yyyyMMddHHmm</maven.build.timestamp.format>
+
+		<gpg.skip>true</gpg.skip>
+		<gpg.executable>/usr/bin/gpg2</gpg.executable>
+		<gpg.keyname>5712920B2E4880520B3A40CC85A934078534E695</gpg.keyname>
 	</properties>
 
 	<distributionManagement>
@@ -110,7 +161,22 @@
 				<artifactId>maven-plugin-plugin</artifactId>
 				<version>3.6.0</version>
 			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-gpg-plugin</artifactId>
+				<version>1.5</version>
+				<executions>
+					<execution>
+						<id>sign-artifacts</id>
+						<phase>verify</phase>
+						<goals>
+							<goal>sign</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
 		</plugins>
 	</build>
+
 
 </project>

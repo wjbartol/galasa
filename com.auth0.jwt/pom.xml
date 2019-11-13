@@ -16,11 +16,11 @@
 	<name>Galasa wrapped version of auth0 JWT</name>
 
 	<dependencies>
-    <dependency>
-      <groupId>com.auth0</groupId>
-      <artifactId>java-jwt</artifactId>
-      <version>3.8.1</version>
-    </dependency>
+		<dependency>
+			<groupId>com.auth0</groupId>
+			<artifactId>java-jwt</artifactId>
+			<version>3.8.1</version>
+		</dependency>
 	</dependencies>
 
 	<build>
@@ -35,10 +35,10 @@
 						<Bundle-SymbolicName>com.auth0.jwt</Bundle-SymbolicName>
 						<Embed-Dependency>*;scope=compile</Embed-Dependency>
 						<Export-Package>com.auth0.jwt,
-              com.auth0.jwt.JWT,
-              com.auth0.jwt.algorithms,
-              com.auth0.jwt.exceptions,
-              com.auth0.jwt.interfaces
+							com.auth0.jwt.JWT,
+							com.auth0.jwt.algorithms,
+							com.auth0.jwt.exceptions,
+							com.auth0.jwt.interfaces
 						</Export-Package>
 					</instructions>
 				</configuration>

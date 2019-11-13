@@ -194,11 +194,11 @@
 
 			<distributionManagement>
 				<snapshotRepository>
-					<id>staging.snapshot</id>
+					<id>ossrh</id>
 					<url>https://oss.sonatype.org/content/repositories/snapshots</url>
 				</snapshotRepository>
 				<repository>
-					<id>staging.release</id>
+					<id>ossrh</id>
 					<url>https://oss.sonatype.org/service/local/staging/deploy/maven2</url>
 				</repository>
 			</distributionManagement>

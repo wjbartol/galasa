@@ -1,4 +1,4 @@
-def mvnProfile    = 'galasa-dev'
+def mvnProfile    = 'dev'
 
 pipeline {
 // Initially run on any agent
@@ -24,17 +24,18 @@ pipeline {
             }
          }
       }
-// If the test-preprod tag,  then set as appropriate
-//      stage('set-test-preprod') {
-//         when {
-//           environment name: 'GIT_BRANCH', value: 'origin/testpreprod'
-//         }
-//         steps {
-//            script {
-//               mvnProfile    = 'galasa-preprod'
-//            }
-//         }
-//     }
+// If the staging branch,  then set as appropriate
+      stage('set-test-preprod') {
+         when {
+           environment name: 'GIT_BRANCH', value: 'origin/staging'
+         }
+         steps {
+            script {
+               mvnGoal       = 'deploy'
+               mvnProfile    = 'staging'
+            }
+         }
+     }
 
 // for debugging purposes
       stage('report') {

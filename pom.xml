@@ -50,7 +50,7 @@
 		<module>com.jcraft.jsch</module>
 		<module>com.auth0.jwt</module>
 	</modules>
-
+	
 	<scm>
 		<url>https://github.com/galasa-dev/wrapping</url>
 		<connection>scm:git:git:://github.com/galasa-dev/wrapping</connection>

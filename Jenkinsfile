@@ -1,5 +1,4 @@
 def mvnProfile    = 'unknown'
-def gitBranch     = 'unknown'
 
 pipeline {
 // Initially run on any agent
@@ -21,31 +20,28 @@ pipeline {
          }
          steps {
             script {
-               mvnProfile    = 'galasa-dev'
-               gitBranch     = 'master'
+               mvnProfile    = 'dev'
                mvnGoal       = 'deploy'
             }
          }
       }
-// If the test-preprod tag,  then set as appropriate
-//      stage('set-test-preprod') {
-//         when {
-//           environment name: 'GIT_BRANCH', value: 'origin/testpreprod'
-//         }
-//         steps {
-//            script {
-//               mvnProfile    = 'galasa-preprod'
-//               dockerVersion = 'preprod'
-//               gitBranch     = 'testpreprod'
-//            }
-//         }
-//     }
+// If the staging branch,  then set as appropriate
+      stage('set-staging') {
+         when {
+           environment name: 'GIT_BRANCH', value: 'origin/staging'
+         }
+         steps {
+            script {
+               mvnGoal       = 'deploy'
+               mvnProfile    = 'staging'
+            }
+         }
+     }
 
 // for debugging purposes
       stage('report') {
          steps {
             echo "Branch/Tag         : ${env.GIT_BRANCH}"
-            echo "Repo Branches      : ${gitBranch}"
             echo "Workspace directory: ${workspace}"
             echo "Maven Goal         : ${mvnGoal}"
             echo "Maven profile      : ${mvnProfile}"
@@ -69,7 +65,7 @@ pipeline {
 // Build the wrapping repository
       stage('wrapping') {
          steps {
-            sh "mvn --settings ${workspace}/settings.xml -Dmaven.repo.local=${workspace}/repository -P ${mvnProfile} -B -e -fae ${mvnGoal}"
+            sh "mvn --settings ${workspace}/settings.xml -Dgpg.skip=false -Dmaven.repo.local=${workspace}/repository -P ${mvnProfile} -B -e -fae ${mvnGoal}"
          }
       }
    }

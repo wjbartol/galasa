@@ -5,23 +5,62 @@
 
 	<groupId>dev.galasa</groupId>
 	<artifactId>galasa-wrapping-parent</artifactId>
-	<version>0.3.0-SNAPSHOT</version>
+	<version>0.3.0</version>
 	<packaging>pom</packaging>
+
+	<name>Galasa OSGi Wrapping</name>
+	<description>Wraps non-OSGi JARs into OSGi Bundles for use in the Galasa Ecosystem</description>
+	<url>https://galasa.dev</url>
+
+	<licenses>
+		<license>
+			<name>Eclipse Public License - v 2.0</name>
+			<url>https://www.eclipse.org/legal/epl-2.0/t</url>
+		</license>
+	</licenses>
+
+	<developers>
+		<developer>
+			<name>Michael Baylis</name>
+			<email>Michael.Baylis@uk.ibm.com</email>
+			<organization>IBM</organization>
+			<organizationUrl>https://www.ibm.com</organizationUrl>
+		</developer>
+		<developer>
+			<name>William Yates</name>
+			<email>wyates@uk.ibm.com</email>
+			<organization>IBM</organization>
+			<organizationUrl>https://www.ibm.com</organizationUrl>
+		</developer>
+		<developer>
+			<name>David Roberts</name>
+			<email>david.roberts@uk.ibm.com</email>
+			<organization>IBM</organization>
+			<organizationUrl>https://www.ibm.com</organizationUrl>
+		</developer>
+		<developer>
+			<name>James Davies</name>
+			<email>james.davies@ibm.com</email>
+			<organization>IBM</organization>
+			<organizationUrl>https://www.ibm.com</organizationUrl>
+		</developer>
+	</developers>
 
 	<modules>
 		<module>com.jcraft.jsch</module>
 		<module>com.auth0.jwt</module>
 	</modules>
-	<distributionManagement>
-		<repository>
-			<id>galasa.repo</id>
-			<url>${galasa.distribution.repo}</url>
-		</repository>
-		<snapshotRepository>
-			<id>galasa.repo</id>
-			<url>${galasa.distribution.repo}</url>
-		</snapshotRepository>
-	</distributionManagement>
+	
+	<scm>
+		<url>https://github.com/galasa-dev/wrapping</url>
+		<connection>scm:git:git:://github.com/galasa-dev/wrapping</connection>
+		<developerConnection>scm:git:git:://github.com/galasa-dev/wrapping</developerConnection>
+	</scm>
+
+	<issueManagement>
+		<url>https://github.com/galasa-dev/projectmanagement/issues</url>
+		<system>GitHub</system>
+	</issueManagement>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -30,8 +69,11 @@
 		<maven.compiler.source>1.8</maven.compiler.source>
 		<maven.compiler.target>1.8</maven.compiler.target>
 		<maven.build.timestamp.format>yyyyMMddHHmm</maven.build.timestamp.format>
-	</properties>
 
+		<gpg.skip>true</gpg.skip>
+		<gpg.executable>/usr/bin/gpg2</gpg.executable>
+		<gpg.keyname>5712920B2E4880520B3A40CC85A934078534E695</gpg.keyname>
+	</properties>
 
 	<build>
 		<pluginManagement>
@@ -58,6 +100,35 @@
 		</plugins>
 	</build>
 
+	<profiles>
+		<profile>
+			<id>dev</id>
 
+			<distributionManagement>
+				<repository>
+					<id>galasa.repo</id>
+					<url>https://nexus.galasa.dev/repository/master</url>
+				</repository>
+				<snapshotRepository>
+					<id>galasa.repo</id>
+					<url>https://nexus.galasa.dev/repository/master</url>
+				</snapshotRepository>
+			</distributionManagement>
+		</profile>
+		<profile>
+			<id>staging</id>
+
+			<distributionManagement>
+				<snapshotRepository>
+					<id>ossrh</id>
+					<url>https://oss.sonatype.org/content/repositories/snapshots</url>
+				</snapshotRepository>
+				<repository>
+					<id>ossrh</id>
+					<url>https://oss.sonatype.org/service/local/staging/deploy/maven2</url>
+				</repository>
+			</distributionManagement>
+		</profile>
+	</profiles>
 
 </project>

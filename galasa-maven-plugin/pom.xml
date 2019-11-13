@@ -71,17 +71,6 @@
 		<gpg.keyname>5712920B2E4880520B3A40CC85A934078534E695</gpg.keyname>
 	</properties>
 
-	<distributionManagement>
-		<repository>
-			<id>galasa.repo</id>
-			<url>${galasa.distribution.repo}</url>
-		</repository>
-		<snapshotRepository>
-			<id>galasa.repo</id>
-			<url>${galasa.distribution.repo}</url>
-		</snapshotRepository>
-	</distributionManagement>
-
 	<dependencies>
 		<dependency>
 			<groupId>org.apache.maven.plugin-tools</groupId>
@@ -172,11 +161,49 @@
 						<goals>
 							<goal>sign</goal>
 						</goals>
+						<configuration>
+							<gpgArguments>
+								<arg>--pinentry-mode</arg>
+								<arg>loopback</arg>
+							</gpgArguments>
+							<passphraseServerId>gpg.passphrase</passphraseServerId>
+						</configuration>
 					</execution>
 				</executions>
 			</plugin>
 		</plugins>
 	</build>
+
+	<profiles>
+		<profile>
+			<id>dev</id>
+
+			<distributionManagement>
+				<repository>
+					<id>galasa.repo</id>
+					<url>https://nexus.galasa.dev/repository/master</url>
+				</repository>
+				<snapshotRepository>
+					<id>galasa.repo</id>
+					<url>https://nexus.galasa.dev/repository/master</url>
+				</snapshotRepository>
+			</distributionManagement>
+		</profile>
+		<profile>
+			<id>staging</id>
+
+			<distributionManagement>
+				<snapshotRepository>
+					<id>staging.snapshot</id>
+					<url>https://oss.sonatype.org/content/repositories/snapshots</url>
+				</snapshotRepository>
+				<repository>
+					<id>staging.release</id>
+					<url>https://oss.sonatype.org/service/local/staging/deploy/maven2</url>
+				</repository>
+			</distributionManagement>
+		</profile>
+	</profiles>
 
 
 </project>

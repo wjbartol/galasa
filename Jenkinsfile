@@ -65,7 +65,9 @@ pipeline {
 // Build the wrapping repository
       stage('wrapping') {
          steps {
-            sh "mvn --settings ${workspace}/settings.xml -Dgpg.skip=false -Dmaven.repo.local=${workspace}/repository -P ${mvnProfile} -B -e -fae ${mvnGoal}"
+            withCredentials([string(credentialsId: 'galasa-gpg', variable: 'GPG')]) {
+               sh "mvn --settings ${workspace}/settings.xml -Dgpg.skip=false -Dgpg.passphrase=$GPG -Dmaven.repo.local=${workspace}/repository -P ${mvnProfile} -B -e -fae ${mvnGoal}"
+            }
          }
       }
    }

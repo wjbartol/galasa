@@ -50,7 +50,7 @@
 		<module>com.jcraft.jsch</module>
 		<module>com.auth0.jwt</module>
 	</modules>
-	
+
 	<scm>
 		<url>https://github.com/galasa-dev/wrapping</url>
 		<connection>scm:git:git:://github.com/galasa-dev/wrapping</connection>
@@ -61,6 +61,17 @@
 		<url>https://github.com/galasa-dev/projectmanagement/issues</url>
 		<system>GitHub</system>
 	</issueManagement>
+
+	<distributionManagement>
+		<repository>
+			<id>galasa.repo</id>
+			<url>${galasa.release.distribution.repo}</url>
+		</repository>
+		<snapshotRepository>
+			<id>galasa.repo</id>
+			<url>${galasa.snapshot.distribution.repo}</url>
+		</snapshotRepository>
+	</distributionManagement>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -120,5 +131,6 @@
 			</plugin>
 		</plugins>
 	</build>
+
 
 </project>

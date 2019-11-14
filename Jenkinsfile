@@ -65,11 +65,11 @@ pipeline {
       stage('maven') {
          steps {
             withCredentials([string(credentialsId: 'galasa-gpg', variable: 'GPG')]) {
-            withSonarQubeEnv('GalasaSonarQube') {
-               dir('galasa-maven-plugin') {
-                  sh "mvn --settings ${workspace}/settings.xml -Dgpg.skip=false -Dgpg.passphrase=$GPG -Dmaven.repo.local=${workspace}/repository -P ${mvnProfile} -B -e -fae ${mvnGoal}"
+               withSonarQubeEnv('GalasaSonarQube') {
+                  dir('galasa-maven-plugin') {
+                     sh "mvn --settings ${workspace}/settings.xml -Dgpg.skip=false -Dgpg.passphrase=$GPG -Dmaven.repo.local=${workspace}/repository -P ${mvnProfile} -B -e -fae ${mvnGoal}"
+                  }
                }
-            }
             }
          }
       }

@@ -64,12 +64,12 @@
 
 	<distributionManagement>
 		<repository>
-			<id>galasa.repo</id>
-			<url>${galasa.release.distribution.repo}</url>
+			<id>galasa.release.repo</id>
+			<url>${galasa.release.repo}</url>
 		</repository>
 		<snapshotRepository>
-			<id>galasa.repo</id>
-			<url>${galasa.snapshot.distribution.repo}</url>
+			<id>galasa.snapshot.repo</id>
+			<url>${galasa.snapshot.repo}</url>
 		</snapshotRepository>
 	</distributionManagement>
 

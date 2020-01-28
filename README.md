@@ -1,7 +1,6 @@
 # Maven Plugin for building Galasa
 
-This respository is an extension to Maven and contains code that is used to build OSGI bundles for Galasa. The OSGI bundle repositories contain all the project information, configuration details and dependencies that are needed for building and running Galasa projects.
-
+This repository is an extension to Maven2 and includes goals that are used to build OSGI bundles and test catalogs for Galasa. The OSGI bundle repositories contain all the project information, configuration details and dependencies that are needed for building and running Galasa projects. The test catalog is used to manage Galasa test cases - attributes associated with test cases that are held in the catalog can used to schedule test runs.
 
 ## Documentation
 

@@ -111,14 +111,16 @@ public class BuildBundleTestCatalog extends AbstractMojo {
             ClassLoader load = new URLClassLoader(classpathURLs.toArray(new URL[classpathURLs.size()]), thisLoad);
 
             Class<?> annotationTest = ReflectionUtils.forName("dev.galasa.Test", load);
+            Class<?> annotationSharedEnv = ReflectionUtils.forName("dev.galasa.SharedEnvironment", load);
             Class<?> annotationBuilder = ReflectionUtils.forName("dev.galasa.framework.spi.TestCatalogBuilder", load);
             Class<?> annotationBuilderInterface = ReflectionUtils
                     .forName("dev.galasa.framework.spi.ITestCatalogBuilder", load);
 
-            if (annotationTest == null || annotationBuilder == null || annotationBuilderInterface == null) {
+            if (annotationTest == null || annotationSharedEnv == null || annotationBuilder == null || annotationBuilderInterface == null) {
                 getLog().warn(
                         "Ignoring bundle for test catalog processing because the annotations are missing on the classpath");
-                getLog().warn("dev.galasa.Test=" + annotationTest);
+                getLog().warn("dev.galasa.Test=" + annotationSharedEnv);
+                getLog().warn("dev.galasa.SharedEnvironment=" + annotationTest);
                 getLog().warn("dev.galasa.framework.spi.TestCatalogBuilder=" + annotationBuilder);
                 getLog().warn("dev.galasa.framework.spi.ITestCatalogBuilder=" + annotationBuilderInterface);
                 return;
@@ -133,7 +135,8 @@ public class BuildBundleTestCatalog extends AbstractMojo {
             Reflections reflections = new Reflections(configuration);
 
             // *** Locate all the Test Catalog Builders on the classpath
-            HashMap<Object, Method> catalogBuilders = new HashMap<>();
+            HashMap<Object, Method> catalogTestBuilders = new HashMap<>();
+            HashMap<Object, Method> catalogSenvBuilders = new HashMap<>();
             @SuppressWarnings("unchecked")
             Set<Class<?>> testCatalogBuilderClasses = reflections
                     .getTypesAnnotatedWith((Class<? extends Annotation>) annotationBuilder);
@@ -141,8 +144,11 @@ public class BuildBundleTestCatalog extends AbstractMojo {
                 // *** Have to do reflection here, becuase of the different classpaths
                 if (annotationBuilderInterface.isAssignableFrom(klass)) {
                     try {
-                        catalogBuilders.put(klass.newInstance(),
+                        Object instance = klass.newInstance();
+                        catalogTestBuilders.put(instance,
                                 klass.getMethod("appendTestCatalog", JsonObject.class, JsonObject.class, Class.class));
+                        catalogSenvBuilders.put(instance,
+                                klass.getMethod("appendTestCatalogForSharedEnvironment", JsonObject.class, Class.class));
                         getLog().debug("Found test catalog builder class " + klass.getName());
                     } catch (Exception e) {
                         getLog().warn("Ignoring test catalog builder class " + klass.getName(), e);
@@ -163,6 +169,8 @@ public class BuildBundleTestCatalog extends AbstractMojo {
             jsonRoot.add("packages", jsonPackages);
             JsonObject jsonBundles = new JsonObject();
             jsonRoot.add("bundles", jsonBundles);
+            JsonObject jsonSharedEnv = new JsonObject();
+            jsonRoot.add("sharedEnvironments", jsonSharedEnv);
 
             JsonObject jsonBundle = new JsonObject();
             jsonBundles.add(bundleName, jsonBundle);
@@ -204,8 +212,36 @@ public class BuildBundleTestCatalog extends AbstractMojo {
 
                 // *** Call each Catalog Builder in turn to append data to the root and the
                 // class
-                for (Entry<Object, Method> builder : catalogBuilders.entrySet()) {
+                for (Entry<Object, Method> builder : catalogTestBuilders.entrySet()) {
                     builder.getValue().invoke(builder.getKey(), jsonRoot, jsonTestClass, sourceTestClass);
+                }
+            }
+            
+            //*** Build list of shared environments
+
+            @SuppressWarnings("unchecked")
+            Set<Class<?>> sourceSenvClasses = reflections
+                    .getTypesAnnotatedWith((Class<? extends Annotation>) annotationSharedEnv);
+            int senvCount = 0;
+            for (Class<?> sourceSenvClass : sourceSenvClasses) {
+                senvCount++;
+                String fullName = bundleName + "/" + sourceSenvClass.getName();
+                String senvClassName = sourceSenvClass.getName();
+                String packageName = sourceSenvClass.getPackage().getName();
+                getLog().info("     " + senvClassName);
+
+                // *** Create the main test class descriptor
+                JsonObject jsonSenvClass = new JsonObject();
+                jsonSenvClass.addProperty("name", senvClassName);
+                jsonSenvClass.addProperty("bundle", bundleName);
+                jsonSenvClass.addProperty("shortName", sourceSenvClass.getSimpleName());
+                jsonSenvClass.addProperty("package", packageName);
+                jsonSharedEnv.add(fullName, jsonSenvClass);
+
+                // *** Call each Catalog Builder in turn to append data to the
+                // class
+                for (Entry<Object, Method> builder : catalogSenvBuilders.entrySet()) {
+                    builder.getValue().invoke(builder.getKey(), jsonSenvClass, sourceSenvClass);
                 }
             }
 
@@ -222,7 +258,7 @@ public class BuildBundleTestCatalog extends AbstractMojo {
             } else if (testCount == 1) {
                 getLog().info("Test catalog built with 1 test class");
             } else {
-                getLog().info("Test catalog built with " + testCount + " test classes");
+                getLog().info("Test catalog built with " + senvCount + " test classes");
             }
         } catch (Throwable t) {
             throw new MojoExecutionException("Problem processing the test catalog for the bundle", t);

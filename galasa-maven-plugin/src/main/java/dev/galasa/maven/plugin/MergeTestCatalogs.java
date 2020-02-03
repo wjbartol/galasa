@@ -90,6 +90,8 @@ public class MergeTestCatalogs extends AbstractMojo {
             jsonRoot.add("packages", jsonPackages);
             JsonObject jsonBundles = new JsonObject();
             jsonRoot.add("bundles", jsonBundles);
+            JsonObject jsonSenv = new JsonObject();
+            jsonRoot.add("sharedEnvironments", jsonSenv);
 
             jsonRoot.addProperty("name", project.getName());
 
@@ -167,6 +169,15 @@ public class MergeTestCatalogs extends AbstractMojo {
                         JsonElement tc = bundleEntry.getValue();
 
                         jsonBundles.add(name, tc);
+                    }
+
+                    // *** Append/replace all the Shared Environments
+                    JsonObject subSenv = testCatalogRoot.getAsJsonObject("sharedEnvironments");
+                    for (Entry<String, JsonElement> senvEntry : subSenv.entrySet()) {
+                        String name = senvEntry.getKey();
+                        JsonElement tc = senvEntry.getValue();
+
+                        jsonSenv.add(name, tc);
                     }
                 }
             }

@@ -199,7 +199,7 @@
 					<replacements>
 						<replacement>
 							<token>@hash@</token>
-							<value>${env.GITHASH}</value>
+							<value>${env.GIT_COMMIT}</value>
 						</replacement>
 					</replacements>
 				</configuration>

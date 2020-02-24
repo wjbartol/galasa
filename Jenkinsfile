@@ -13,7 +13,7 @@ pipeline {
 // Set up the workspace, clear the git directories and setup the manen settings.xml files
       stage('prep-workspace') { 
          steps {
-            configFileProvider([configFile(fileId: ${env.MAVEN_SETTINGS}, targetLocation: 'settings.xml')]) {
+            configFileProvider([configFile(fileId: '86dde059-684b-4300-b595-64e83c2dd217', targetLocation: 'settings.xml')]) {
             }
             dir('repository/dev.galasa') {
                deleteDir()

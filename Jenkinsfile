@@ -9,18 +9,7 @@ pipeline {
 //Set some defaults
       def workspace = pwd()
    }
-   stages {
-
-// for debugging purposes
-      stage('report') {
-         steps {
-            echo "Branch/Tag         : ${env.GIT_BRANCH}"
-            echo "Workspace directory: ${workspace}"
-            echo "Maven Goal         : ${env.MAVEN_GOAL}"
-            echo "Maven profile      : ${env.MAVEN_PROFILE}"
-         }
-      }
-   
+   stages {  
 // Set up the workspace, clear the git directories and setup the manve settings.xml files
       stage('prep-workspace') { 
          steps {

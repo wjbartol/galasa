@@ -10,10 +10,10 @@ pipeline {
       def workspace = pwd()
    }
    stages {  
-// Set up the workspace, clear the git directories and setup the manve settings.xml files
+// Set up the workspace, clear the git directories and setup the manen settings.xml files
       stage('prep-workspace') { 
          steps {
-            configFileProvider([configFile(fileId: '86dde059-684b-4300-b595-64e83c2dd217', targetLocation: 'settings.xml')]) {
+            configFileProvider([configFile(fileId: "${env.MAVEN_SETTINGS}", targetLocation: 'settings.xml')]) {
             }
             dir('repository/dev.galasa') {
                deleteDir()
@@ -24,14 +24,14 @@ pipeline {
          }
       }
       
-// Build the wrapping repository
+// Build the maven repository
       stage('maven') {
          steps {
-            withCredentials([string(credentialsId: 'galasa-gpg', variable: 'GPG')]) {
+            withCredentials([string(credentialsId: "${env.GPG_CREDENTIALS}", variable: 'GPG')]) {
                withSonarQubeEnv('GalasaSonarQube') {
                   withFolderProperties {
                      dir('galasa-maven-plugin') {
-                        sh "mvn --settings ${workspace}/settings.xml -Dgpg.skip=${GPG_SKIP} -Dgpg.passphrase=$GPG -Dmaven.repo.local=${workspace}/repository -P ${env.MAVEN_PROFILE} -B -e -fae ${env.MAVEN_GOAL}"
+                        sh "mvn --settings ${workspace}/settings.xml -Dgpg.skip=${env.GPG_SKIP} -Dgpg.passphrase=$GPG -Dmaven.repo.local=${workspace}/repository -P ${env.MAVEN_PROFILE} -B -e -fae ${env.MAVEN_GOAL}"
                      }
                   }
                }

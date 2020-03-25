@@ -139,7 +139,7 @@ public class BuildBundleTestCatalog extends AbstractMojo {
             HashMap<Object, Method> catalogSenvBuilders = new HashMap<>();
             @SuppressWarnings("unchecked")
             Set<Class<?>> testCatalogBuilderClasses = reflections
-                    .getTypesAnnotatedWith((Class<? extends Annotation>) annotationBuilder);
+            .getTypesAnnotatedWith((Class<? extends Annotation>) annotationBuilder);
             for (Class<?> klass : testCatalogBuilderClasses) {
                 // *** Have to do reflection here, becuase of the different classpaths
                 if (annotationBuilderInterface.isAssignableFrom(klass)) {
@@ -159,7 +159,7 @@ public class BuildBundleTestCatalog extends AbstractMojo {
             // *** Locate all the test classes on the classpath
             @SuppressWarnings("unchecked")
             Set<Class<?>> sourceTestClasses = reflections
-                    .getTypesAnnotatedWith((Class<? extends Annotation>) annotationTest);
+            .getTypesAnnotatedWith((Class<? extends Annotation>) annotationTest);
 
             // *** Create the JSON Template
             JsonObject jsonRoot = new JsonObject();
@@ -183,7 +183,13 @@ public class BuildBundleTestCatalog extends AbstractMojo {
                 testCount++;
                 String fullName = bundleName + "/" + sourceTestClass.getName();
                 String testClassName = sourceTestClass.getName();
-                String packageName = sourceTestClass.getPackage().getName();
+                String packageName = null;
+                if (sourceTestClass.getPackage() != null) {
+                    packageName = sourceTestClass.getPackage().getName();
+                } else {
+                    packageName = "default";
+                }
+
                 getLog().info("     " + testClassName);
 
                 // *** Create the main test class descriptor
@@ -216,18 +222,23 @@ public class BuildBundleTestCatalog extends AbstractMojo {
                     builder.getValue().invoke(builder.getKey(), jsonRoot, jsonTestClass, sourceTestClass);
                 }
             }
-            
+
             //*** Build list of shared environments
 
             @SuppressWarnings("unchecked")
             Set<Class<?>> sourceSenvClasses = reflections
-                    .getTypesAnnotatedWith((Class<? extends Annotation>) annotationSharedEnv);
+            .getTypesAnnotatedWith((Class<? extends Annotation>) annotationSharedEnv);
             int senvCount = 0;
             for (Class<?> sourceSenvClass : sourceSenvClasses) {
                 senvCount++;
                 String fullName = bundleName + "/" + sourceSenvClass.getName();
                 String senvClassName = sourceSenvClass.getName();
-                String packageName = sourceSenvClass.getPackage().getName();
+                String packageName = null;
+                if (sourceSenvClass.getPackage() != null) {
+                    packageName = sourceSenvClass.getPackage().getName();
+                } else {
+                    packageName = "default";
+                }
                 getLog().info("     " + senvClassName);
 
                 // *** Create the main test class descriptor

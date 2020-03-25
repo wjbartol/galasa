@@ -148,6 +148,9 @@ public class BuildOBRResources extends AbstractMojo {
             getLog().info("BuildOBRResources: Processing artifact " + artifact.getId());
             ResourceImpl newResource = (ResourceImpl) obrDataModelHelper
                     .createResource(artifact.getFile().toURI().toURL());
+            if (newResource == null) {
+                throw new MojoExecutionException("Problem with jar file. Not an OSGi bundle?");
+            }
 
             URI name = null;
             switch (obrUrlType) {

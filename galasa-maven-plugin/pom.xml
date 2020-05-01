@@ -10,7 +10,7 @@
 	<version>0.8.0-SNAPSHOT</version>
 
 	<name>Galasa Maven Plugin</name>
-	<description>Maven plugin for build Galasa artifacts such as the OBR, Test Catalog and Karaf Features</description>
+	<description>Maven plugin for build Galasa artifacts such as the OBR, Test Catalog</description>
 	<url>https://galasa.dev</url>
 
 	<licenses>

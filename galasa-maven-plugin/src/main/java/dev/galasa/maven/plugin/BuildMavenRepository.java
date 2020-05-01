@@ -34,11 +34,7 @@ import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.project.MavenProject;
 
 /**
- * This goal will take a set of OBRs and create the equivalent Karaf Feature XML
- * file.
- * 
- * It will create a feature per OBR and a feature containing all resources from
- * each of the OBRs.
+ * This goal will copy all artifacts to a pseudo maven repository
  * 
  * @author Michael Baylis
  *

@@ -269,7 +269,14 @@ public class BuildBundleTestCatalog extends AbstractMojo {
             } else if (testCount == 1) {
                 getLog().info("Test catalog built with 1 test class");
             } else {
-                getLog().info("Test catalog built with " + senvCount + " test classes");
+                getLog().info("Test catalog built with " + testCount + " test classes");
+            }
+            if (senvCount == 0) {
+                getLog().info("Test catalog built with no shared environments defined");
+            } else if (senvCount == 1) {
+                getLog().info("Test catalog built with 1 shared environment");
+            } else {
+                getLog().info("Test catalog built with " + testCount + " shared environments");
             }
         } catch (Throwable t) {
             throw new MojoExecutionException("Problem processing the test catalog for the bundle", t);

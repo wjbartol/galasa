@@ -54,11 +54,9 @@ public class BuildGherkinZip extends AbstractMojo {
             ZipOutputStream zos = new ZipOutputStream(fos);
             for(File file : featureFiles){
                 String filePath = file.getPath();
-                System.out.println("Zipping "+filePath);
-                //for ZipEntry we need to keep only relative file path, so we used substring on absolute path
+                getLog().info("Zipping "+filePath);
                 ZipEntry ze = new ZipEntry(filePath.substring(project.getBasedir().getAbsolutePath().length()+1, filePath.length()));
                 zos.putNextEntry(ze);
-                //read the file and write to ZipOutputStream
                 FileInputStream fis = new FileInputStream(filePath);
                 byte[] buffer = new byte[1024];
                 int len;

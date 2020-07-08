@@ -3,8 +3,11 @@ package dev.galasa.maven.plugin;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Consumer;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -19,7 +22,7 @@ import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectHelper;
 
-@Mojo(name = "gherkinzip", defaultPhase = LifecyclePhase.PROCESS_CLASSES, threadSafe = true, requiresDependencyCollection = ResolutionScope.COMPILE_PLUS_RUNTIME, requiresDependencyResolution = ResolutionScope.COMPILE_PLUS_RUNTIME)
+@Mojo(name = "gherkinzip", defaultPhase = LifecyclePhase.PACKAGE, threadSafe = true, requiresDependencyCollection = ResolutionScope.COMPILE_PLUS_RUNTIME, requiresDependencyResolution = ResolutionScope.COMPILE_PLUS_RUNTIME)
 public class BuildGherkinZip extends AbstractMojo {
 
     @Component
@@ -46,7 +49,8 @@ public class BuildGherkinZip extends AbstractMojo {
                 outputDirectory.mkdirs();
             }
 
-            List<File> featureFiles = retrieveFeatureFiles(project.getBasedir());
+            List<File> featureFiles = new ArrayList<>();
+            Files.list(project.getBasedir().toPath()).forEach(new ConsumeDirectory(featureFiles));
 
             File zipFile = new File(outputDirectory, project.getArtifactId() + "-" + project.getVersion() + ".zip");
 
@@ -76,15 +80,27 @@ public class BuildGherkinZip extends AbstractMojo {
         }
     }
 
-    private List<File> retrieveFeatureFiles(File file) {
-        List<File> files = new ArrayList<>();
-        if(file.isFile() && file.getName().endsWith(".feature")) {
-            files.add(file);
-        } else if(file.isDirectory()) {
-            for(File child : file.listFiles()) {
-                files.addAll(retrieveFeatureFiles(child));
+    private static class ConsumeDirectory implements Consumer<Path> {
+
+        private final List<File> files;
+
+        public ConsumeDirectory(List<File> files) {
+            this.files = files;
+        }
+
+        @Override
+        public void accept(Path path) {
+            try {
+                if(Files.isDirectory(path)) {
+                    Files.list(path).forEach(new ConsumeDirectory(files));
+                } else {
+                    if(path.toFile().getName().endsWith(".feature")) {
+                        files.add(path.toFile());
+                    }
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         }
-        return files;
     }
 }

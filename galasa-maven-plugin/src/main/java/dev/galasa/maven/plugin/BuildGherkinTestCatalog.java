@@ -1,8 +1,11 @@
 package dev.galasa.maven.plugin;
 
 import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Consumer;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -52,18 +55,16 @@ public class BuildGherkinTestCatalog extends AbstractMojo {
             JsonObject jsonFeatures = new JsonObject();
             jsonRoot.add("gherkin", jsonFeatures);
 
-            List<File> featureFiles = retrieveFeatureFiles(project.getBasedir());
+            List<File> featureFiles = new ArrayList<>();
+            Files.list(project.getBasedir().toPath()).forEach(new ConsumeDirectory(featureFiles));
 
             for(File feature : featureFiles) {
-                String featureName = feature.getPath().replace(project.getBasedir().getPath() + "/", "");
+                String featureName = feature.toPath().subpath(project.getBasedir().toPath().getNameCount(), feature.toPath().getNameCount()).toString();
                 JsonObject featureJson = new JsonObject();
                 featureJson.addProperty("name", featureName);
-                featureJson.addProperty("shortName", feature.getName());
-                JsonObject maven = new JsonObject();
-                maven.addProperty("groupId", project.getGroupId());
-                maven.addProperty("artifactId", project.getArtifactId());
-                maven.addProperty("version", project.getVersion());
-                featureJson.add("maven", maven);
+                featureJson.addProperty("shortName", feature.getName().replace(".feature", ""));
+                String maven = project.getGroupId() + "/" + project.getArtifactId() + "/" + project.getVersion();
+                featureJson.addProperty("maven",  maven);
 
                 jsonFeatures.add(featureName, featureJson);
             }
@@ -80,16 +81,28 @@ public class BuildGherkinTestCatalog extends AbstractMojo {
         }
     }
 
-    private List<File> retrieveFeatureFiles(File file) {
-        List<File> files = new ArrayList<>();
-        if(file.isFile() && file.getName().endsWith(".feature")) {
-            files.add(file);
-        } else if(file.isDirectory()) {
-            for(File child : file.listFiles()) {
-                files.addAll(retrieveFeatureFiles(child));
+    private static class ConsumeDirectory implements Consumer<Path> {
+
+        private final List<File> files;
+
+        public ConsumeDirectory(List<File> files) {
+            this.files = files;
+        }
+
+        @Override
+        public void accept(Path path) {
+            try {
+                if(Files.isDirectory(path)) {
+                    Files.list(path).forEach(new ConsumeDirectory(files));
+                } else {
+                    if(path.toFile().getName().endsWith(".feature")) {
+                        files.add(path.toFile());
+                    }
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         }
-        return files;
     }
     
 }

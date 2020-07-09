@@ -92,6 +92,8 @@ public class MergeTestCatalogs extends AbstractMojo {
             jsonRoot.add("bundles", jsonBundles);
             JsonObject jsonSenv = new JsonObject();
             jsonRoot.add("sharedEnvironments", jsonSenv);
+            JsonObject jsonGherkin = new JsonObject();
+            jsonRoot.add("gherkin", jsonGherkin);
 
             jsonRoot.addProperty("name", project.getName());
 
@@ -137,47 +139,66 @@ public class MergeTestCatalogs extends AbstractMojo {
 
                     // *** Append/replace all the test classes
                     JsonObject subTestClasses = testCatalogRoot.getAsJsonObject("classes");
-                    for (Entry<String, JsonElement> testClassEntry : subTestClasses.entrySet()) {
-                        String name = testClassEntry.getKey();
-                        JsonElement tc = testClassEntry.getValue();
-
-                        jsonClasses.add(name, tc);
+                    if(subTestClasses != null) {
+                        for (Entry<String, JsonElement> testClassEntry : subTestClasses.entrySet()) {
+                            String name = testClassEntry.getKey();
+                            JsonElement tc = testClassEntry.getValue();
+    
+                            jsonClasses.add(name, tc);
+                        }
                     }
 
                     // *** Append to the packages
                     JsonObject subPackages = testCatalogRoot.getAsJsonObject("packages");
-                    for (Entry<String, JsonElement> packageEntry : subPackages.entrySet()) {
-                        String name = packageEntry.getKey();
-                        JsonArray list = (JsonArray) packageEntry.getValue();
-
-                        JsonArray mergedPackage = jsonPackages.getAsJsonArray(name);
-                        if (mergedPackage == null) {
-                            mergedPackage = new JsonArray();
-                            jsonPackages.add(name, mergedPackage);
-                        }
-
-                        for (int i = 0; i < list.size(); i++) {
-                            String className = list.get(i).getAsString();
-                            mergedPackage.add(className);
+                    if(subPackages != null) {
+                        for (Entry<String, JsonElement> packageEntry : subPackages.entrySet()) {
+                            String name = packageEntry.getKey();
+                            JsonArray list = (JsonArray) packageEntry.getValue();
+    
+                            JsonArray mergedPackage = jsonPackages.getAsJsonArray(name);
+                            if (mergedPackage == null) {
+                                mergedPackage = new JsonArray();
+                                jsonPackages.add(name, mergedPackage);
+                            }
+    
+                            for (int i = 0; i < list.size(); i++) {
+                                String className = list.get(i).getAsString();
+                                mergedPackage.add(className);
+                            }
                         }
                     }
 
                     // *** Append/replace all the bundles
                     JsonObject subBundles = testCatalogRoot.getAsJsonObject("bundles");
-                    for (Entry<String, JsonElement> bundleEntry : subBundles.entrySet()) {
-                        String name = bundleEntry.getKey();
-                        JsonElement tc = bundleEntry.getValue();
-
-                        jsonBundles.add(name, tc);
+                    if(subBundles != null) {
+                        for (Entry<String, JsonElement> bundleEntry : subBundles.entrySet()) {
+                            String name = bundleEntry.getKey();
+                            JsonElement tc = bundleEntry.getValue();
+    
+                            jsonBundles.add(name, tc);
+                        }
                     }
 
                     // *** Append/replace all the Shared Environments
                     JsonObject subSenv = testCatalogRoot.getAsJsonObject("sharedEnvironments");
-                    for (Entry<String, JsonElement> senvEntry : subSenv.entrySet()) {
-                        String name = senvEntry.getKey();
-                        JsonElement tc = senvEntry.getValue();
+                    if(subSenv != null) {
+                        for (Entry<String, JsonElement> senvEntry : subSenv.entrySet()) {
+                            String name = senvEntry.getKey();
+                            JsonElement tc = senvEntry.getValue();
+    
+                            jsonSenv.add(name, tc);
+                        }
+                    }
 
-                        jsonSenv.add(name, tc);
+                    // *** Append/replace all the Gherkin
+                    JsonObject subGherkin = testCatalogRoot.getAsJsonObject("gherkin");
+                    if(subGherkin != null) {
+                        for (Entry<String, JsonElement> gherkinEntry : subGherkin.entrySet()) {
+                            String name = gherkinEntry.getKey();
+                            JsonElement tc = gherkinEntry.getValue();
+    
+                            jsonGherkin.add(name, tc);
+                        }
                     }
                 }
             }

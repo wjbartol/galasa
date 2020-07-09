@@ -22,6 +22,7 @@ import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectHelper;
+import org.apache.maven.shared.utils.io.IOUtil;
 
 @Mojo(name = "gherkinzip", defaultPhase = LifecyclePhase.PACKAGE, threadSafe = true, requiresDependencyCollection = ResolutionScope.COMPILE_PLUS_RUNTIME, requiresDependencyResolution = ResolutionScope.COMPILE_PLUS_RUNTIME)
 public class BuildGherkinZip extends AbstractMojo {
@@ -62,11 +63,7 @@ public class BuildGherkinZip extends AbstractMojo {
                 ZipEntry ze = new ZipEntry(project.getBasedir().toPath().relativize(feature).toString());
                 zos.putNextEntry(ze);
                 FileInputStream fis = new FileInputStream(feature.toString());
-                byte[] buffer = new byte[1024];
-                int len;
-                while ((len = fis.read(buffer)) > 0) {
-                    zos.write(buffer, 0, len);
-                }
+                IOUtil.copy(fis, zos);
                 zos.closeEntry();
                 fis.close();
             }

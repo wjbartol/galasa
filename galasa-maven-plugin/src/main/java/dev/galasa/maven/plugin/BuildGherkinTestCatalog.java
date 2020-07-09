@@ -62,7 +62,8 @@ public class BuildGherkinTestCatalog extends AbstractMojo {
                 String featureName = project.getBasedir().toPath().relativize(feature).toString();
                 JsonObject featureJson = new JsonObject();
                 featureJson.addProperty("name", featureName);
-                featureJson.addProperty("shortName", feature.getFileName().toString().substring(0, feature.getFileName().toString().length() - 8));
+                String fileName = feature.getFileName().toString();
+                featureJson.addProperty("shortName", fileName.substring(0, fileName.length() - 8));
                 String maven = project.getGroupId() + "/" + project.getArtifactId() + "/" + project.getVersion();
                 featureJson.addProperty("maven",  maven);
 

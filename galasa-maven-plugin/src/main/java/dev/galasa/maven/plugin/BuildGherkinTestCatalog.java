@@ -55,14 +55,14 @@ public class BuildGherkinTestCatalog extends AbstractMojo {
             JsonObject jsonFeatures = new JsonObject();
             jsonRoot.add("gherkin", jsonFeatures);
 
-            List<File> featureFiles = new ArrayList<>();
+            List<Path> featureFiles = new ArrayList<>();
             Files.list(project.getBasedir().toPath()).forEach(new ConsumeDirectory(featureFiles));
 
-            for(File feature : featureFiles) {
-                String featureName = feature.toPath().subpath(project.getBasedir().toPath().getNameCount(), feature.toPath().getNameCount()).toString();
+            for(Path feature : featureFiles) {
+                String featureName = project.getBasedir().toPath().relativize(feature).toString();
                 JsonObject featureJson = new JsonObject();
                 featureJson.addProperty("name", featureName);
-                featureJson.addProperty("shortName", feature.getName().replace(".feature", ""));
+                featureJson.addProperty("shortName", feature.getFileName().toString().substring(0, feature.getFileName().toString().length() - 8));
                 String maven = project.getGroupId() + "/" + project.getArtifactId() + "/" + project.getVersion();
                 featureJson.addProperty("maven",  maven);
 
@@ -83,9 +83,9 @@ public class BuildGherkinTestCatalog extends AbstractMojo {
 
     private static class ConsumeDirectory implements Consumer<Path> {
 
-        private final List<File> files;
+        private final List<Path> files;
 
-        public ConsumeDirectory(List<File> files) {
+        public ConsumeDirectory(List<Path> files) {
             this.files = files;
         }
 
@@ -96,7 +96,7 @@ public class BuildGherkinTestCatalog extends AbstractMojo {
                     Files.list(path).forEach(new ConsumeDirectory(files));
                 } else {
                     if(path.toFile().getName().endsWith(".feature")) {
-                        files.add(path.toFile());
+                        files.add(path);
                     }
                 }
             } catch (Exception e) {

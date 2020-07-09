@@ -5,6 +5,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
@@ -49,19 +50,18 @@ public class BuildGherkinZip extends AbstractMojo {
                 outputDirectory.mkdirs();
             }
 
-            List<File> featureFiles = new ArrayList<>();
+            List<Path> featureFiles = new ArrayList<>();
             Files.list(project.getBasedir().toPath()).forEach(new ConsumeDirectory(featureFiles));
 
-            File zipFile = new File(outputDirectory, project.getArtifactId() + "-" + project.getVersion() + ".zip");
+            Path zipFile = Paths.get(outputDirectory.getPath(), project.getArtifactId() + "-" + project.getVersion() + ".zip");
 
-            FileOutputStream fos = new FileOutputStream(zipFile.getPath());
+            FileOutputStream fos = new FileOutputStream(zipFile.toString());
             ZipOutputStream zos = new ZipOutputStream(fos);
-            for(File file : featureFiles){
-                String filePath = file.getPath();
-                getLog().info("Zipping "+filePath);
-                ZipEntry ze = new ZipEntry(filePath.substring(project.getBasedir().getAbsolutePath().length()+1, filePath.length()));
+            for(Path feature : featureFiles){
+                getLog().info("Zipping " + feature);
+                ZipEntry ze = new ZipEntry(project.getBasedir().toPath().relativize(feature).toString());
                 zos.putNextEntry(ze);
-                FileInputStream fis = new FileInputStream(filePath);
+                FileInputStream fis = new FileInputStream(feature.toString());
                 byte[] buffer = new byte[1024];
                 int len;
                 while ((len = fis.read(buffer)) > 0) {
@@ -73,7 +73,7 @@ public class BuildGherkinZip extends AbstractMojo {
             zos.close();
             fos.close();
 
-            projectHelper.attachArtifact(project, "zip", "gherkinzip", zipFile);
+            projectHelper.attachArtifact(project, "zip", "gherkin", zipFile.toFile());
 
         } catch (Throwable t) {
             throw new MojoExecutionException("Problem processing creating zip for gherkin", t);
@@ -82,9 +82,9 @@ public class BuildGherkinZip extends AbstractMojo {
 
     private static class ConsumeDirectory implements Consumer<Path> {
 
-        private final List<File> files;
+        private final List<Path> files;
 
-        public ConsumeDirectory(List<File> files) {
+        public ConsumeDirectory(List<Path> files) {
             this.files = files;
         }
 
@@ -95,7 +95,7 @@ public class BuildGherkinZip extends AbstractMojo {
                     Files.list(path).forEach(new ConsumeDirectory(files));
                 } else {
                     if(path.toFile().getName().endsWith(".feature")) {
-                        files.add(path.toFile());
+                        files.add(path);
                     }
                 }
             } catch (Exception e) {

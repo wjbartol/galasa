@@ -49,6 +49,7 @@
 	<modules>
 		<module>com.jcraft.jsch</module>
 		<module>com.auth0.jwt</module>
+		<module>com.google.gson</module>
 	</modules>
 
 	<scm>

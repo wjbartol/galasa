@@ -24,6 +24,7 @@ import org.apache.felix.bundlerepository.impl.RepositoryImpl;
 import org.apache.felix.bundlerepository.impl.ResourceImpl;
 import org.gradle.api.DefaultTask;
 import org.gradle.api.artifacts.Configuration;
+import org.gradle.api.artifacts.ConfigurationContainer;
 import org.gradle.api.artifacts.ResolvedArtifact;
 import org.gradle.api.artifacts.ResolvedDependency;
 import org.gradle.api.tasks.TaskAction;
@@ -165,6 +166,13 @@ public class ObrBuildTask extends DefaultTask {
         Path buildDirectory = Paths.get(getProject().getBuildDir().toURI());
         this.pathObr = buildDirectory.resolve("galasa.obr");
         getOutputs().file(pathObr);
+        
+        ConfigurationContainer configurations = getProject().getConfigurations();
+        Configuration bundleConfiguration = configurations.findByName("bundle");
+        Configuration obrConfiguration = configurations.findByName("obr");
+        
+        getDependsOn().add(bundleConfiguration);
+        getDependsOn().add(obrConfiguration);
     }
 
 }

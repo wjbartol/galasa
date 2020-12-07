@@ -3,7 +3,7 @@
  * 
  * (c) Copyright IBM Corp. 2020.
  */
-package dev.galasa.gradle;
+package dev.galasa.gradle.obr;
 
 import javax.inject.Inject;
 
@@ -17,17 +17,15 @@ import org.gradle.api.internal.artifacts.ArtifactAttributes;
 import org.gradle.api.internal.artifacts.dsl.LazyPublishArtifact;
 import org.gradle.api.provider.Provider;
 
-import dev.galasa.gradle.obr.ObrBuildTask;
-
 /**
- * A simple 'hello world' plugin.
+ * Generate an OBR
  */
-public class GalasaPlugin implements Plugin<Project> {
+public class ObrPlugin implements Plugin<Project> {
     
     private final SoftwareComponentFactory softwareComponentFactory;
 
     @Inject
-    public GalasaPlugin(SoftwareComponentFactory softwareComponentFactory) {
+    public ObrPlugin(SoftwareComponentFactory softwareComponentFactory) {
         this.softwareComponentFactory = softwareComponentFactory;
     }
     
@@ -79,10 +77,6 @@ public class GalasaPlugin implements Plugin<Project> {
         
         AdhocComponentWithVariants componentObr = softwareComponentFactory.adhoc("galasaobr");
         project.getComponents().add(componentObr);
-        
-        AdhocComponentWithVariants componentTestCatalog = softwareComponentFactory.adhoc("galasatestcat");
-        project.getComponents().add(componentTestCatalog);
-        
     }
 
     private void createInboundConfigurations(Project project) {
@@ -113,16 +107,6 @@ public class GalasaPlugin implements Plugin<Project> {
             // This is required for the metadata publishing, needs atleast one attribute
             // so it can be selective if necessary
            t.attribute(ArtifactAttributes.ARTIFACT_FORMAT, "obr");
-        });
-
-    
-        Configuration gentestcatalogConfiguration = configurations.create("galasagentestcat");
-        gentestcatalogConfiguration.setCanBeResolved(false);
-        gentestcatalogConfiguration.setCanBeConsumed(true);
-        gentestcatalogConfiguration.attributes(t -> {
-            // This is required for the metadata publishing, needs atleast one attribute
-            // so it can be selective if necessary
-           t.attribute(ArtifactAttributes.ARTIFACT_FORMAT, "testcatalog");
         });
     }
 }

@@ -90,7 +90,7 @@ public class ObrBuildTask extends DefaultTask {
         
         String fileName = file.getName();
         if (!fileName.endsWith(".jar")) {
-            getLogger().warn("Bundle " + id + " does end with .jar, ignoring");
+            getLogger().warn("Bundle " + id + " does not end with .jar, ignoring");
             return;
         }
         

@@ -3,7 +3,7 @@
  * 
  * (c) Copyright IBM Corp. 2020.
  */
-package dev.galasa.gradle.obr;
+package dev.galasa.gradle.testcatalog;
 
 import javax.inject.Inject;
 
@@ -16,53 +16,69 @@ import org.gradle.api.component.SoftwareComponentFactory;
 import org.gradle.api.internal.artifacts.ArtifactAttributes;
 import org.gradle.api.internal.artifacts.dsl.LazyPublishArtifact;
 import org.gradle.api.provider.Provider;
+import org.gradle.api.publish.plugins.PublishingPlugin;
 
 /**
- * Generate an OBR
+ * Build testcatalog artifact
  */
-public class ObrPlugin implements Plugin<Project> {
+public class TestCatalogPlugin implements Plugin<Project> {
     
     private final SoftwareComponentFactory softwareComponentFactory;
 
     @Inject
-    public ObrPlugin(SoftwareComponentFactory softwareComponentFactory) {
+    public TestCatalogPlugin(SoftwareComponentFactory softwareComponentFactory) {
         this.softwareComponentFactory = softwareComponentFactory;
     }
     
     public void apply(Project project) {
+        project.getPluginManager().apply(PublishingPlugin.class);
         
         createInboundConfigurations(project);
         createOutboundConfigurations(project);
         createSoftwareComponents(project);
-        createObrBuildTask(project);
+        createTestcatBuildTask(project);
+        createTestcatDeployTask(project);
         
-        addVariantsToObr(project);
+        addVariantsToTestcat(project);
         
+        System.out.println("b");
+        
+        DeplotTestCatalogExtension extension = project.getExtensions().create("deployTestCatalog", DeplotTestCatalogExtension.class, project.getObjects());
+        System.out.println(extension.bootstrap);
     }
 
-    private void addVariantsToObr(Project project) {
+    private void addVariantsToTestcat(Project project) {
         
         // Add all the variants from the outbound configuration to the software component
         
-        Configuration configurationObr = project.getConfigurations().getByName("galasagenobr");
-        AdhocComponentWithVariants componentObr = (AdhocComponentWithVariants) project.getComponents().getByName("galasaobr");
+        Configuration configurationTestcat = project.getConfigurations().getByName("galasagentestcat");
+        AdhocComponentWithVariants componentTestcat = (AdhocComponentWithVariants) project.getComponents().getByName("galasatestcat");
 
         // Add everything from the config
-        ((AdhocComponentWithVariants)componentObr).addVariantsFromConfiguration(configurationObr, c -> {
+        ((AdhocComponentWithVariants)componentTestcat).addVariantsFromConfiguration(configurationTestcat, c -> {
         });
     }
 
-    private void createObrBuildTask(Project project) {
+    private void createTestcatBuildTask(Project project) {
         
-        // Create the new Task, called genobr
-        Provider<ObrBuildTask> provider = project.getTasks().register("genobr", ObrBuildTask.class, obrTask -> {
-            obrTask.apply();
+        // Create the new Task, called gentestcat
+        Provider<TestCatalogBuildTask> provider = project.getTasks().register("gentestcat", TestCatalogBuildTask.class, testcatTask -> {
+            testcatTask.apply();
         });
         
         // Create the Publish Artifact that the task will be creating and add it the 
         // configuration outbound list
         LazyPublishArtifact artifact = new LazyPublishArtifact(provider);
-        project.getConfigurations().getByName("galasagenobr").getOutgoing().artifact(artifact);
+        project.getConfigurations().getByName("galasagentestcat").getOutgoing().artifact(artifact);
+    }
+
+    private void createTestcatDeployTask(Project project) {
+        
+        // Create the new Task, called deploytestcat
+        project.getTasks().register("deploytestcat", TestCatalogDeployTask.class, testcatTask -> {
+            testcatTask.apply();
+        });
+        
     }
 
     private void createSoftwareComponents(Project project) {
@@ -75,23 +91,20 @@ public class ObrPlugin implements Plugin<Project> {
         //
         // you can use the software component in publishing with "from components.galasaobr"
         
-        AdhocComponentWithVariants componentObr = softwareComponentFactory.adhoc("galasaobr");
-        project.getComponents().add(componentObr);
+        AdhocComponentWithVariants componentTestcat = softwareComponentFactory.adhoc("galasatestcat");
+        project.getComponents().add(componentTestcat);
     }
 
     private void createInboundConfigurations(Project project) {
         
         ConfigurationContainer configurations = project.getConfigurations();
         
-        // Create two new configurations that are used as dependencies
+        // Create new configuration that is used as dependencies
         // dependendencies {
         //     bundle('xxxxx')
-        //     obr('xxx')
         // }
         Configuration bundleConfiguration = configurations.maybeCreate("bundle");
         bundleConfiguration.setTransitive(false); // Do not resolve the dependency chain, we only want the top level
-        Configuration obrConfiguration = configurations.maybeCreate("obr");
-        obrConfiguration.setTransitive(false); // Do not resolve the dependency chain, we only want the top level
     }
 
     private void createOutboundConfigurations(Project project) {
@@ -100,13 +113,13 @@ public class ObrPlugin implements Plugin<Project> {
         // create "outbound" configurations, this is the stuff this plugin is going to generate
         // one configuration per "type",  ie one for obr and one for testcatalog.
         // need it kind of unique so we don't clash with anything from other plugins
-        Configuration genobrConfiguration = configurations.create("galasagenobr");
-        genobrConfiguration.setCanBeResolved(false);
-        genobrConfiguration.setCanBeConsumed(true);
-        genobrConfiguration.attributes(t -> {
+        Configuration gentestcatConfiguration = configurations.create("galasagentestcat");
+        gentestcatConfiguration.setCanBeResolved(false);
+        gentestcatConfiguration.setCanBeConsumed(true);
+        gentestcatConfiguration.attributes(t -> {
             // This is required for the metadata publishing, needs atleast one attribute
             // so it can be selective if necessary
-           t.attribute(ArtifactAttributes.ARTIFACT_FORMAT, "obr");
+           t.attribute(ArtifactAttributes.ARTIFACT_FORMAT, "testcatalog");
         });
     }
 }

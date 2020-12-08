@@ -24,9 +24,13 @@ gradlePlugin {
             id = 'dev.galasa.obr'
             implementationClass = 'dev.galasa.gradle.obr.ObrPlugin'
         }
-        obr {
+        tests {
             id = 'dev.galasa.tests'
             implementationClass = 'dev.galasa.gradle.tests.TestsPlugin'
+        }
+        testcatalog {
+            id = 'dev.galasa.testcatalog'
+            implementationClass = 'dev.galasa.gradle.testcatalog.TestCatalogPlugin'
         }
     }
 }

@@ -62,6 +62,7 @@ public class TestCatalogBuildTask extends DefaultTask {
         
         //*** Create Metadata
         jsonMetadata.addProperty("generated", Instant.now().toString());
+        jsonMetadata.addProperty("name", getProject().getName());
 
         //*** Find the classpaths to use
         ArrayList<URL> classpathURLs = new ArrayList<URL>();

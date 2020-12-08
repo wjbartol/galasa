@@ -5,11 +5,12 @@
  */
 package dev.galasa.gradle.testcatalog;
 
+import java.io.BufferedReader;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -18,7 +19,6 @@ import java.util.Properties;
 import org.gradle.api.DefaultTask;
 import org.gradle.api.Task;
 import org.gradle.api.tasks.TaskAction;
-import org.gradle.internal.impldep.org.apache.commons.io.IOUtils;
 
 public class TestCatalogDeployTask extends DefaultTask {
 
@@ -97,7 +97,14 @@ public class TestCatalogDeployTask extends DefaultTask {
 
         String response = "";
         if (is != null) {
-            response = IOUtils.toString(is, "utf-8");
+            StringBuilder sb = new StringBuilder();
+            try (BufferedReader br = new BufferedReader(new InputStreamReader(is))) {
+                String line = null;
+                while((line = br.readLine()) != null) {
+                    sb.append(line);
+                }
+            }
+            response = sb.toString();
         }
 
         conn.disconnect();

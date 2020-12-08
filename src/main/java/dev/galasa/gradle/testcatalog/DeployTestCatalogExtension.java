@@ -4,10 +4,10 @@ import javax.inject.Inject;
 
 import org.gradle.api.model.ObjectFactory;
 
-public class DeplotTestCatalogExtension {
+public class DeployTestCatalogExtension {
     
     @Inject
-    public DeplotTestCatalogExtension(ObjectFactory objectFactory) {
+    public DeployTestCatalogExtension(ObjectFactory objectFactory) {
     }
 
     public String bootstrap;

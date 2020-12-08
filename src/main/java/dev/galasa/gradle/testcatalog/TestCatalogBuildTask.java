@@ -65,8 +65,15 @@ public class TestCatalogBuildTask extends DefaultTask {
         this.jsonRoot.add("gherkin", this.jsonGherkin);
 
         //*** Create Metadata
-        this.jsonMetadata.addProperty("generated", Instant.now().toString());
+        Instant now = Instant.now();
+        this.jsonMetadata.addProperty("generated", now.toString());
         this.jsonMetadata.addProperty("name", getProject().getName());
+        
+        //*** Create old properties
+        this.jsonRoot.addProperty("name", getProject().getName());
+        this.jsonRoot.addProperty("build", "gradle");
+        this.jsonRoot.addProperty("version", getProject().getVersion().toString());
+        this.jsonRoot.addProperty("built", now.toString());
 
         Configuration config = getProject().getConfigurations().getByName("bundle");
         for(ResolvedDependency dependency : config.getResolvedConfiguration().getFirstLevelModuleDependencies()) {
@@ -106,7 +113,6 @@ public class TestCatalogBuildTask extends DefaultTask {
             ZipEntry entry = null;
 
             while((entry = zis.getNextEntry()) != null) {
-                System.out.println(entry.getName());
                 if ("META-INF/testcatalog.json".equals(entry.getName())) {
                     break;
                 }
@@ -117,12 +123,9 @@ public class TestCatalogBuildTask extends DefaultTask {
                 return;
             }
 
-            System.out.println("reading");
             try (InputStreamReader reader = new InputStreamReader(zis)) {
                 JsonObject testCatalogRoot = this.gson.fromJson(reader, JsonObject.class);
                 
-                System.out.println("read");
-
                 // *** Append/replace all the test classes
                 JsonObject subTestClasses = testCatalogRoot.getAsJsonObject("classes");
                 if(subTestClasses != null) {

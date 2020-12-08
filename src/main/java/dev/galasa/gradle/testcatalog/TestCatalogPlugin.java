@@ -41,17 +41,14 @@ public class TestCatalogPlugin implements Plugin<Project> {
         
         addVariantsToTestcat(project);
         
-        System.out.println("b");
-        
-        DeplotTestCatalogExtension extension = project.getExtensions().create("deployTestCatalog", DeplotTestCatalogExtension.class, project.getObjects());
-        System.out.println(extension.bootstrap);
+        project.getExtensions().create("deployTestCatalog", DeployTestCatalogExtension.class, project.getObjects());
     }
 
     private void addVariantsToTestcat(Project project) {
         
         // Add all the variants from the outbound configuration to the software component
         
-        Configuration configurationTestcat = project.getConfigurations().getByName("galasagentestcat");
+        Configuration configurationTestcat = project.getConfigurations().getByName("galasamergetestcat");
         AdhocComponentWithVariants componentTestcat = (AdhocComponentWithVariants) project.getComponents().getByName("galasatestcat");
 
         // Add everything from the config
@@ -62,14 +59,14 @@ public class TestCatalogPlugin implements Plugin<Project> {
     private void createTestcatBuildTask(Project project) {
         
         // Create the new Task, called gentestcat
-        Provider<TestCatalogBuildTask> provider = project.getTasks().register("gentestcat", TestCatalogBuildTask.class, testcatTask -> {
+        Provider<TestCatalogBuildTask> provider = project.getTasks().register("mergetestcat", TestCatalogBuildTask.class, testcatTask -> {
             testcatTask.apply();
         });
         
         // Create the Publish Artifact that the task will be creating and add it the 
         // configuration outbound list
         LazyPublishArtifact artifact = new LazyPublishArtifact(provider);
-        project.getConfigurations().getByName("galasagentestcat").getOutgoing().artifact(artifact);
+        project.getConfigurations().getByName("galasamergetestcat").getOutgoing().artifact(artifact);
     }
 
     private void createTestcatDeployTask(Project project) {
@@ -113,7 +110,7 @@ public class TestCatalogPlugin implements Plugin<Project> {
         // create "outbound" configurations, this is the stuff this plugin is going to generate
         // one configuration per "type",  ie one for obr and one for testcatalog.
         // need it kind of unique so we don't clash with anything from other plugins
-        Configuration gentestcatConfiguration = configurations.create("galasagentestcat");
+        Configuration gentestcatConfiguration = configurations.create("galasamergetestcat");
         gentestcatConfiguration.setCanBeResolved(false);
         gentestcatConfiguration.setCanBeConsumed(true);
         gentestcatConfiguration.attributes(t -> {

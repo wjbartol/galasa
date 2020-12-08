@@ -28,6 +28,10 @@ gradlePlugin {
             id = 'dev.galasa.tests'
             implementationClass = 'dev.galasa.gradle.tests.TestsPlugin'
         }
+        githash {
+            id = 'dev.galasa.githash'
+            implementationClass = 'dev.galasa.gradle.hashes.GitHashPlugin'
+        }
         testcatalog {
             id = 'dev.galasa.testcatalog'
             implementationClass = 'dev.galasa.gradle.testcatalog.TestCatalogPlugin'

@@ -8,13 +8,17 @@ package dev.galasa.maven.plugin;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
+import java.lang.reflect.Field;
 import java.net.URI;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Iterator;
 import java.util.Set;
 
 import org.apache.felix.bundlerepository.DataModelHelper;
 import org.apache.felix.bundlerepository.Repository;
+import org.apache.felix.bundlerepository.Requirement;
 import org.apache.felix.bundlerepository.Resource;
 import org.apache.felix.bundlerepository.impl.DataModelHelperImpl;
 import org.apache.felix.bundlerepository.impl.RepositoryImpl;
@@ -53,7 +57,18 @@ public class BuildOBRResources extends AbstractMojo {
     @Parameter(defaultValue = "false", property = "includeSelf", required = false)
     private boolean      includeSelf;
 
+    private Field requirementsField;
+
     public void execute() throws MojoExecutionException, MojoFailureException {
+
+        // give access to the requirements field in the ResourceImpl so we can remove the 
+        // execution environment requirement as Felix has an outstanding bug
+        try {
+            this.requirementsField = ResourceImpl.class.getDeclaredField("m_reqList");
+            this.requirementsField.setAccessible(true);
+        } catch (NoSuchFieldException | SecurityException e) {
+            throw new MojoExecutionException("Unable to adjust the ResourceImpl class for a workaround a bug in Felix", e);
+        }
 
         getLog().info("BuildOBRResources: Building project " + project.getName() + ". includeSelf=" + includeSelf);
         if (obrUrlType == null) {
@@ -150,6 +165,26 @@ public class BuildOBRResources extends AbstractMojo {
                     .createResource(artifact.getFile().toURI().toURL());
             if (newResource == null) {
                 throw new MojoExecutionException("Problem with jar file. Not an OSGi bundle?");
+            }
+
+            // **** Extremely dodgy,  but no other way to do this at the moment due to 
+            // **** https://issues.apache.org/jira/browse/FELIX-575
+            try {
+                @SuppressWarnings("unchecked")
+                ArrayList<Requirement> requirements = (ArrayList<Requirement>) this.requirementsField.get(newResource);
+                
+                if (requirements != null) {
+                    Iterator<Requirement> requirementi = requirements.iterator();
+                    while(requirementi.hasNext()) {
+                        Requirement requirement = requirementi.next();
+                        if ("ee".equals(requirement.getName())) {
+                            requirementi.remove();
+                            getLog().info("Removed requirement from bundle - " + requirement.toString() + " due to https://issues.apache.org/jira/browse/FELIX-57");
+                        }
+                    }
+                }
+            } catch(Throwable t) {
+                throw new MojoExecutionException("Unable to remove execution environment requirement", t);
             }
 
             URI name = null;

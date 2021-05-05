@@ -5,12 +5,18 @@
  */
 package dev.galasa.maven.plugin;
 
+import java.io.BufferedInputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStreamReader;
 import java.time.Instant;
 import java.util.List;
 import java.util.Map.Entry;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.maven.artifact.Artifact;
 import org.apache.maven.model.Dependency;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -117,92 +123,109 @@ public class MergeTestCatalogs extends AbstractMojo {
                     continue;
                 }
 
-                // *** Try and see if the dependency has a sister test catalog
-                DefaultArtifact artifactTestCatalog = new DefaultArtifact(dependency.getGroupId(),
-                        dependency.getArtifactId(), "testcatalog", "json", dependency.getVersion());
+                JsonObject testCatalogRoot = null;
 
-                ArtifactRequest request = new ArtifactRequest();
-                request.setArtifact(artifactTestCatalog);
-
-                ArtifactResult result = null;
-                try {
-                    result = repoSystem.resolveArtifact(repoSession, request);
-                } catch (Exception e) {
-                    getLog().warn(e.getMessage());
+                // *** First check if the jar is new format with testcatalog embedded
+                for(Artifact artifact : project.getArtifacts()) {
+                    if (dependency.getGroupId().equals(artifact.getGroupId())
+                            && dependency.getArtifactId().equals(artifact.getArtifactId())
+                            && dependency.getType().equals(artifact.getType())) {
+                        testCatalogRoot = getEmbeddedTestCatalog(artifact, gson);
+                        break;
+                    }
                 }
 
-                if (result != null) {
-                    getLog().info("Merging bundle test catalog " + result.getArtifact().toString());
+                if (testCatalogRoot == null) {
+                    // *** Try and see if the dependency has a sister test catalog
+                    DefaultArtifact artifactTestCatalog = new DefaultArtifact(dependency.getGroupId(),
+                            dependency.getArtifactId(), "testcatalog", "json", dependency.getVersion());
 
-                    String subTestCatalog = FileUtils.readFileToString(result.getArtifact().getFile(), "utf-8");
-                    JsonObject testCatalogRoot = gson.fromJson(subTestCatalog, JsonObject.class);
+                    ArtifactRequest request = new ArtifactRequest();
+                    request.setArtifact(artifactTestCatalog);
 
-                    // *** Append/replace all the test classes
-                    JsonObject subTestClasses = testCatalogRoot.getAsJsonObject("classes");
-                    if(subTestClasses != null) {
-                        for (Entry<String, JsonElement> testClassEntry : subTestClasses.entrySet()) {
-                            String name = testClassEntry.getKey();
-                            JsonElement tc = testClassEntry.getValue();
-    
-                            jsonClasses.add(name, tc);
-                        }
+                    ArtifactResult result = null;
+                    try {
+                        result = repoSystem.resolveArtifact(repoSession, request);
+                    } catch (Exception e) {
+                        getLog().warn(e.getMessage());
                     }
 
-                    // *** Append to the packages
-                    JsonObject subPackages = testCatalogRoot.getAsJsonObject("packages");
-                    if(subPackages != null) {
-                        for (Entry<String, JsonElement> packageEntry : subPackages.entrySet()) {
-                            String name = packageEntry.getKey();
-                            JsonArray list = (JsonArray) packageEntry.getValue();
-    
-                            JsonArray mergedPackage = jsonPackages.getAsJsonArray(name);
-                            if (mergedPackage == null) {
-                                mergedPackage = new JsonArray();
-                                jsonPackages.add(name, mergedPackage);
-                            }
-    
-                            for (int i = 0; i < list.size(); i++) {
-                                String className = list.get(i).getAsString();
-                                mergedPackage.add(className);
-                            }
+                    if (result != null) {
+                        getLog().info("Merging bundle test catalog " + result.getArtifact().toString());
+
+                        String subTestCatalog = FileUtils.readFileToString(result.getArtifact().getFile(), "utf-8");
+                        testCatalogRoot = gson.fromJson(subTestCatalog, JsonObject.class);
+                    }
+                }
+                
+                if (testCatalogRoot == null) {
+                    continue;
+                }
+
+                // *** Append/replace all the test classes
+                JsonObject subTestClasses = testCatalogRoot.getAsJsonObject("classes");
+                if(subTestClasses != null) {
+                    for (Entry<String, JsonElement> testClassEntry : subTestClasses.entrySet()) {
+                        String name = testClassEntry.getKey();
+                        JsonElement tc = testClassEntry.getValue();
+
+                        jsonClasses.add(name, tc);
+                    }
+                }
+
+                // *** Append to the packages
+                JsonObject subPackages = testCatalogRoot.getAsJsonObject("packages");
+                if(subPackages != null) {
+                    for (Entry<String, JsonElement> packageEntry : subPackages.entrySet()) {
+                        String name = packageEntry.getKey();
+                        JsonArray list = (JsonArray) packageEntry.getValue();
+
+                        JsonArray mergedPackage = jsonPackages.getAsJsonArray(name);
+                        if (mergedPackage == null) {
+                            mergedPackage = new JsonArray();
+                            jsonPackages.add(name, mergedPackage);
+                        }
+
+                        for (int i = 0; i < list.size(); i++) {
+                            String className = list.get(i).getAsString();
+                            mergedPackage.add(className);
                         }
                     }
+                }
 
-                    // *** Append/replace all the bundles
-                    JsonObject subBundles = testCatalogRoot.getAsJsonObject("bundles");
-                    if(subBundles != null) {
-                        for (Entry<String, JsonElement> bundleEntry : subBundles.entrySet()) {
-                            String name = bundleEntry.getKey();
-                            JsonElement tc = bundleEntry.getValue();
-    
-                            jsonBundles.add(name, tc);
-                        }
+                // *** Append/replace all the bundles
+                JsonObject subBundles = testCatalogRoot.getAsJsonObject("bundles");
+                if(subBundles != null) {
+                    for (Entry<String, JsonElement> bundleEntry : subBundles.entrySet()) {
+                        String name = bundleEntry.getKey();
+                        JsonElement tc = bundleEntry.getValue();
+
+                        jsonBundles.add(name, tc);
                     }
+                }
 
-                    // *** Append/replace all the Shared Environments
-                    JsonObject subSenv = testCatalogRoot.getAsJsonObject("sharedEnvironments");
-                    if(subSenv != null) {
-                        for (Entry<String, JsonElement> senvEntry : subSenv.entrySet()) {
-                            String name = senvEntry.getKey();
-                            JsonElement tc = senvEntry.getValue();
-    
-                            jsonSenv.add(name, tc);
-                        }
+                // *** Append/replace all the Shared Environments
+                JsonObject subSenv = testCatalogRoot.getAsJsonObject("sharedEnvironments");
+                if(subSenv != null) {
+                    for (Entry<String, JsonElement> senvEntry : subSenv.entrySet()) {
+                        String name = senvEntry.getKey();
+                        JsonElement tc = senvEntry.getValue();
+
+                        jsonSenv.add(name, tc);
                     }
+                }
 
-                    // *** Append/replace all the Gherkin
-                    JsonObject subGherkin = testCatalogRoot.getAsJsonObject("gherkin");
-                    if(subGherkin != null) {
-                        for (Entry<String, JsonElement> gherkinEntry : subGherkin.entrySet()) {
-                            String name = gherkinEntry.getKey();
-                            JsonElement tc = gherkinEntry.getValue();
-    
-                            jsonGherkin.add(name, tc);
-                        }
+                // *** Append/replace all the Gherkin
+                JsonObject subGherkin = testCatalogRoot.getAsJsonObject("gherkin");
+                if(subGherkin != null) {
+                    for (Entry<String, JsonElement> gherkinEntry : subGherkin.entrySet()) {
+                        String name = gherkinEntry.getKey();
+                        JsonElement tc = gherkinEntry.getValue();
+
+                        jsonGherkin.add(name, tc);
                     }
                 }
             }
-
             // *** Write the new master test catalog
             String testCatlog = gson.toJson(jsonRoot);
 
@@ -216,4 +239,29 @@ public class MergeTestCatalogs extends AbstractMojo {
 
     }
 
+    private JsonObject getEmbeddedTestCatalog(Artifact artifact, Gson gson) {
+
+        try (ZipInputStream zis = new ZipInputStream(new BufferedInputStream(new FileInputStream(artifact.getFile())))) {
+            ZipEntry entry = null;
+
+            while((entry = zis.getNextEntry()) != null) {
+                if ("META-INF/testcatalog.json".equals(entry.getName())) {
+                    break;
+                }
+            }
+
+            if (entry == null) {
+                return null;
+            }
+
+            getLog().info("Merging bundle test catalog " + artifact.toString());
+            try (InputStreamReader reader = new InputStreamReader(zis)) {
+                return gson.fromJson(reader, JsonObject.class);
+            }
+        } catch(Exception e) {
+            getLog().warn(e.getMessage());
+        }
+
+        return null;
+    }
 }

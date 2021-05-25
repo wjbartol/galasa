@@ -43,7 +43,6 @@ gradlePlugin {
 }
 
 signing {
-    useGpgCmd()
     sign publishing.publications
 }
 

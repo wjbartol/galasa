@@ -1,6 +1,7 @@
 plugins {
     id 'java-gradle-plugin'
     id 'maven-publish'
+    id 'signing'
 }
 
 def distRepo = System.getenv('MAVEN_REPO') ?: "https://nexus.galasa.dev/repository/maven-development"
@@ -41,6 +42,10 @@ gradlePlugin {
     }
 }
 
+signing {
+    useGpgCmd()
+    sign publishing.publications
+}
 
 publishing {
     publications {

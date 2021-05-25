@@ -46,6 +46,14 @@ signing {
     sign publishing.publications
 }
 
+
+
+tasks.withType(Sign) {
+    onlyIf { isRelease.toBoolean() }
+}
+
+
+
 publishing {
     publications {
         pluginMaven(MavenPublication) {

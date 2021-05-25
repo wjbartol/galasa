@@ -42,6 +42,17 @@ gradlePlugin {
     }
 }
 
+java {
+    withJavadocJar()
+    withSourcesJar()
+}
+    
+tasks.withType(Javadoc) {
+    failOnError = false
+    enabled = true
+}
+
+
 signing {
     sign publishing.publications
 }

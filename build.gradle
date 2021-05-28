@@ -4,13 +4,16 @@ plugins {
     id 'signing'
 }
 
-def distRepo = System.getenv('MAVEN_REPO') ?: "https://nexus.galasa.dev/repository/maven-development"
-
 group   = "dev.galasa"
 version = "0.15.0"
 
 repositories {
-    mavenCentral()
+    maven {
+       url "$sourceMaven"
+    }
+    maven {
+       url "$centralMaven"
+    }
 }
 
 dependencies {
@@ -72,12 +75,13 @@ publishing {
     }
     repositories {
         maven {
-            name = 'distRepo'
-            url  = distRepo
+            url  = "$targetMaven"
             
-            credentials {
-                username System.getenv('MAVENUSERNAME')
-                password System.getenv('MAVENPASSWORD')
+            if ("$targetMaven".startsWith('http')) {
+                credentials {
+                    username System.getenv('MAVENUSERNAME')
+                    password System.getenv('MAVENPASSWORD')
+                }
             }
         }
     }

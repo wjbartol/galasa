@@ -1,6 +1,6 @@
 ARG baseVersion
 ARG dockerRepository
-FROM ${dockerRepository}/galasa/galasa-maven-base:${baseVersion}
+FROM ${dockerRepository}/galasadev/galasa-maven-base:${baseVersion}
 
 ARG branch
 ARG gitHash

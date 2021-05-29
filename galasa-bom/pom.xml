@@ -38,7 +38,7 @@
 			<dependency>
 				<groupId>dev.galasa</groupId>
 				<artifactId>dev.galasa.zos.manager</artifactId>
-				<version>0.15.0</version>
+				<version>0.16.0</version>
 			</dependency>
 			<dependency>
 				<groupId>dev.galasa</groupId>
@@ -58,7 +58,7 @@
 			<dependency>
 				<groupId>dev.galasa</groupId>
 				<artifactId>dev.galasa.zosfile.zosmf.manager</artifactId>
-				<version>0.15.0</version>
+				<version>0.16.0</version>
 			</dependency>
 			<dependency>
 				<groupId>dev.galasa</groupId>
@@ -95,7 +95,7 @@
 			<dependency>
 				<groupId>dev.galasa</groupId>
 				<artifactId>dev.galasa.zosfile.rseapi.manager</artifactId>
-				<version>0.15.0</version>
+				<version>0.16.0</version>
 				<scope>compile</scope>
 			</dependency>
 			<dependency>
@@ -111,7 +111,7 @@
 			<dependency>
 				<groupId>dev.galasa</groupId>
 				<artifactId>dev.galasa.cicsts.manager</artifactId>
-				<version>0.15.0</version>
+				<version>0.16.0</version>
 			</dependency>
 			<dependency>
 				<groupId>dev.galasa</groupId>
@@ -131,7 +131,7 @@
 			<dependency>
 				<groupId>dev.galasa</groupId>
 				<artifactId>dev.galasa.cicsts.resource.manager</artifactId>
-				<version>0.15.0</version>
+				<version>0.16.0</version>
 			</dependency>
 			<dependency>
 				<groupId>dev.galasa</groupId>
@@ -171,7 +171,7 @@
 			<dependency>
 				<groupId>dev.galasa</groupId>
 				<artifactId>dev.galasa.galasaecosystem.manager</artifactId>
-				<version>0.15.0</version>
+				<version>0.16.0</version>
 			</dependency>
 			<dependency>
 				<groupId>dev.galasa</groupId>

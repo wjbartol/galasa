@@ -1,7 +1,9 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-    <groupId>dev.galasa</groupId>
+	<groupId>dev.galasa</groupId>
 	<artifactId>galasa-bom</artifactId>
 	<version>0.16.0</version>
 	<packaging>pom</packaging>
@@ -18,11 +20,11 @@
 				<artifactId>dev.galasa.framework</artifactId>
 				<version>0.15.0</version>
 			</dependency>
-            <dependency>
-                <groupId>dev.galasa</groupId>
-                <artifactId>dev.galasa.artifact.manager</artifactId>
-                <version>0.16.0</version>
-            </dependency>
+			<dependency>
+				<groupId>dev.galasa</groupId>
+				<artifactId>dev.galasa.artifact.manager</artifactId>
+				<version>0.16.0</version>
+			</dependency>
 			<dependency>
 				<groupId>dev.galasa</groupId>
 				<artifactId>dev.galasa.core.manager</artifactId>
@@ -58,54 +60,54 @@
 				<artifactId>dev.galasa.zosfile.zosmf.manager</artifactId>
 				<version>0.15.0</version>
 			</dependency>
-            <dependency>
-                <groupId>dev.galasa</groupId>
-                <artifactId>dev.galasa.zosmf.manager</artifactId>
-                <version>0.15.0</version>
-            </dependency>
-            <dependency>
-                <groupId>dev.galasa</groupId>
-                <artifactId>dev.galasa.zosprogram.manager</artifactId>
-                <version>0.15.0</version>
-            </dependency>
-            <dependency>
-                <groupId>dev.galasa</groupId>
-                <artifactId>dev.galasa.zostsocommand.ssh.manager</artifactId>
-                <version>0.15.0</version>
-            </dependency>
-            <dependency>
-                <groupId>dev.galasa</groupId>
-                <artifactId>dev.galasa.zosunixcommand.ssh.manager</artifactId>
-                <version>0.15.0</version>
-            </dependency>
-	        <dependency>
-	            <groupId>dev.galasa</groupId>
-	            <artifactId>dev.galasa.zosrseapi.manager</artifactId>
-	            <version>0.15.0</version>
-	            <scope>compile</scope>
-	        </dependency>
-	        <dependency>
-	            <groupId>dev.galasa</groupId>
-	            <artifactId>dev.galasa.zosbatch.rseapi.manager</artifactId>
-	            <version>0.15.0</version>
-	            <scope>compile</scope>
-	        </dependency>
-            <dependency>
-                <groupId>dev.galasa</groupId>
-                <artifactId>dev.galasa.zosfile.rseapi.manager</artifactId>
-                <version>0.15.0</version>
-                <scope>compile</scope>
-            </dependency>
-            <dependency>
-                <groupId>dev.galasa</groupId>
-                <artifactId>dev.galasa.zosconsole.oeconsol.manager</artifactId>
-                <version>0.15.0</version>
-            </dependency>
-            <dependency>
-                <groupId>dev.galasa</groupId>
-                <artifactId>dev.galasa.zosliberty.manager</artifactId>
-                <version>0.15.0</version>
-            </dependency>
+			<dependency>
+				<groupId>dev.galasa</groupId>
+				<artifactId>dev.galasa.zosmf.manager</artifactId>
+				<version>0.15.0</version>
+			</dependency>
+			<dependency>
+				<groupId>dev.galasa</groupId>
+				<artifactId>dev.galasa.zosprogram.manager</artifactId>
+				<version>0.15.0</version>
+			</dependency>
+			<dependency>
+				<groupId>dev.galasa</groupId>
+				<artifactId>dev.galasa.zostsocommand.ssh.manager</artifactId>
+				<version>0.15.0</version>
+			</dependency>
+			<dependency>
+				<groupId>dev.galasa</groupId>
+				<artifactId>dev.galasa.zosunixcommand.ssh.manager</artifactId>
+				<version>0.15.0</version>
+			</dependency>
+			<dependency>
+				<groupId>dev.galasa</groupId>
+				<artifactId>dev.galasa.zosrseapi.manager</artifactId>
+				<version>0.15.0</version>
+				<scope>compile</scope>
+			</dependency>
+			<dependency>
+				<groupId>dev.galasa</groupId>
+				<artifactId>dev.galasa.zosbatch.rseapi.manager</artifactId>
+				<version>0.15.0</version>
+				<scope>compile</scope>
+			</dependency>
+			<dependency>
+				<groupId>dev.galasa</groupId>
+				<artifactId>dev.galasa.zosfile.rseapi.manager</artifactId>
+				<version>0.15.0</version>
+				<scope>compile</scope>
+			</dependency>
+			<dependency>
+				<groupId>dev.galasa</groupId>
+				<artifactId>dev.galasa.zosconsole.oeconsol.manager</artifactId>
+				<version>0.15.0</version>
+			</dependency>
+			<dependency>
+				<groupId>dev.galasa</groupId>
+				<artifactId>dev.galasa.zosliberty.manager</artifactId>
+				<version>0.15.0</version>
+			</dependency>
 			<dependency>
 				<groupId>dev.galasa</groupId>
 				<artifactId>dev.galasa.cicsts.manager</artifactId>
@@ -126,11 +128,11 @@
 				<artifactId>dev.galasa.cicsts.ceda.manager</artifactId>
 				<version>0.15.0</version>
 			</dependency>
-            <dependency>
-                <groupId>dev.galasa</groupId>
-                <artifactId>dev.galasa.cicsts.resource.manager</artifactId>
-                <version>0.15.0</version>
-            </dependency>
+			<dependency>
+				<groupId>dev.galasa</groupId>
+				<artifactId>dev.galasa.cicsts.resource.manager</artifactId>
+				<version>0.15.0</version>
+			</dependency>
 			<dependency>
 				<groupId>dev.galasa</groupId>
 				<artifactId>dev.galasa.linux.manager</artifactId>
@@ -176,16 +178,16 @@
 				<artifactId>dev.galasa.selenium.manager</artifactId>
 				<version>0.15.0</version>
 			</dependency>
-            <dependency>
-                <groupId>dev.galasa</groupId>
-                <artifactId>dev.galasa.jmeter.manager</artifactId>
-                <version>0.15.0</version>
-            </dependency>
-            <dependency>
-                <groupId>dev.galasa</groupId>
-                <artifactId>dev.galasa.textscan.manager</artifactId>
-                <version>0.15.0</version>
-            </dependency>
+			<dependency>
+				<groupId>dev.galasa</groupId>
+				<artifactId>dev.galasa.jmeter.manager</artifactId>
+				<version>0.15.0</version>
+			</dependency>
+			<dependency>
+				<groupId>dev.galasa</groupId>
+				<artifactId>dev.galasa.textscan.manager</artifactId>
+				<version>0.15.0</version>
+			</dependency>
 			<dependency>
 				<groupId>commons-io</groupId>
 				<artifactId>commons-io</artifactId>
@@ -258,4 +260,16 @@
 			</plugins>
 		</pluginManagement>
 	</build>
+
+	<distributionManagement>
+		<repository>
+			<id>galasa.release.repo</id>
+			<url>${galasa.release.repo}</url>
+		</repository>
+		<snapshotRepository>
+			<id>galasa.snapshot.repo</id>
+			<url>${galasa.snapshot.repo}</url>
+		</snapshotRepository>
+	</distributionManagement>
+
 </project>

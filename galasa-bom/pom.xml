@@ -176,7 +176,7 @@
 			<dependency>
 				<groupId>dev.galasa</groupId>
 				<artifactId>dev.galasa.selenium.manager</artifactId>
-				<version>0.15.0</version>
+				<version>0.16.0</version>
 			</dependency>
 			<dependency>
 				<groupId>dev.galasa</groupId>

@@ -20,6 +20,13 @@
 	</distributionManagement>
 
 	<dependencies>
+{{range .Artifacts}}
+        <dependency>
+            <groupId>{{.GroupId}}</groupId>
+            <artifactId>{{.ArtifactId}}</artifactId>
+            <version>{{.Version}}</version>
+        </dependency>
+    {{end}}
 	</dependencies>
 
 	<build>

@@ -27,11 +27,11 @@ framework:
 
     
   - artifact: dev.galasa.framework.docker.controller
-    version: 0.15.0
+    version: 0.16.0
     obr: true
     
   - artifact: dev.galasa.framework.k8s.controller
-    version: 0.15.0
+    version: 0.16.0
     obr: true
     
   - artifact: dev.galasa.framework.maven.repository
@@ -138,6 +138,12 @@ managers:
     bom: true
 
   - artifact: dev.galasa.http.manager
+    version: 0.16.0
+    obr: true
+    bom: true
+    mvp: true
+    
+  - artifact: dev.galasa.ipnetwork.manager
     version: 0.16.0
     obr: true
     bom: true
@@ -283,12 +289,6 @@ managers:
     obr: true
     mvp: true
     
-  - artifact: dev.galasa.ipnetwork.manager
-    version: 0.15.0
-    obr: true
-    bom: true
-    mvp: true
-    
   - artifact: dev.galasa.java.manager
     version: 0.15.0
     obr: true
@@ -415,7 +415,7 @@ external:
     
   - group: commons-codec
     artifact: commons-codec 
-    version: 1.11
+    version: 1.15
     obr: true
     bom: true
     isolated: true

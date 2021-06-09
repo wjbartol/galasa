@@ -126,11 +126,29 @@ managers:
     obr: true
     bom: true
     
+  - artifact: dev.galasa.docker.manager
+    version: 0.16.0
+    obr: true
+    bom: true
+    mvp: true
+    
   - artifact: dev.galasa.galasaecosystem.manager
     version: 0.16.0
     obr: true
     bom: true
 
+  - artifact: dev.galasa.http.manager
+    version: 0.16.0
+    obr: true
+    bom: true
+    mvp: true
+    
+  - artifact: dev.galasa.kubernetes.manager
+    version: 0.16.0
+    obr: true
+    bom: true
+    mvp: true
+    
   - artifact: dev.galasa.linux.manager.ivt
     version: 0.16.0
     obr: true
@@ -145,6 +163,11 @@ managers:
     version: 0.16.0
     obr: true
     mvp: true
+    
+  - artifact: dev.galasa.textscan.manager
+    version: 0.16.0
+    obr: true
+    bom: true
     
   - artifact: dev.galasa.zos.manager
     version: 0.16.0
@@ -176,6 +199,12 @@ managers:
     mvp: true
     
   - artifact: dev.galasa.zosfile.zosmf.manager
+    version: 0.16.0
+    obr: true
+    bom: true
+    mvp: true
+    
+  - artifact: dev.galasa.zosrseapi.manager
     version: 0.16.0
     obr: true
     bom: true
@@ -231,12 +260,6 @@ managers:
     obr: true
     mvp: true
     
-  - artifact: dev.galasa.docker.manager
-    version: 0.15.0
-    obr: true
-    bom: true
-    mvp: true
-    
   - artifact: dev.galasa.docker.manager.ivt
     version: 0.15.0
     obr: true
@@ -254,12 +277,6 @@ managers:
   - artifact: dev.galasa.galasaecosystem.manager.ivt
     version: 0.15.0
     obr: true
-    
-  - artifact: dev.galasa.http.manager
-    version: 0.15.0
-    obr: true
-    bom: true
-    mvp: true
     
   - artifact: dev.galasa.http.manager.ivt
     version: 0.15.0
@@ -296,12 +313,6 @@ managers:
     version: 0.15.0
     obr: true
     
-  - artifact: dev.galasa.kubernetes.manager
-    version: 0.15.0
-    obr: true
-    bom: true
-    mvp: true
-    
   - artifact: dev.galasa.kubernetes.manager.ivt
     version: 0.15.0
     obr: true
@@ -312,11 +323,6 @@ managers:
     bom: true
     
   - artifact: dev.galasa.linux.manager
-    version: 0.15.0
-    obr: true
-    bom: true
-    
-  - artifact: dev.galasa.textscan.manager
     version: 0.15.0
     obr: true
     bom: true
@@ -354,12 +360,6 @@ managers:
     bom: true
     
   - artifact: dev.galasa.zosprogram.manager 
-    version: 0.15.0
-    obr: true
-    bom: true
-    mvp: true
-    
-  - artifact: dev.galasa.zosrseapi.manager
     version: 0.15.0
     obr: true
     bom: true
@@ -429,7 +429,7 @@ external:
     
   - group: commons-io
     artifact: commons-io
-    version: 2.6
+    version: 2.9.0
     obr: true
     bom: true
     mvp: true

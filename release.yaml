@@ -649,14 +649,14 @@ external:
     
   - group: org.apache.httpcomponents
     artifact: httpclient-osgi
-    version: 4.5.8
+    version: 4.5.13
     obr: true
     bom: true
     isolated: true
     
   - group: org.apache.httpcomponents
     artifact: httpcore-osgi
-    version: 4.4.11
+    version: 4.4.14
     obr: true
     bom: true
     isolated: true

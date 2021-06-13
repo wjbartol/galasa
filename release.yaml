@@ -685,6 +685,6 @@ external:
 
   - group: org.yaml 
     artifact: snakeyaml 
-    version: 1.19 
+    version: 1.29
     obr: true 
     isolated: true

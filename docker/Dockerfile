@@ -8,4 +8,4 @@ ARG gitHash
 RUN sed -i 's/\/gradle"/\/maven"/' /usr/local/apache2/conf/httpd.conf
 
 COPY repo/ /usr/local/apache2/htdocs/
-RUN echo -n ${gitHash} > /usr/local/apache2/htdocs/maven.githash
+COPY maven.githash /usr/local/apache2/htdocs/maven.githash

@@ -71,7 +71,17 @@
         </developer>
     </developers>
 
+    <scm>
+        <url>https://github.com/galasa-dev/framework</url>
+        <connection>scm:git:git:://github.com/galasa-dev/framework</connection>
+        <developerConnection>scm:git:git:://github.com/galasa-dev/framework</developerConnection>
+    </scm>
 
+    <issueManagement>
+        <url>https://github.com/galasa-dev/projectmanagement/issues</url>
+        <system>GitHub</system>
+    </issueManagement>
+    
 	<dependencyManagement>
         <dependencies>
 {{range .Artifacts}}

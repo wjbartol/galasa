@@ -76,10 +76,6 @@
 		<maven.compiler.source>${java.version}</maven.compiler.source>
 		<maven.compiler.target>${java.version}</maven.compiler.target>
 		<maven.build.timestamp.format>yyyyMMddHHmm</maven.build.timestamp.format>
-
-		<gpg.skip>true</gpg.skip>
-		<gpg.executable>/usr/bin/gpg2</gpg.executable>
-		<gpg.keyname>C43F690BFADF88D8378721CEA00445C65AB3E02B</gpg.keyname>
 	</properties>
 
 	<dependencies>

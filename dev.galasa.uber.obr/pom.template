@@ -5,7 +5,7 @@
 
 	<groupId>dev.galasa</groupId>
 	<artifactId>dev.galasa.uber.obr</artifactId>
-	<version>0.16.0</version>
+	<version>{{.Release}}</version>
 	<packaging>galasa-obr</packaging>
 
     <name>Galasa OSGi Bundle Repository</name>

@@ -135,7 +135,7 @@ managers:
     isolated: true
     
   - artifact: dev.galasa.cicsts.manager
-    version: 0.16.0
+    version: 0.17.0
     obr: true
     bom: true
     isolated: true
@@ -169,7 +169,7 @@ managers:
     isolated: true
     
   - artifact: dev.galasa.cicsts.resource.manager
-    version: 0.16.0
+    version: 0.17.0
     obr: true
     bom: true
     isolated: true
@@ -366,21 +366,21 @@ managers:
     isolated: true
     
   - artifact: dev.galasa.zosfile.rseapi.manager
-    version: 0.16.0
+    version: 0.17.0
     obr: true
     bom: true
     mvp: true
     isolated: true
     
   - artifact: dev.galasa.zosfile.zosmf.manager
-    version: 0.16.0
+    version: 0.17.0
     obr: true
     bom: true
     mvp: true
     isolated: true
     
   - artifact: dev.galasa.zosliberty.manager
-    version: 0.15.0
+    version: 0.17.0
     obr: true
     bom: true
     isolated: true

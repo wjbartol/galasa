@@ -147,13 +147,13 @@ managers:
     isolated: true
     
   - artifact: dev.galasa.cicsts.ceda.manager
-    version: 0.15.0
+    version: 0.17.0
     obr: true
     bom: true
     isolated: true
     
   - artifact: dev.galasa.cicsts.ceda.manager.ivt
-    version: 0.15.0
+    version: 0.17.0
     obr: true
     isolated: true
     

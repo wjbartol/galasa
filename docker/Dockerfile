@@ -1,7 +1,6 @@
-ARG gradleVersion
 ARG dockerRepository
 ARG branch
-FROM ${dockerRepository}/galasadev/galasa-maven-gradle:${gradleVersion}-${branch}
+FROM ${dockerRepository}/galasadev/galasa-maven-gradle:${branch}
 
 ARG gitHash
 

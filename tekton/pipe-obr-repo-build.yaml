@@ -15,8 +15,6 @@ spec:
   params:
   - name: distBranch
     type: string
-  - name: version
-    type: string
   - name: noPush
     type: string
     default: ""
@@ -27,10 +25,6 @@ spec:
     params:
     - name: distBranch
       value: $(params.distBranch)
-    - name: version
-      value: $(params.version)
-    - name: managersVersion
-      value: $(params.version)
     - name: managersSourceRepo
       value: https://cicscit.hursley.ibm.com/galasadev/$(params.distBranch)/maven/managers/
     - name: mavenCentralRepo

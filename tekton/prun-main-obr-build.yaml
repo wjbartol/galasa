@@ -12,8 +12,6 @@ spec:
   params:
   - name: distBranch
     value: main
-  - name: version
-    value: 0.17.0
   pipelineRef:
     name: obr-repo-build
   serviceAccountName: build-bot

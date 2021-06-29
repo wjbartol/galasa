@@ -1,0 +1,65 @@
+#
+# Licensed Materials - Property of IBM
+# 
+# (c) Copyright IBM Corp. 2021.
+#
+apiVersion: tekton.dev/v1beta1
+kind: Pipeline
+metadata:
+  name: javadoc-build
+  namespace: galasa-tekton
+spec:
+  resources:
+  - name: git-obr
+    type: git
+  params:
+  - name: distBranch
+    type: string
+  - name: noPush
+    type: string
+    default: ""
+  tasks:
+  - name: javadoc-build
+    taskRef:
+      name: javadoc-build
+    params:
+    - name: distBranch
+      value: $(params.distBranch)
+    - name: managersSourceRepo
+      value: https://cicscit.hursley.ibm.com/galasadev/$(params.distBranch)/maven/managers/
+    - name: mavenCentralRepo
+      value: https://nexus.cics-ts.hur.hdclab.intranet.ibm.com/repository/proxy/
+    - name: noPush
+      value: $(params.noPush)
+    resources:
+      inputs:
+      - name: git-obr
+        resource: git-obr
+  - name: recycle-javadoc
+    taskRef:
+      name: recycle-deployment
+    runAfter:
+    - javadoc-build
+    when:
+    - input: "$(params.noPush)"
+      operator: notin
+      values: ["--no-push"]
+    params:
+    - name: namespace
+      value: galasa-development
+    - name: deployment
+      value: maven-$(params.distBranch)-javadoc
+  - name: recycle-apidoc
+    taskRef:
+      name: recycle-deployment
+    runAfter:
+    - javadoc-build
+    when:
+    - input: "$(params.noPush)"
+      operator: notin
+      values: ["--no-push"]
+    params:
+    - name: namespace
+      value: galasa-development
+    - name: deployment
+      value: maven-$(params.distBranch)-apidocs

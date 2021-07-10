@@ -19,6 +19,7 @@ framework:
   - artifact: dev.galasa.framework
     version: 0.16.0
     obr: true
+    bom: true
     mvp: true
     
   - artifact: galasa-boot

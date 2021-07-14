@@ -244,19 +244,19 @@ managers:
     isolated: true
     
   - artifact: dev.galasa.java.manager
-    version: 0.15.0
+    version: 0.17.0
     obr: true
     bom: true
     isolated: true
     
   - artifact: dev.galasa.java.ubuntu.manager
-    version: 0.15.0
+    version: 0.17.0
     obr: true
     bom: true
     isolated: true
     
   - artifact: dev.galasa.java.windows.manager
-    version: 0.15.0
+    version: 0.17.0
     obr: true
     bom: true
     isolated: true

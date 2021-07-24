@@ -1,3 +1,8 @@
+#
+# Licensed Materials - Property of IBM
+# 
+# (c) Copyright IBM Corp. 2021.
+#
 apiVersion: galasa.dev/v1alpha
 kind: Release
 metadata:

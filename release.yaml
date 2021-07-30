@@ -28,7 +28,7 @@ framework:
     mvp: true
     
   - artifact: galasa-boot
-    version: 0.16.0
+    version: 0.17.0
     mvp: true
 
     

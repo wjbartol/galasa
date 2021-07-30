@@ -104,7 +104,7 @@ api:
     isolated: true
     
   - artifact: dev.galasa.framework.api.ras
-    version: 0.15.0
+    version: 0.17.0
     obr: true
     isolated: true
     

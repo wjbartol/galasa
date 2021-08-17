@@ -301,7 +301,7 @@ managers:
     isolated: true
     
   - artifact: dev.galasa.linux.manager
-    version: 0.15.0
+    version: 0.17.0
     obr: true
     bom: true
     isolated: true
@@ -312,7 +312,7 @@ managers:
     isolated: true
     
   - artifact: dev.galasa.openstack.manager
-    version: 0.15.0
+    version: 0.17.0
     obr: true
     bom: true
     isolated: true

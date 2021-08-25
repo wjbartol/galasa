@@ -204,7 +204,7 @@ managers:
     isolated: true
     
   - artifact: dev.galasa.docker.manager.ivt
-    version: 0.15.0
+    version: 0.17.0
     obr: true
     mvp: true
     isolated: true

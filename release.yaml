@@ -394,6 +394,12 @@ managers:
     bom: true
     isolated: true
     
+  - artifact: dev.galasa.zosliberty.angel.manager
+    version: 0.17.0
+    obr: true
+    bom: true
+    isolated: true
+    
   - artifact: dev.galasa.zos.manager
     version: 0.17.0
     obr: true

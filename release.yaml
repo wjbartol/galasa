@@ -204,7 +204,7 @@ managers:
     isolated: true
     
   - artifact: dev.galasa.docker.manager.ivt
-    version: 0.17.0
+    version: 0.18.0
     obr: true
     mvp: true
     isolated: true
@@ -395,7 +395,7 @@ managers:
     isolated: true
     
   - artifact: dev.galasa.zosliberty.angel.manager
-    version: 0.17.0
+    version: 0.18.0
     obr: true
     bom: true
     isolated: true

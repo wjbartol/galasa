@@ -1,7 +1,5 @@
 #
-# Licensed Materials - Property of IBM
-# 
-# (c) Copyright IBM Corp. 2021.
+# Copyright contributors to the Galasa project 
 #
 apiVersion: tekton.dev/v1beta1
 kind: Task
@@ -9,10 +7,10 @@ metadata:
   name: maven-repo-build
   namespace: galasa-tekton
 spec:
-  resources:
-    inputs:
-      - name: git-maven
-        type: git
+  workspaces:
+  - name: git-workspace
+    optional: false
+    mountpath: /workspace/git
   params:
   - name: distBranch
     type: string
@@ -68,11 +66,11 @@ spec:
     - name: mavengpg
       mountPath: /root/mavengpg
   - name: maven-build
-    workingDir: /workspace/git-maven/galasa-maven-plugin
+    workingDir: /workspace/git/maven/galasa-maven-plugin
     image: $(params.dockerRepo)/galasa/galasa-build
     command:
     - mvn
-    - -Dgalasa.release.repo=file:/workspace/git-maven/docker/repo/
+    - -Dgalasa.release.repo=file:/workspace/git/maven/docker/repo/
     - -Dgalasa.jacocoEnabled=$(params.jacocoEnabled)
     - -Dgalasa.isRelease=$(params.isRelease)
     - -Dgalasa.source.repo=$(params.mavenSourceRepo)
@@ -84,22 +82,22 @@ spec:
     - -fae
     - deploy
   - name: delete-plugin-metadata
-    workingDir: /workspace/git-maven/docker/repo/dev/galasa
+    workingDir: /workspace/git/maven/docker/repo/dev/galasa
     image: $(params.dockerRepo)/galasa/galasa-build
     script: |
       #!/bin/sh
       rm maven-metadata*
   - name: get-commit
-    workingDir: /workspace/git-maven
+    workingDir: /workspace/git/maven
     image: $(params.dockerRepo)/galasa/galasa-build
     script: |
       #!/bin/sh
       set +e
       COMMIT="$(git log --format="%H" -n 1)"
-      echo $COMMIT > /workspace/git-maven/docker/maven.githash
+      echo $COMMIT > /workspace/git/maven/docker/maven.githash
       echo commit is $COMMIT
   - name: docker-build
-    workingDir: /workspace/git-maven/docker
+    workingDir: /workspace/git/maven/docker
     image: $(params.dockerRepo)/library/kaniko-executor:latest
     env:
     - name: DOCKER_CONFIG
@@ -107,10 +105,10 @@ spec:
     command:
     - /kaniko/executor
     - --dockerfile=./Dockerfile
-    - --context=/workspace/git-maven/docker
+    - --context=/workspace/git/maven/docker
     - --destination=$(params.dockerRepo)/galasadev/galasa-maven-maven:$(params.distBranch)
     - $(params.noPush)
-    - --oci-layout-path=/workspace/git-maven/docker/image-digest
+    - --oci-layout-path=/workspace/git/maven/docker/image-digest
     - --skip-tls-verify
     - --skip-tls-verify-pull
     - --single-snapshot

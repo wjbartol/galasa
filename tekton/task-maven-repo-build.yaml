@@ -22,7 +22,7 @@ spec:
     default: https://repo.maven.apache.org/maven2/
   - name: dockerRepo
     type: string
-    default: nexus.cics-ts.hur.hdclab.intranet.ibm.com:8080
+    default: harbor-cicsk8s.hursley.ibm.com
   - name: noPush
     type: string
     default: ""
@@ -35,13 +35,13 @@ spec:
   steps:
   - name: gpgdirectory
     workingDir: /workspace
-    image: $(params.dockerRepo)/galasa/galasa-build
+    image: $(params.dockerRepo)/galasadev/galasa-build
     command:
     - mkdir
     - /workspace/gpg
   - name: import-gpg
     workingDir: /workspace
-    image: $(params.dockerRepo)/galasa/galasa-build
+    image: $(params.dockerRepo)/galasadev/galasa-build
     command:
     - gpg
     - --homedir
@@ -57,7 +57,7 @@ spec:
       mountPath: /root/mavengpg
   - name: copy-settings
     workingDir: /workspace
-    image: $(params.dockerRepo)/galasa/galasa-build
+    image: $(params.dockerRepo)/galasadev/galasa-build
     command:
     - cp
     - /root/mavengpg/settings.xml
@@ -67,7 +67,7 @@ spec:
       mountPath: /root/mavengpg
   - name: maven-build
     workingDir: /workspace/git/maven/galasa-maven-plugin
-    image: $(params.dockerRepo)/galasa/galasa-build
+    image: $(params.dockerRepo)/galasadev/galasa-build
     command:
     - mvn
     - -Dgalasa.release.repo=file:/workspace/git/maven/docker/repo/
@@ -83,13 +83,13 @@ spec:
     - deploy
   - name: delete-plugin-metadata
     workingDir: /workspace/git/maven/docker/repo/dev/galasa
-    image: $(params.dockerRepo)/galasa/galasa-build
+    image: $(params.dockerRepo)/galasadev/galasa-build
     script: |
       #!/bin/sh
       rm maven-metadata*
   - name: get-commit
     workingDir: /workspace/git/maven
-    image: $(params.dockerRepo)/galasa/galasa-build
+    image: $(params.dockerRepo)/galasadev/galasa-build
     script: |
       #!/bin/sh
       set +e
@@ -98,7 +98,7 @@ spec:
       echo commit is $COMMIT
   - name: docker-build
     workingDir: /workspace/git/maven/docker
-    image: $(params.dockerRepo)/library/kaniko-executor:latest
+    image: $(params.dockerRepo)/common/kaniko-project/executor:latest
     env:
     - name: DOCKER_CONFIG
       value: /tekton/home/.docker

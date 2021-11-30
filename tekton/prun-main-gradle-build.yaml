@@ -30,7 +30,6 @@ spec:
   - name: git-workspace
     volumeClaimTemplate:
       spec:
-        storageClassName: rbd
         accessModes:
           - ReadWriteOnce
         resources:

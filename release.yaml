@@ -240,3 +240,18 @@ external:
     version: 1.29
     obr: true 
     isolated: true
+
+  - group: org.bouncycastle 
+    artifact: bcpkix-jdk15on 
+    version: 1.69
+    obr: true
+
+  - group: org.bouncycastle 
+    artifact: bcprov-jdk15on 
+    version: 1.69
+    obr: true
+
+  - group: org.bouncycastle 
+    artifact: bcutil-jdk15on 
+    version: 1.69
+    obr: true

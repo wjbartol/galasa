@@ -18,7 +18,6 @@ spec:
   podTemplate:
     nodeSelector:
       beta.kubernetes.io/arch: amd64
-      platform: hdc
     volumes:
     - name: gpggradle
       secret:
@@ -30,6 +29,7 @@ spec:
   - name: git-workspace
     volumeClaimTemplate:
       spec:
+        storageClassName: longhorn-temp
         accessModes:
           - ReadWriteOnce
         resources:

@@ -13,10 +13,10 @@ pipeline {
       def mvnGoal    = 'install'
    }
    stages {
-// If it is the master branch, version 0.3.0 and master on all the other branches
+// If it is the main branch, version 0.3.0 and main on all the other branches
       stage('set-dev') {
          when {
-           environment name: 'GIT_BRANCH', value: 'origin/master'
+           environment name: 'GIT_BRANCH', value: 'origin/main'
          }
          steps {
             script {

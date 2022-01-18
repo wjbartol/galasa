@@ -1,7 +1,5 @@
 /*
- * Licensed Materials - Property of IBM
- * 
- * (c) Copyright IBM Corp. 2019.
+ * Copyright contributors to the Galasa project
  */
 package dev.galasa.maven.plugin;
 
@@ -88,7 +86,7 @@ public class MergeTestCatalogs extends AbstractMojo {
         try {
             Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
-            // *** Create the Master
+            // *** Create the Main
             JsonObject jsonRoot = new JsonObject();
             JsonObject jsonClasses = new JsonObject();
             jsonRoot.add("classes", jsonClasses);
@@ -226,7 +224,7 @@ public class MergeTestCatalogs extends AbstractMojo {
                     }
                 }
             }
-            // *** Write the new master test catalog
+            // *** Write the new Main test catalog
             String testCatlog = gson.toJson(jsonRoot);
 
             File fileTestCatalog = new File(outputDirectory, "testcatalog.json");

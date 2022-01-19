@@ -1,95 +1,89 @@
-#
-# Licensed Materials - Property of IBM
-# 
-# (c) Copyright IBM Corp. 2021.
-#
 apiVersion: tekton.dev/v1beta1
 kind: Task
 metadata:
   name: javadoc-build
   namespace: galasa-tekton
 spec:
-  resources:
-    inputs:
-      - name: git-obr
-        type: git
   params:
   - name: distBranch
     type: string
-  - name: mavenBaseVersion
+  - default: 0.16.0
+    name: mavenBaseVersion
     type: string
-    default: 0.16.0
-  - name: mavenCentralRepo
+  - default: https://artifactory-cicsk8s.hursley.ibm.com/artifactory/maven-proxy/
+    name: mavenCentralRepo
     type: string
-    default: https://nexus.cics-ts.hur.hdclab.intranet.ibm.com/repository/proxy/
-  - name: managersSourceRepo
+  - default: https://repo.maven.apache.org/maven2/
+    name: managersSourceRepo
     type: string
-    default: https://repo.maven.apache.org/maven2/
-  - name: dockerRepo
+  - default: harbor-cicsk8s.hursley.ibm.com
+    name: dockerRepo
     type: string
-    default: nexus.cics-ts.hur.hdclab.intranet.ibm.com:8080
-  - name: noPush
+  - default: ""
+    name: noPush
     type: string
-    default: ""
   steps:
-  - name: generate-pom
-    workingDir: /workspace/git-obr/javadocs
-    image: $(params.dockerRepo)/galasa/galasa-build
-    command:
-    - galasabld 
-    - template 
+  - command:
+    - galasabld
+    - template
     - --releaseMetadata
-    - ../release.yaml 
+    - /workspace/git/framework/release.yaml
+    - --releaseMetadata
+    - /workspace/git/extensions/release.yaml
+    - --releaseMetadata
+    - /workspace/git/managers/release.yaml
+    - --releaseMetadata
+    - /workspace/git/obr/release.yaml
     - --template
-    - pom.template 
+    - pom.template
     - --output
-    - pom.xml 
+    - pom.xml
     - --javadoc
-  - name: javadoc-build
-    workingDir: /workspace/git-obr/javadocs
-    image: $(params.dockerRepo)/galasa/galasa-build
-    command:
+    image: $(params.dockerRepo)/galasadev/galasa-build
+    name: generate-pom
+    resources: {}
+    workingDir: /workspace/git/obr/javadocs
+  - command:
     - mvn
     - -Dgpg.skip=true
-    - -Dgalasa.release.repo=file:/workspace/git-obr/javadocs/docker/repo/
+    - -Dgalasa.release.repo=file:/workspace/git/obr/javadocs/docker/repo/
     - -Dgalasa.source.repo=$(params.managersSourceRepo)
     - -Dgalasa.central.repo=$(params.mavenCentralRepo)
     - -Dmaven.javadoc.failOnError=false
     - --settings
-    - /workspace/git-obr/settings.xml
+    - /workspace/git/obr/settings.xml
     - -B
     - -e
     - -fae
     - deploy
-  - name: javadoc-image-build
-    workingDir: /workspace/git-obr/javadocs
-    image: $(params.dockerRepo)/library/kaniko-executor:latest
-    env:
-    - name: DOCKER_CONFIG
-      value: /tekton/home/.docker
-    command:
+    image: $(params.dockerRepo)/galasadev/galasa-build
+    name: javadoc-build
+    resources: {}
+    workingDir: /workspace/git/obr/javadocs
+  - command:
     - /kaniko/executor
     - --dockerfile=./Dockerfile
-    - --context=/workspace/git-obr/javadocs
+    - --context=/workspace/git/obr/javadocs
     - --destination=$(params.dockerRepo)/galasadev/galasa-javadocs:$(params.distBranch)
     - $(params.noPush)
-    - --oci-layout-path=/workspace/git-obr/docker/image-digest
+    - --oci-layout-path=/workspace/git/obr/docker/image-digest
     - --skip-tls-verify
     - --skip-tls-verify-pull
     - --single-snapshot
     - --verbosity=info
-    - --build-arg=dockerRepository=$(params.dockerRepo)
+    - --build-arg=dockerRepository=$(params.dockerRepo)/dockerhub
     - --build-arg=branch=$(params.distBranch)
-  - name: javadoc-repo-build
-    workingDir: /workspace/git-obr/javadocs/docker
-    image: $(params.dockerRepo)/library/kaniko-executor:latest
     env:
     - name: DOCKER_CONFIG
-      value: /tekton/home/.docker
-    command:
+      value: /tekton/creds/.docker
+    image: $(params.dockerRepo)/common/kaniko-project/executor:latest
+    name: javadoc-image-build
+    resources: {}
+    workingDir: /workspace/git/obr/javadocs
+  - command:
     - /kaniko/executor
     - --dockerfile=./Dockerfile
-    - --context=/workspace/git-obr/javadocs/docker
+    - --context=/workspace/git/obr/javadocs/docker
     - --destination=$(params.dockerRepo)/galasadev/galasa-maven-javadoc:$(params.distBranch)
     - $(params.noPush)
     - --oci-layout-path=/workspace/git-gradle/docker/image-digest
@@ -100,3 +94,13 @@ spec:
     - --build-arg=dockerRepository=$(params.dockerRepo)
     - --build-arg=baseVersion=$(params.mavenBaseVersion)
     - --build-arg=branch=$(params.distBranch)
+    env:
+    - name: DOCKER_CONFIG
+      value: /tekton/creds/.docker
+    image: $(params.dockerRepo)/common/kaniko-project/executor:latest
+    name: javadoc-repo-build
+    resources: {}
+    workingDir: /workspace/git/obr/javadocs/docker
+  workspaces:
+  - mountPath: /workspace/git
+    name: git-workspace

@@ -1,65 +1,136 @@
-#
-# Licensed Materials - Property of IBM
-# 
-# (c) Copyright IBM Corp. 2021.
-#
 apiVersion: tekton.dev/v1beta1
 kind: Pipeline
 metadata:
   name: javadoc-build
   namespace: galasa-tekton
 spec:
-  resources:
-  - name: git-obr
-    type: git
   params:
   - name: distBranch
     type: string
-  - name: noPush
+  - name: refspec
     type: string
-    default: ""
+  - default: ""
+    name: noPush
+    type: string
   tasks:
-  - name: javadoc-build
+  - name: clone-framework
+    params:
+    - name: url
+      value: https://github.com/galasa-dev/framework
+    - name: revision
+      value: $(params.distBranch)
+    - name: depth
+      value: "99999999"
+    - name: subdirectory
+      value: framework
     taskRef:
-      name: javadoc-build
+      kind: Task
+      name: git-clone
+    workspaces:
+    - name: output
+      workspace: git-workspace
+  - name: clone-extensions
+    params:
+    - name: url
+      value: https://github.com/galasa-dev/extensions
+    - name: revision
+      value: $(params.distBranch)
+    - name: depth
+      value: "99999999"
+    - name: subdirectory
+      value: extensions
+    taskRef:
+      kind: Task
+      name: git-clone
+    workspaces:
+    - name: output
+      workspace: git-workspace
+  - name: clone-managers
+    params:
+    - name: url
+      value: https://github.com/galasa-dev/managers
+    - name: revision
+      value: $(params.distBranch)
+    - name: depth
+      value: "99999999"
+    - name: subdirectory
+      value: managers
+    taskRef:
+      kind: Task
+      name: git-clone
+    workspaces:
+    - name: output
+      workspace: git-workspace
+  - name: clone-obr
+    params:
+    - name: url
+      value: https://github.com/galasa-dev/obr
+    - name: revision
+      value: $(params.distBranch)
+    - name: refspec
+      value: $(params.refspec)
+    - name: depth
+      value: "99999999"
+    - name: subdirectory
+      value: obr
+    taskRef:
+      kind: Task
+      name: git-clone
+    workspaces:
+    - name: output
+      workspace: git-workspace
+  - name: javadoc-build
     params:
     - name: distBranch
       value: $(params.distBranch)
     - name: managersSourceRepo
-      value: https://cicscit.hursley.ibm.com/galasadev/$(params.distBranch)/maven/managers/
+      value: https://galasadev-cicsk8s.hursley.ibm.com/$(params.distBranch)/maven/managers/
     - name: mavenCentralRepo
       value: https://nexus.cics-ts.hur.hdclab.intranet.ibm.com/repository/proxy/
     - name: noPush
       value: $(params.noPush)
-    resources:
-      inputs:
-      - name: git-obr
-        resource: git-obr
-  - name: recycle-javadoc
-    taskRef:
-      name: recycle-deployment
     runAfter:
-    - javadoc-build
-    when:
-    - input: "$(params.noPush)"
-      operator: notin
-      values: ["--no-push"]
+    - clone-obr
+    - clone-framework
+    - clone-extensions
+    - clone-managers
+    taskRef:
+      kind: Task
+      name: javadoc-build
+    workspaces:
+    - name: git-workspace
+      workspace: git-workspace
+  - name: recycle-javadoc
     params:
     - name: namespace
-      value: galasa-development
+      value: galasa-branch-$(params.distBranch)
     - name: deployment
       value: maven-$(params.distBranch)-javadoc
-  - name: recycle-apidoc
-    taskRef:
-      name: recycle-deployment
     runAfter:
     - javadoc-build
+    taskRef:
+      kind: Task
+      name: recycle-deployment
     when:
-    - input: "$(params.noPush)"
+    - input: $(params.noPush)
       operator: notin
-      values: ["--no-push"]
+      values:
+      - --no-push
+  - name: recycle-apidoc
     params:
     - name: namespace
-      value: galasa-development
+      value: galasa-branch-$(params.distBranch)
     - name: deployment
       value: maven-$(params.distBranch)-apidocs
+    runAfter:
+    - javadoc-build
+    taskRef:
+      kind: Task
+      name: recycle-deployment
+    when:
+    - input: $(params.noPush)
+      operator: notin
+      values:
+      - --no-push
+  workspaces:
+  - name: git-workspace

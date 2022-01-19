@@ -19,10 +19,10 @@ spec:
     default: 0.16.0
   - name: mavenCentralRepo
     type: string
-    default: https://nexus.cics-ts.hur.hdclab.intranet.ibm.com/repository/proxy/
+    default: https://artifactory-cicsk8s.hursley.ibm.com/artifactory/maven-proxy/
   - name: mavenSourceRepo
     type: string
-    default: https://nexus.cics-ts.hur.hdclab.intranet.ibm.com/repository/proxy/
+    default: https://artifactory-cicsk8s.hursley.ibm.com/artifactory/maven-proxy/
   - name: dockerRepo
     type: string
     default: harbor-cicsk8s.hursley.ibm.com

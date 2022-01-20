@@ -223,6 +223,23 @@ public class MergeTestCatalogs extends AbstractMojo {
                         jsonGherkin.add(name, tc);
                     }
                 }
+                
+                // Adhoc entries
+                
+                for(Entry<String, JsonElement> toplevelCategory : testCatalogRoot.entrySet()) {
+                	String name = toplevelCategory.getKey();
+                	if (name.equals("classes")
+                			|| name.equals("packages")
+                			|| name.equals("bundles")
+                			|| name.equals("sharedEnvironments")
+                			|| name.equals("gherkin")
+                			|| name.equals("metadata")) {
+                		continue;
+                	}
+                	mergeObject(name, toplevelCategory.getValue(), jsonRoot);
+                }
+                
+                
             }
             // *** Write the new Main test catalog
             String testCatlog = gson.toJson(jsonRoot);
@@ -237,7 +254,41 @@ public class MergeTestCatalogs extends AbstractMojo {
 
     }
 
-    private JsonObject getEmbeddedTestCatalog(Artifact artifact, Gson gson) {
+    private void mergeObject(String name, JsonElement level, JsonObject parent) {
+    	if (level.isJsonArray()) {
+    		mergeArray(name, (JsonArray)level, parent);
+    		return;
+    	}
+    	
+    	if (!level.isJsonObject()) {
+    		getLog().error("Unable to merge entries from " + name);
+    	}
+    	
+   	
+    	JsonObject jsonCategory = parent.getAsJsonObject(name);
+		if (jsonCategory == null) {
+			jsonCategory = new JsonObject();
+			parent.add(name, jsonCategory);
+		}
+		
+		for(Entry<String, JsonElement> nextLevel : ((JsonObject)level).entrySet()) {
+			mergeObject(nextLevel.getKey(), nextLevel.getValue(), jsonCategory);
+		}
+	}
+
+	private void mergeArray(String name, JsonArray level, JsonObject parent) {
+		JsonArray array = parent.getAsJsonArray(name);
+		if (array == null) {
+			array = new JsonArray();
+			parent.add(name, array);
+		}
+		
+		for(int i = 0; i < level.size(); i++) {
+			array.add(level.get(i));
+		}
+	}
+
+	private JsonObject getEmbeddedTestCatalog(Artifact artifact, Gson gson) {
 
         try (ZipInputStream zis = new ZipInputStream(new BufferedInputStream(new FileInputStream(artifact.getFile())))) {
             ZipEntry entry = null;

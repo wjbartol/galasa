@@ -1,6 +1,6 @@
 ARG dockerRepository
 ARG branch
-FROM ${dockerRepository}/galasadev/galasa-buildutilities:latest AS buildutils
+FROM ${dockerRepository}/galasadev/galasa-bld-binary:${branch} AS buildutils
 
 FROM ${dockerRepository}/galasadev/galasa-maven-managers:${branch}
 

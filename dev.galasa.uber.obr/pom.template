@@ -46,26 +46,14 @@
             <organizationUrl>https://www.ibm.com</organizationUrl>
         </developer>
         <developer>
-            <name>Matthew Chivers</name>
-            <email>matthew.chivers@ibm.com</email>
+            <name>Kees Jansen</name>
+            <email>kees.jansen@ibm.com</email>
             <organization>IBM</organization>
             <organizationUrl>https://www.ibm.com</organizationUrl>
         </developer>
         <developer>
             <name>Jade Carino</name>
             <email>jade.carino@ibm.com</email>
-            <organization>IBM</organization>
-            <organizationUrl>https://www.ibm.com</organizationUrl>
-        </developer>
-        <developer>
-            <name>Charlie Meek</name>
-            <email>charlie.meek@ibm.com</email>
-            <organization>IBM</organization>
-            <organizationUrl>https://www.ibm.com</organizationUrl>
-        </developer>
-        <developer>
-            <name>Diana Slepikaite</name>
-            <email>diana.slepikaite@ibm.com</email>
             <organization>IBM</organization>
             <organizationUrl>https://www.ibm.com</organizationUrl>
         </developer>

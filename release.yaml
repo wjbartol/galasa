@@ -130,6 +130,7 @@ external:
     artifact: commons-collections4
     version: 4.4
     obr: true
+    mvp: true
     isolated: true
     
   - group: org.apache.commons 

@@ -4,8 +4,6 @@ FROM ${dockerRepository}/galasadev/galasa-bld-binary:main AS buildutils
 
 FROM ${dockerRepository}/galasadev/galasa-maven-managers:${branch}
 
-RUN sed -i 's/\/managers"/\/obr"/' /usr/local/apache2/conf/httpd.conf
-
 RUN apt update && apt install -y ca-certificates && rm -rf /var/lib/apt/lists/*
 
 COPY repo/ /usr/local/apache2/htdocs/

@@ -79,6 +79,13 @@ external:
     mvp: true
     isolated: true
     
+  - group: dev.galasa
+    artifact: jta
+    version: 1.1
+    obr: true
+    mvp: true
+    isolated: true
+
   - group: io.prometheus
     artifact: simpleclient
     version: 0.6.0

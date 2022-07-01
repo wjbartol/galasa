@@ -83,10 +83,6 @@
 		<maven.compiler.source>1.8</maven.compiler.source>
 		<maven.compiler.target>1.8</maven.compiler.target>
 		<maven.build.timestamp.format>yyyyMMddHHmm</maven.build.timestamp.format>
-
-		<gpg.skip>true</gpg.skip>
-		<gpg.executable>/usr/bin/gpg2</gpg.executable>
-		<gpg.keyname>5712920B2E4880520B3A40CC85A934078534E695</gpg.keyname>
 	</properties>
 
 	<build>
@@ -127,7 +123,6 @@
 								<arg>--pinentry-mode</arg>
 								<arg>loopback</arg>
 							</gpgArguments>
-							<passphraseServerId>gpg.passphrase</passphraseServerId>
 						</configuration>
 					</execution>
 				</executions>

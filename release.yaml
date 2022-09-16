@@ -224,8 +224,8 @@ external:
     mvp: true
     
   - group: org.apache.velocity 
-    artifact: velocity
-    version: 1.7 
+    artifact: velocity-engine-core
+    version: 2.3
     obr: true
     mvp: true
     isolated: true

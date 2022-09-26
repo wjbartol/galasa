@@ -149,7 +149,7 @@ external:
     
   - group: org.apache.commons
     artifact: commons-lang3
-    version: 3.8.1
+    version: 3.11
     obr: true
     bom: true
     mvp: true
@@ -262,9 +262,4 @@ external:
   - group: org.bouncycastle 
     artifact: bcutil-jdk15on 
     version: 1.69
-    obr: true
-
-  - group: org.apache.commons
-    artifact: commons-lang3
-    version: 3.11
     obr: true

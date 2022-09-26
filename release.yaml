@@ -263,3 +263,8 @@ external:
     artifact: bcutil-jdk15on 
     version: 1.69
     obr: true
+
+  - group: org.apache.commons
+    artifact: commons-lang3
+    version: 3.11
+    obr: true

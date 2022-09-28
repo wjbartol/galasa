@@ -263,3 +263,10 @@ external:
     artifact: bcutil-jdk15on 
     version: 1.69
     obr: true
+
+  - group: org.slf4j
+    artifact: slf4j-api
+    version: 1.7.25
+    obr: true
+    mvp: true
+    isolated: true

@@ -4,5 +4,6 @@ Gradle plugins for Galasa
 ## To Build locally
 Use the `.build-locally.sh` script to invoke a build.
 
-You may wish to set the following environment variables to control the local build inputs and outputs:
+See the notes at the top of the script for a list of environment variables which can be over-ridden to control build behaviour.
+
 

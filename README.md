@@ -1,5 +1,5 @@
 # Wrapping
-This repository wraps Galasa dependencies that are not in an OSGI bundle into a OSGI bundles which can be run in Galasa. 
+This repository wraps Galasa dependencies that are not in an OSGI bundle into OSGI bundles which can be run in Galasa. 
 
 ## Documentation
 

@@ -43,7 +43,19 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-dependency-plugin</artifactId>
+                <version>3.3.0</version>
 				<executions>
+                    <execution>
+						<id>gather-dependent-jars</id>
+						<phase>generate-sources</phase>
+						<goals>
+							<goal>unpack-dependencies</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>${project.build.directory}/classes</outputDirectory>
+                            <excludeGroupIds>dev.galasa</excludeGroupIds>
+						</configuration>
+					</execution>
 					<execution>
 						<id>unpack</id>
 						<phase>generate-sources</phase>
@@ -58,22 +70,30 @@
 					</execution>
 				</executions>
 			</plugin>
+
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-javadoc-plugin</artifactId>
+                <version>3.4.1</version>
 				<executions>
 					<execution>
 						<phase>compile</phase>
 						<id>attach-javadocs</id>
 						<goals>
-							<goal>javadoc-no-fork</goal>
+							<goal>javadoc</goal>
 						</goals>
 					</execution>
 				</executions>
 				<configuration>
 					<failOnError>false</failOnError>
+                    <debug>false</debug>
 					<sourcepath>${project.build.directory}/sources</sourcepath>
-					<excludePackageNames>*.ivt:*.internal.*:*.internal:dev.galasa.framework.maven.repository.spi</excludePackageNames>
+					<excludePackageNames>*.ivt:*.internal.*:*.internal:dev.galasa.framework.maven.repository.spi:OSGI-OPT.*</excludePackageNames>
+                    <additionalOptions>
+                        -classpath
+                        '${project.build.directory}/classes'
+                        --frames
+                    </additionalOptions>
 					<tags>
                         <tag>
                             <name>galasa.annotation</name>

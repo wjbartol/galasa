@@ -109,7 +109,6 @@ fi
 #-----------------------------------------------------------------------------------------                   
 # Main logic.
 #-----------------------------------------------------------------------------------------                   
-
 source_dir="."
 
 project=$(basename ${BASEDIR})
@@ -150,7 +149,10 @@ log_file=${LOGS_DIR}/${project}.txt
 info "Log will be placed at ${log_file}"
 date > ${log_file}
 
+
+#------------------------------------------------------------------------------------
 h2 "Checking dependencies are present..."
+#------------------------------------------------------------------------------------
 declare -a required_files=(
 ${WORKSPACE_DIR}/${project}/dev.galasa.uber.obr/pom.template
 ${WORKSPACE_DIR}/framework/release.yaml 
@@ -167,8 +169,10 @@ do
     fi
 done
 
-h2 "Generating a pom.xml from a template, using all the versions of everything..."
 
+#------------------------------------------------------------------------------------
+h2 "Generating a pom.xml from a template, using all the versions of everything..."
+#------------------------------------------------------------------------------------
 cat << EOF >> ${log_file}
 Using command:
 
@@ -237,7 +241,9 @@ fi
 success "pom.xml built ok - log is at ${log_file}"
 
 
+#------------------------------------------------------------------------------------
 h2 "Building the generated pom.xml to package-up things into an OBR we can publish..."
+#------------------------------------------------------------------------------------
 mvn \
 -Dgpg.passphrase=${GPG_PASSPHRASE} \
 -Dgalasa.source.repo=${SOURCE_MAVEN} \
@@ -248,5 +254,57 @@ rc=$? ; if [[ "${rc}" != "0" ]]; then
     error "Failed to push built obr into maven repo ${project}" 
     exit 1 
 fi
+success "OK"
+
+#------------------------------------------------------------------------------------
+h1 "Building the javadoc using the OBR..."
+#------------------------------------------------------------------------------------
+
+
+#------------------------------------------------------------------------------------
+h2 "Generate a pom.xml we can use with the javadoc"
+#------------------------------------------------------------------------------------
+cd ${WORKSPACE_DIR}/obr/javadocs
+
+${GALASA_BUILD_TOOL_PATH} template \
+--releaseMetadata ${WORKSPACE_DIR}/framework/release.yaml \
+--releaseMetadata ${WORKSPACE_DIR}/extensions/release.yaml \
+--releaseMetadata ${WORKSPACE_DIR}/managers/release.yaml \
+--releaseMetadata ${WORKSPACE_DIR}/obr/release.yaml \
+--template pom.template \
+--output pom.xml \
+--javadoc 
+
+rc=$? ; if [[ "${rc}" != "0" ]]; then error "Failed to create the pom.xml for javadoc" ;  exit 1 ; fi
+success "OK - pom.xml file created at ${WORKSPACE_DIR}/obr/javadocs/pom.xml"
+
+
+#------------------------------------------------------------------------------------
+h2 "Building the javadoc with maven"
+#------------------------------------------------------------------------------------
+cd ${WORKSPACE_DIR}/obr/javadocs
+mvn clean install \
+--settings ${WORKSPACE_DIR}/obr/settings.xml \
+--batch-mode \
+--errors \
+--fail-at-end \
+-Dgpg.skip=true \
+-Dgalasa.source.repo=${SOURCE_MAVEN} \
+-Dgalasa.central.repo=https://repo.maven.apache.org/maven2/ \
+-Dmaven.javadoc.failOnError=true
+
+rc=$? ; if [[ "${rc}" != "0" ]]; then error "maven failed for javadoc build" ;  exit 1 ; fi
+
+success "OK - Build the galasa-uber-javadoc-*.zip file:"
+ls ${WORKSPACE_DIR}/obr/javadocs/target/*.zip
+
+# #------------------------------------------------------------------------------------
+# h2 "Packaging the javadoc into a docker file"
+# #------------------------------------------------------------------------------------
+# cd ${WORKSPACE_DIR}/obr/javadocs
+# docker --file ${WORKSPACE_DIR}/automation/dockerfiles/javadocs/javadocs-image-dockerfile .
+   
+# rc=$? ; if [[ "${rc}" != "0" ]]; then error "Failed to create the docker image containing the javadoc" ;  exit 1 ; fi
+# success "OK"
 
 success "Project ${project} built - OK - log is at ${log_file}"

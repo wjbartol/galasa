@@ -197,7 +197,7 @@ external:
     
   - group: org.apache.felix
     artifact: org.apache.felix.http.jetty
-    version: 4.0.14
+    version: 4.2.2
     obr: true
     isolated: true
     

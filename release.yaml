@@ -190,14 +190,14 @@ external:
     
   - group: org.apache.felix
     artifact: org.apache.felix.http.servlet-api
-    version: 1.1.2
+    version: 2.1.0
     obr: true
     mvp: true
     isolated: true
     
   - group: org.apache.felix
     artifact: org.apache.felix.http.jetty
-    version: 4.0.14
+    version: 5.0.0
     obr: true
     isolated: true
     

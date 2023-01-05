@@ -245,7 +245,7 @@ external:
 
   - group: org.yaml 
     artifact: snakeyaml 
-    version: 1.30
+    version: 1.33
     obr: true 
     isolated: true
 

@@ -128,7 +128,7 @@ external:
     
   - group: org.apache.bcel
     artifact: bcel
-    version: 6.3
+    version: 6.7.0
     obr: true
     mvp: true
     isolated: true
@@ -149,7 +149,7 @@ external:
     
   - group: org.apache.commons
     artifact: commons-lang3
-    version: 3.11
+    version: 3.12.0
     obr: true
     bom: true
     mvp: true

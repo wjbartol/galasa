@@ -92,7 +92,6 @@
                     <additionalOptions>
                         -classpath
                         '${project.build.directory}/classes'
-                        --frames
                     </additionalOptions>
 					<tags>
                         <tag>

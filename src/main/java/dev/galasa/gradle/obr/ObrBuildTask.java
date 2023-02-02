@@ -8,45 +8,62 @@ package dev.galasa.gradle.obr;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileReader;
+import java.lang.reflect.Field;
 import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Iterator;
 
 import org.apache.felix.bundlerepository.DataModelHelper;
+import org.apache.felix.bundlerepository.Requirement;
 import org.apache.felix.bundlerepository.Repository;
 import org.apache.felix.bundlerepository.Resource;
 import org.apache.felix.bundlerepository.impl.DataModelHelperImpl;
 import org.apache.felix.bundlerepository.impl.RepositoryImpl;
 import org.apache.felix.bundlerepository.impl.ResourceImpl;
 import org.gradle.api.DefaultTask;
+import org.gradle.api.Project;
 import org.gradle.api.artifacts.Configuration;
 import org.gradle.api.artifacts.ConfigurationContainer;
 import org.gradle.api.artifacts.ResolvedArtifact;
 import org.gradle.api.artifacts.ResolvedDependency;
+import org.gradle.api.logging.Logger;
 import org.gradle.api.tasks.TaskAction;
 
 public class ObrBuildTask extends DefaultTask {
 
     private Path pathObr;
 
+    private Project project = getProject();
+
+    private Field requirementsField;
+
+    public Logger logger = getLogger();
+
     @TaskAction
     public void genobr() throws Exception {
-        getLogger().debug("Building OBR");
+        logger.debug("Building OBR");
 
+        try {
+            this.requirementsField = ResourceImpl.class.getDeclaredField("m_reqList");
+            this.requirementsField.setAccessible(true);
+        } catch (NoSuchFieldException | SecurityException e) {
+            throw new Exception("Unable to adjust the ResourceImpl class for a workaround a bug in Felix", e);
+        }
 
         DataModelHelper obrDataModelHelper = new DataModelHelperImpl();
         RepositoryImpl newRepository = new RepositoryImpl();
 
-        Configuration config = getProject().getConfigurations().getByName("bundle");
+        Configuration config = project.getConfigurations().getByName("bundle");
         for(ResolvedDependency dependency : config.getResolvedConfiguration().getFirstLevelModuleDependencies()) {
             processBundle(obrDataModelHelper, newRepository, dependency);
         }
         
-        config = getProject().getConfigurations().getByName("obr");
+        config = project.getConfigurations().getByName("obr");
         for(ResolvedDependency dependency : config.getResolvedConfiguration().getFirstLevelModuleDependencies()) {
             processObr(obrDataModelHelper, newRepository, dependency);
         }
@@ -58,7 +75,7 @@ public class ObrBuildTask extends DefaultTask {
         
         SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd-HHmmss");
         newRepository.setLastModified(sdf.format(Calendar.getInstance().getTime()));
-
+        newRepository.setName(project.getGroup().toString()+":"+project.getName()+":"+project.getVersion().toString());
         try (BufferedWriter writer = Files.newBufferedWriter(this.pathObr)) {
             obrDataModelHelper.writeRepository(newRepository, writer);
         } catch (Exception e) {
@@ -66,21 +83,21 @@ public class ObrBuildTask extends DefaultTask {
         }
         
         if (newRepository.getResources().length == 1) {
-            getLogger().info("Repository created with " + newRepository.getResources().length
+            logger.info("Repository created with " + newRepository.getResources().length
                     + " resource stored in " + this.pathObr.toAbsolutePath().toString());
         } else {
-            getLogger().info("Repository created with " + newRepository.getResources().length
+            logger.info("Repository created with " + newRepository.getResources().length
                     + " resource stored in " + this.pathObr.toAbsolutePath().toString());
         }
     }
 
     private void processBundle(DataModelHelper obrDataModelHelper, RepositoryImpl newRepository, ResolvedDependency dependency) throws ObrException {
         String id = dependency.getName();
-        getLogger().debug("Processing bundle " + id);
+        logger.debug("Processing bundle " + id);
         
         Iterator<ResolvedArtifact> artifactIterator = dependency.getAllModuleArtifacts().iterator();
         if (!artifactIterator.hasNext()) {
-            getLogger().warn("No artifacts found for " + id);
+            logger.warn("No artifacts found for " + id);
             return;
         }
         
@@ -90,7 +107,7 @@ public class ObrBuildTask extends DefaultTask {
         
         String fileName = file.getName();
         if (!fileName.endsWith(".jar")) {
-            getLogger().warn("Bundle " + id + " does not end with .jar, ignoring");
+            logger.warn("Bundle " + id + " does not end with .jar, ignoring");
             return;
         }
         
@@ -102,6 +119,26 @@ public class ObrBuildTask extends DefaultTask {
             if (newResource == null) {
                 throw new ObrException("Problem with file '" + id + ". Not an OSGi bundle?");
             }
+
+            // Cloned from the maven plugin in order to ensure consistancy in obrs
+            // **** https://issues.apache.org/jira/browse/FELIX-575
+            try {
+                @SuppressWarnings("unchecked")
+                ArrayList<Requirement> requirements = (ArrayList<Requirement>) this.requirementsField.get(newResource);
+                
+                if (requirements != null) {
+                    Iterator<Requirement> requirementi = requirements.iterator();
+                    while(requirementi.hasNext()) {
+                        Requirement requirement = requirementi.next();
+                        if ("ee".equals(requirement.getName())) {
+                            requirementi.remove();
+                        }
+                    }
+                }
+            } catch(Throwable t) {
+                throw new Exception("Unable to remove execution environment requirement", t);
+            }
+
             newResource.put(Resource.URI, location);
             newRepository.addResource(newResource);
 
@@ -112,7 +149,7 @@ public class ObrBuildTask extends DefaultTask {
         }
         
         if (artifactIterator.hasNext()) {
-            getLogger().warn("Dependency " + id + " resolved to more than one artifact");
+            logger.warn("Dependency " + id + " resolved to more than one artifact");
         }
         
     }
@@ -120,11 +157,11 @@ public class ObrBuildTask extends DefaultTask {
     
     private void processObr(DataModelHelper obrDataModelHelper, RepositoryImpl newRepository, ResolvedDependency dependency) throws ObrException {
         String id = dependency.getName();
-        getLogger().warn("Processing OBR " + id);
+        logger.warn("Processing OBR " + id);
         
         Iterator<ResolvedArtifact> artifactIterator = dependency.getAllModuleArtifacts().iterator();
         if (!artifactIterator.hasNext()) {
-            getLogger().warn("No artifacts found for " + id);
+            logger.warn("No artifacts found for " + id);
             return;
         }
         
@@ -134,7 +171,7 @@ public class ObrBuildTask extends DefaultTask {
         
         String fileName = file.getName();
         if (!fileName.endsWith(".obr")) {
-            getLogger().warn("OBR " + id + " does end with .obr, ignoring");
+            logger.warn("OBR " + id + " does end with .obr, ignoring");
             return;
         }
         
@@ -144,7 +181,7 @@ public class ObrBuildTask extends DefaultTask {
 
                 for (Resource resource : mergeRepository.getResources()) {
                     newRepository.addResource(resource);
-                    getLogger().warn("Merged bundle " + resource.getPresentationName() + " - "
+                    logger.warn("Merged bundle " + resource.getPresentationName() + " - "
                             + resource.getId() + " to repository");
                 }
             }
@@ -155,7 +192,7 @@ public class ObrBuildTask extends DefaultTask {
         }
         
         if (artifactIterator.hasNext()) {
-            getLogger().warn("Dependency " + id + " resolved to more than one artifact");
+            logger.warn("Dependency " + id + " resolved to more than one artifact");
         }
     }
 
@@ -163,11 +200,11 @@ public class ObrBuildTask extends DefaultTask {
 
     public void apply() {
         // Run during apply phase, need to decide on the output file name
-        Path buildDirectory = Paths.get(getProject().getBuildDir().toURI());
+        Path buildDirectory = Paths.get(project.getBuildDir().toURI());
         this.pathObr = buildDirectory.resolve("galasa.obr");
         getOutputs().file(pathObr);
         
-        ConfigurationContainer configurations = getProject().getConfigurations();
+        ConfigurationContainer configurations = project.getConfigurations();
         Configuration bundleConfiguration = configurations.findByName("bundle");
         Configuration obrConfiguration = configurations.findByName("obr");
         

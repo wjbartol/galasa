@@ -235,7 +235,7 @@ ${GALASA_BUILD_TOOL_PATH} template \
 
 rc=$? 
 if [[ "${rc}" != "0" ]]; then 
-    error "Failed to convery release.yaml files into a pom.xml ${project}" 
+    error "Failed to convery release.yaml files into a pom.xml ${project}. log file is ${log_file}" 
     exit 1 
 fi
 success "pom.xml built ok - log is at ${log_file}"
@@ -251,7 +251,7 @@ mvn \
 2>&1 >> ${log_file}
 
 rc=$? ; if [[ "${rc}" != "0" ]]; then 
-    error "Failed to push built obr into maven repo ${project}" 
+    error "Failed to push built obr into maven repo ${project}. log file is ${log_file}"
     exit 1 
 fi
 success "OK"

@@ -69,8 +69,77 @@ tasks.withType(Sign) {
 
 
 publishing {
-    publications {
-        pluginMaven(MavenPublication) {
+    afterEvaluate {
+        publications {
+            pluginMaven(MavenPublication) {
+            }
+
+            withType(MavenPublication) {
+                pom {
+                    url = 'https://galasa.dev'
+                    name = 'Galasa Gradle Plugins'
+                    description = 'This project contains the Galasa Gradle plugins'
+                    licenses {
+                        license {
+                            name = 'Eclipse Public License - v 2.0'
+                            url = 'https://www.eclipse.org/legal/epl-2.0/t'
+                        }
+                    }
+                    developers {
+                        developer {
+                            name = 'Michael Baylis'
+                            email = 'Michael.Baylis@uk.ibm.com'
+                            organization = 'IBM'
+                            organizationUrl = 'https://www.ibm.com'
+                        }
+                        developer {
+                            name = 'William Yates'
+                            email = 'wyates@uk.ibm.com'
+                            organization = 'IBM'
+                            organizationUrl = 'https://www.ibm.com'
+                        }
+                        developer {
+                            name = 'Michael Cobbett'
+                            email = 'mike_cobbett@uk.ibm.com'
+                            organization = 'IBM'
+                            organizationUrl = 'https://www.ibm.com'
+                        }
+                        developer {
+                            name = 'Jade Carino'
+                            email = 'jade.carino@ibm.com'
+                            organization = 'IBM'
+                            organizationUrl = 'https://www.ibm.com'
+                        }
+                        developer {
+                            name = 'Savvas Kyriacou'
+                            email = 'savvasky@uk.ibm.com'
+                            organization = 'IBM'
+                            organizationUrl = 'https://www.ibm.com'
+                        }
+                        developer {
+                            name = 'Aaron Jhaj'
+                            email = 'aaron.jhaj@ibm.com'
+                            organization = 'IBM'
+                            organizationUrl = 'https://www.ibm.com'
+                        }
+                        developer {
+                            name = 'Eamonn Mansour'
+                            email = 'eamonn.mansour@ibm.com'
+                            organization = 'IBM'
+                            organizationUrl = 'https://www.ibm.com'
+                        }
+                    }
+                    scm {
+                        connection = 'scm:git:git:://github.com/galasa-dev/gradle'
+                        developerConnection = 'scm:git:git:://github.com/galasa-dev/gradle'
+                        url = 'https://github.com/galasa-dev/gradle'
+                    }
+                    issueManagement {
+                        system = 'GitHub'
+                        url = 'https://github.com/galasa-dev/projectmanagement/issues'
+                    }
+                }
+            }
         }
     }
     repositories {

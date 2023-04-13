@@ -113,12 +113,23 @@ CONSOLE_FLAG=--console=plain
 log_file=${LOGS_DIR}/${project}.txt
 info "Log will be placed at ${log_file}"
 
+
+info "About to run this command:"
+cat << EOF
 gradle --no-daemon \
 ${CONSOLE_FLAG} \
 -Dorg.gradle.java.home=${JAVA_HOME} \
 -PsourceMaven=${SOURCE_MAVEN} ${OPTIONAL_DEBUG_FLAG} \
 clean build publishToMavenLocal \
-2>&1 > ${log_file}
+$cmd 2>&1 > ${log_file}
+EOF
+
+gradle --no-daemon \
+${CONSOLE_FLAG} \
+-Dorg.gradle.java.home=${JAVA_HOME} \
+-PsourceMaven=${SOURCE_MAVEN} ${OPTIONAL_DEBUG_FLAG} \
+clean build publishToMavenLocal \
+$cmd 2>&1 > ${log_file}
 
 rc=$? ; if [[ "${rc}" != "0" ]]; then cat ${log_file} ; error "Failed to build ${project}" ; exit 1 ; fi
 cat ${log_file} | grep --ignore-case "warning"

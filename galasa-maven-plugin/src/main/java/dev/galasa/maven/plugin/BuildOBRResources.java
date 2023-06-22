@@ -105,28 +105,24 @@ public class BuildOBRResources extends AbstractMojo {
                 if (artifact.isResolved() && artifact.getScope().equals("compile")) {
 
                     getLog().info("BuildOBRResources: Artifact resolved, and scope is compile. "+
-                            " artifact id:"+artifact.getArtifactId()+
-                            " classifier:"+artifact.getClassifier()+
-                            " group:"+artifact.getGroupId()+
-                            " id:"+artifact.getId()
+                            " id:"+artifact.getId()+
+                            " classifier:"+artifact.getClassifier()
                     );
 
                     File file = artifact.getFile();
                     if (file == null) {
                         throw new MojoFailureException("BuildOBRResources: Failed to process artifact. Null file handle."+
-                            " artifact id:"+artifact.getArtifactId()+
-                            " classifier:"+artifact.getClassifier()+
-                            " group:"+artifact.getGroupId()+
-                            " id:"+artifact.getId());
+                            " id:"+artifact.getId()+
+                            " classifier:"+artifact.getClassifier()
+                        );
                     }
 
                     String name = file.getName();
                     if (name == null) {
                         throw new MojoFailureException("BuildOBRResources: Failed to process artifact. Null name"+
-                            " artifact id:"+artifact.getArtifactId()+
-                            " classifier:"+artifact.getClassifier()+
-                            " group:"+artifact.getGroupId()+
-                            " id:"+artifact.getId());
+                            " id:"+artifact.getId()+
+                            " classifier:"+artifact.getClassifier()
+                        );
                     }
 
                     if (name.endsWith(".jar")) {

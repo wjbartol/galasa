@@ -103,10 +103,37 @@ public class BuildOBRResources extends AbstractMojo {
         for (Object dependency : project.getDependencyArtifacts()) {
             if (dependency instanceof DefaultArtifact) {
                 DefaultArtifact artifact = (DefaultArtifact) dependency;
+
                 if (artifact.isResolved() && artifact.getScope().equals("compile")) {
-                    if (artifact.getFile().getName().endsWith(".jar")) {
+
+                    getLog().info("BuildOBRResources: Artifact resolved, and scope is compile. "+
+                            " artifact id:"+artifact.getArtifactId()+
+                            " classifier:"+artifact.getClassifier()+
+                            " group:"+artifact.getGroupId()+
+                            " id:"+artifact.getId()
+                    );
+
+                    File file = artifact.getFile();
+                    if (file == null) {
+                        throw new MojoFailureException("BuildOBRResources: Failed to process artifact. Null file handle."+
+                            " artifact id:"+artifact.getArtifactId()+
+                            " classifier:"+artifact.getClassifier()+
+                            " group:"+artifact.getGroupId()+
+                            " id:"+artifact.getId());
+                    }
+
+                    String name = file.getName();
+                    if (name == null) {
+                        throw new MojoFailureException("BuildOBRResources: Failed to process artifact. Null name"+
+                            " artifact id:"+artifact.getArtifactId()+
+                            " classifier:"+artifact.getClassifier()+
+                            " group:"+artifact.getGroupId()+
+                            " id:"+artifact.getId());
+                    }
+
+                    if (name.endsWith(".jar")) {
                         processBundle(artifact, newRepository, obrDataModelHelper);
-                    } else if (artifact.getFile().getName().endsWith(".obr")) {
+                    } else if (name.endsWith(".obr")) {
                         processObr(artifact, newRepository, obrDataModelHelper);
                     }
                 }

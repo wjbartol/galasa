@@ -250,18 +250,18 @@ external:
     isolated: true
 
   - group: org.bouncycastle 
-    artifact: bcpkix-jdk15on 
-    version: 1.69
+    artifact: bcpkix-jdk18on 
+    version: 1.75
     obr: true
 
   - group: org.bouncycastle 
-    artifact: bcprov-jdk15on 
-    version: 1.69
+    artifact: bcprov-jdk18on 
+    version: 1.75
     obr: true
 
   - group: org.bouncycastle 
-    artifact: bcutil-jdk15on 
-    version: 1.69
+    artifact: bcutil-jdk18on 
+    version: 1.75
     obr: true
 
   - group: org.slf4j

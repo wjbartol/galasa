@@ -240,6 +240,20 @@ if [[ "${rc}" != "0" ]]; then
 fi
 success "pom.xml built ok - log is at ${log_file}"
 
+#------------------------------------------------------------------------------------
+function check_developer_attribution_present {
+    h2 "Checking that pom has developer attribution."
+    cat ${BASEDIR}/galasa-bom/pom.template | grep "<developers>" >> /dev/null
+    rc=$?
+    if [[ "${rc}" != "0" ]]; then
+        error "The pom.template must have developer attribution inside. \
+        This is needed so that we can publish artifacts to maven central."
+        exit 1
+    fi
+    success "OK. Pom template contains developer attribution, which maven central needs at the point we publish."
+}
+
+check_developer_attribution_present
 
 #------------------------------------------------------------------------------------
 h2 "Building the generated pom.xml to package-up things into an OBR we can publish..."
@@ -306,5 +320,7 @@ ls ${WORKSPACE_DIR}/obr/javadocs/target/*.zip
    
 # rc=$? ; if [[ "${rc}" != "0" ]]; then error "Failed to create the docker image containing the javadoc" ;  exit 1 ; fi
 # success "OK"
+
+
 
 success "Project ${project} built - OK - log is at ${log_file}"

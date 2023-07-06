@@ -13,3 +13,6 @@ Snap*.trc
 **/build
 **/.gradle
 **/gradle/wrapper
+
+# A folder scripts can put things into without fear of them being checked-in.
+temp/

@@ -321,6 +321,4 @@ ls ${WORKSPACE_DIR}/obr/javadocs/target/*.zip
 # rc=$? ; if [[ "${rc}" != "0" ]]; then error "Failed to create the docker image containing the javadoc" ;  exit 1 ; fi
 # success "OK"
 
-
-
 success "Project ${project} built - OK - log is at ${log_file}"

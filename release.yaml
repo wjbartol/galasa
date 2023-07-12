@@ -14,8 +14,8 @@ release:
     
 external:
   bundles:
-  - group: com.google.code.gson
-    artifact: gson
+  - group: com.google.code.gso
+    artifact: gso
     version: 2.9.0
     obr: true
     bom: true
@@ -23,7 +23,7 @@ external:
     isolated: true
     
   - group: com.sun.activation
-    artifact: jakarta.activation
+    artifact: jakarta.activatio
     version: 2.0.0
     obr: true
     mvp: true
@@ -118,7 +118,7 @@ external:
     mvp: true
     isolated: true
     
-  - group: javax.validation
+  - group: javax.validatio
     artifact: validation-api
     version: 2.0.1.Final
     obr: true

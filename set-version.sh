@@ -99,11 +99,14 @@ if [[ -z $component_version ]]; then
     exit 1
 fi
 
-
+#-------------------------------------------------------------------------------
 function update_release_yaml {
+
+    h1 "Updating the release.yaml so the OBR version gets set."
 
     source_file=$1
     target_file=$2
+    temp_dir=$3
 
     # Read through the release yaml and set the version of the framework bundle explicitly.
     # It's on the line after the line containing 'release:'
@@ -128,14 +131,39 @@ function update_release_yaml {
         fi
 
     done < $source_file > $target_file
+
+    # Copy the temp files back to where they belong...
+    cp $temp_dir/release.yaml ${BASEDIR}/release.yaml
+
+    success "OBR release.yaml updated OK."
 }
 
-temp_dir=$BASEDIR/temp/version_bump
+
+function update_dependency_versions {
+    h1 "Updating the version in the dependencies so we pull in the correct managers, framework...etc."
+    temp_dir=$1
+
+    set -o pipefail
+
+    temp_file="$temp_dir/dependency-build.gradle"
+    source_file="${BASEDIR}/dependency-download/build.gradle"
+    info "Using temporary file $temp_file"
+    info "Updating file $source_file"
+
+    cat $source_file | sed "s/^version[ ]*=[ ]*\".*\"[ ]*$/version = \"$component_version\"/1" > $temp_file
+    rc=$?; if [[ "${rc}" != "0" ]]; then error "Failed to set version into dependency-download build.gradle file."; exit 1; fi
+    cp $temp_file ${source_file}
+    rc=$?; if [[ "${rc}" != "0" ]]; then error "Failed to overwrite new version of dependency-download build.gradle file."; exit 1; fi
+
+    success "Dependency versions updated OK."
+}
+
+temp_dir=$BASEDIR/temp/versions
+rm -fr $temp_dir
 mkdir -p $temp_dir
 
-update_release_yaml ${BASEDIR}/release.yaml $temp_dir/release.yaml
 
-# Copy the temp files back to where they belong...
+update_release_yaml ${BASEDIR}/release.yaml $temp_dir/release.yaml $temp_dir
 
-cp $temp_dir/release.yaml ${BASEDIR}/release.yaml
+update_dependency_versions $temp_dir
 

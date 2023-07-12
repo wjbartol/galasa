@@ -149,96 +149,109 @@ log_file=${LOGS_DIR}/${project}.txt
 info "Log will be placed at ${log_file}"
 date > ${log_file}
 
+#------------------------------------------------------------------------------------
+function read_component_version {
+    h2 "Getting the component version"
+    export component_version=$(cat release.yaml | grep "version" | head -1 | cut -f2 -d':' | xargs)
+    success "Component version is $component_version"
+}
 
 #------------------------------------------------------------------------------------
-h2 "Checking dependencies are present..."
-#------------------------------------------------------------------------------------
-declare -a required_files=(
-${WORKSPACE_DIR}/${project}/dev.galasa.uber.obr/pom.template
-${WORKSPACE_DIR}/framework/release.yaml 
-${WORKSPACE_DIR}/extensions/release.yaml 
-${WORKSPACE_DIR}/managers/release.yaml 
-${WORKSPACE_DIR}/obr/release.yaml 
-)
-for required_file in "${required_files[@]}"
-do
-    if [[ -e "${required_file}" ]]; then
-        success "OK - File ${required_file} is present."
-    else 
-        error "File ${required_file} is required, but missing. Clone the sibling project to make sure it exists."
+function download_dependencies {
+    h2 "Downloading the managers release.yaml"
+    cd ${BASEDIR}/dependency-download
+
+    gradle getDeps \
+        -Dgalasa.source.repo=${SOURCE_MAVEN} \
+        -Dgalasa.central.repo=https://repo.maven.apache.org/maven2/ 
+    rc=$?
+    if [[ "${rc}" != "0" ]]; then 
+        error "Failed to download dependencies. rc=$rc"
+        exit 1
     fi
-done
-
+    success "OK - dependencies downloaded."
+}
 
 #------------------------------------------------------------------------------------
-h2 "Generating a pom.xml from a template, using all the versions of everything..."
+function check_dependencies_present {
+    h2 "Checking dependencies are present..."
+
+    declare -a required_files=(
+    ${WORKSPACE_DIR}/${project}/dev.galasa.uber.obr/pom.template
+    ${WORKSPACE_DIR}/framework/release.yaml 
+    ${WORKSPACE_DIR}/extensions/release.yaml 
+    ${BASEDIR}/dependency-download/build/dependencies/dev.galasa.managers-${component_version}.yaml 
+    ${WORKSPACE_DIR}/obr/release.yaml 
+    )
+    for required_file in "${required_files[@]}"
+    do
+        if [[ -e "${required_file}" ]]; then
+            success "OK - File ${required_file} is present."
+        else 
+            error "File ${required_file} is required, but missing. Clone the sibling project to make sure it exists."
+            exit 1
+        fi
+    done
+}
+
 #------------------------------------------------------------------------------------
-cat << EOF >> ${log_file}
-Using command:
+function construct_obr_pom_xml {
+    h2 "Generating a pom.xml from a template, using all the versions of everything..."
 
-${GALASA_BUILD_TOOL_PATH} template \
-'--releaseMetadata' ${WORKSPACE_DIR}/framework/release.yaml \
-'--releaseMetadata' ${WORKSPACE_DIR}/extensions/release.yaml \
-'--releaseMetadata' ${WORKSPACE_DIR}/managers/release.yaml \
-'--releaseMetadata' ${WORKSPACE_DIR}/obr/release.yaml \
-'--template' pom.template \
-'--output' pom.xml \
-'--obr' \
-2>&1 >> ${log_file}
+    cd ${WORKSPACE_DIR}/${project}/dev.galasa.uber.obr
 
-EOF
+    # What's the architecture-variable name of the build tool we want for this local build ?
+    export ARCHITECTURE=$(uname -m) # arm64 or amd64
+    export GALASA_BUILD_TOOL_NAME=galasabld-darwin-${ARCHITECTURE}
 
-cd ${WORKSPACE_DIR}/${project}/dev.galasa.uber.obr
-
-# What's the architecture-variable name of the build tool we want for this local build ?
-export ARCHITECTURE=$(uname -m) # arm64 or amd64
-export GALASA_BUILD_TOOL_NAME=galasabld-darwin-${ARCHITECTURE}
-
-# Favour the galasabld tool if it's on the path, else use a locally-built version or fail if not available.
-GALASABLD_ON_PATH=$(which galasabld)
-rc=$?
-if [[ "${rc}" == "0" ]]; then
-    info "Using the 'galasabld' tool which is on the PATH"
-    GALASA_BUILD_TOOL_PATH=${GALASABLD_ON_PATH}
-else
-    GALASABLD_ON_PATH=$(which $GALASA_BUILD_TOOL_NAME)
+    # Favour the galasabld tool if it's on the path, else use a locally-built version or fail if not available.
+    GALASABLD_ON_PATH=$(which galasabld)
     rc=$?
     if [[ "${rc}" == "0" ]]; then
-        info "Using the '$GALASA_BUILD_TOOL_NAME' tool which is on the PATH"
+        info "Using the 'galasabld' tool which is on the PATH"
         GALASA_BUILD_TOOL_PATH=${GALASABLD_ON_PATH}
     else
-        info "The galasa build tool 'galasabld' or '$GALASA_BUILD_TOOL_NAME' is not on the path."
-        export GALASA_BUILD_TOOL_PATH=${WORKSPACE_DIR}/buildutils/bin/${GALASA_BUILD_TOOL_NAME}
-        if [[ ! -e ${GALASA_BUILD_TOOL_PATH} ]]; then
-            error "Cannot find the $GALASA_BUILD_TOOL_NAME tools on locally built workspace."
-            info "Try re-building the buildutils project"
-            exit 1
+        GALASABLD_ON_PATH=$(which $GALASA_BUILD_TOOL_NAME)
+        rc=$?
+        if [[ "${rc}" == "0" ]]; then
+            info "Using the '$GALASA_BUILD_TOOL_NAME' tool which is on the PATH"
+            GALASA_BUILD_TOOL_PATH=${GALASABLD_ON_PATH}
         else
-            info "Using the $GALASA_BUILD_TOOL_NAME tool at ${GALASA_BUILD_TOOL_PATH}"
+            info "The galasa build tool 'galasabld' or '$GALASA_BUILD_TOOL_NAME' is not on the path."
+            export GALASA_BUILD_TOOL_PATH=${WORKSPACE_DIR}/buildutils/bin/${GALASA_BUILD_TOOL_NAME}
+            if [[ ! -e ${GALASA_BUILD_TOOL_PATH} ]]; then
+                error "Cannot find the $GALASA_BUILD_TOOL_NAME tools on locally built workspace."
+                info "Try re-building the buildutils project"
+                exit 1
+            else
+                info "Using the $GALASA_BUILD_TOOL_NAME tool at ${GALASA_BUILD_TOOL_PATH}"
+            fi
         fi
     fi
-fi
 
-# Check local build version
-export GALASA_BUILD_TOOL_PATH=${WORKSPACE_DIR}/buildutils/bin/${GALASA_BUILD_TOOL_NAME}
-info "Using galasabld tool ${GALASA_BUILD_TOOL_PATH}"
+    # Check local build version
+    export GALASA_BUILD_TOOL_PATH=${WORKSPACE_DIR}/buildutils/bin/${GALASA_BUILD_TOOL_NAME}
+    info "Using galasabld tool ${GALASA_BUILD_TOOL_PATH}"
 
-${GALASA_BUILD_TOOL_PATH} template \
-'--releaseMetadata' ${WORKSPACE_DIR}/framework/release.yaml \
-'--releaseMetadata' ${WORKSPACE_DIR}/extensions/release.yaml \
-'--releaseMetadata' ${WORKSPACE_DIR}/managers/release.yaml \
-'--releaseMetadata' ${WORKSPACE_DIR}/obr/release.yaml \
-'--template' pom.template \
-'--output' pom.xml \
-'--obr' \
-2>&1 >> ${log_file}
+    cmd="${GALASA_BUILD_TOOL_PATH} template \
+    --releaseMetadata ${WORKSPACE_DIR}/framework/release.yaml \
+    --releaseMetadata ${WORKSPACE_DIR}/extensions/release.yaml \
+    --releaseMetadata ${BASEDIR}/dependency-download/build/dependencies/dev.galasa.managers-${component_version}.yaml \
+    --releaseMetadata ${WORKSPACE_DIR}/obr/release.yaml \
+    --template pom.template \
+    --output pom.xml \
+    --obr \
+    "
+    echo "Command is $cmd" >> ${log_file}
+    $cmd 2>&1 >> ${log_file}
 
-rc=$? 
-if [[ "${rc}" != "0" ]]; then 
-    error "Failed to convery release.yaml files into a pom.xml ${project}. log file is ${log_file}" 
-    exit 1 
-fi
-success "pom.xml built ok - log is at ${log_file}"
+    rc=$? 
+    if [[ "${rc}" != "0" ]]; then 
+        error "Failed to convert release.yaml files into a pom.xml ${project}. log file is ${log_file}" 
+        exit 1 
+    fi
+    success "pom.xml built ok - log is at ${log_file}"
+}
 
 #------------------------------------------------------------------------------------
 function check_developer_attribution_present {
@@ -253,64 +266,62 @@ function check_developer_attribution_present {
     success "OK. Pom template contains developer attribution, which maven central needs at the point we publish."
 }
 
-check_developer_attribution_present
+#------------------------------------------------------------------------------------
+function build_generated_pom {
+    h2 "Building the generated pom.xml to package-up things into an OBR we can publish..."
+    mvn \
+    -Dgpg.passphrase=${GPG_PASSPHRASE} \
+    -Dgalasa.source.repo=${SOURCE_MAVEN} \
+    -Dgalasa.central.repo=https://repo.maven.apache.org/maven2/ install \
+    2>&1 >> ${log_file}
 
-#------------------------------------------------------------------------------------
-h2 "Building the generated pom.xml to package-up things into an OBR we can publish..."
-#------------------------------------------------------------------------------------
-mvn \
--Dgpg.passphrase=${GPG_PASSPHRASE} \
--Dgalasa.source.repo=${SOURCE_MAVEN} \
--Dgalasa.central.repo=https://repo.maven.apache.org/maven2/ install \
-2>&1 >> ${log_file}
+    rc=$? ; if [[ "${rc}" != "0" ]]; then 
+        error "Failed to push built obr into maven repo ${project}. log file is ${log_file}"
+        exit 1 
+    fi
+    success "OK"
+}
 
-rc=$? ; if [[ "${rc}" != "0" ]]; then 
-    error "Failed to push built obr into maven repo ${project}. log file is ${log_file}"
-    exit 1 
-fi
-success "OK"
-
-#------------------------------------------------------------------------------------
-h1 "Building the javadoc using the OBR..."
-#------------------------------------------------------------------------------------
 
 
 #------------------------------------------------------------------------------------
-h2 "Generate a pom.xml we can use with the javadoc"
+function generate_javadoc_pom_xml {
+    h2 "Generate a pom.xml we can use with the javadoc"
+    #------------------------------------------------------------------------------------
+    cd ${WORKSPACE_DIR}/obr/javadocs
+
+    ${GALASA_BUILD_TOOL_PATH} template \
+    --releaseMetadata ${WORKSPACE_DIR}/framework/release.yaml \
+    --releaseMetadata ${WORKSPACE_DIR}/extensions/release.yaml \
+    --releaseMetadata ${WORKSPACE_DIR}/managers/release.yaml \
+    --releaseMetadata ${WORKSPACE_DIR}/obr/release.yaml \
+    --template pom.template \
+    --output pom.xml \
+    --javadoc 
+
+    rc=$? ; if [[ "${rc}" != "0" ]]; then error "Failed to create the pom.xml for javadoc" ;  exit 1 ; fi
+    success "OK - pom.xml file created at ${WORKSPACE_DIR}/obr/javadocs/pom.xml"
+}
+
 #------------------------------------------------------------------------------------
-cd ${WORKSPACE_DIR}/obr/javadocs
+function build_javadoc_pom {
+    h2 "Building the javadoc with maven"
+    cd ${WORKSPACE_DIR}/obr/javadocs
+    mvn clean install \
+    --settings ${WORKSPACE_DIR}/obr/settings.xml \
+    --batch-mode \
+    --errors \
+    --fail-at-end \
+    -Dgpg.skip=true \
+    -Dgalasa.source.repo=${SOURCE_MAVEN} \
+    -Dgalasa.central.repo=https://repo.maven.apache.org/maven2/ \
+    -Dmaven.javadoc.failOnError=true
 
-${GALASA_BUILD_TOOL_PATH} template \
---releaseMetadata ${WORKSPACE_DIR}/framework/release.yaml \
---releaseMetadata ${WORKSPACE_DIR}/extensions/release.yaml \
---releaseMetadata ${WORKSPACE_DIR}/managers/release.yaml \
---releaseMetadata ${WORKSPACE_DIR}/obr/release.yaml \
---template pom.template \
---output pom.xml \
---javadoc 
+    rc=$? ; if [[ "${rc}" != "0" ]]; then error "maven failed for javadoc build" ;  exit 1 ; fi
 
-rc=$? ; if [[ "${rc}" != "0" ]]; then error "Failed to create the pom.xml for javadoc" ;  exit 1 ; fi
-success "OK - pom.xml file created at ${WORKSPACE_DIR}/obr/javadocs/pom.xml"
-
-
-#------------------------------------------------------------------------------------
-h2 "Building the javadoc with maven"
-#------------------------------------------------------------------------------------
-cd ${WORKSPACE_DIR}/obr/javadocs
-mvn clean install \
---settings ${WORKSPACE_DIR}/obr/settings.xml \
---batch-mode \
---errors \
---fail-at-end \
--Dgpg.skip=true \
--Dgalasa.source.repo=${SOURCE_MAVEN} \
--Dgalasa.central.repo=https://repo.maven.apache.org/maven2/ \
--Dmaven.javadoc.failOnError=true
-
-rc=$? ; if [[ "${rc}" != "0" ]]; then error "maven failed for javadoc build" ;  exit 1 ; fi
-
-success "OK - Build the galasa-uber-javadoc-*.zip file:"
-ls ${WORKSPACE_DIR}/obr/javadocs/target/*.zip
+    success "OK - Build the galasa-uber-javadoc-*.zip file:"
+    ls ${WORKSPACE_DIR}/obr/javadocs/target/*.zip
+}
 
 # #------------------------------------------------------------------------------------
 # h2 "Packaging the javadoc into a docker file"
@@ -320,5 +331,15 @@ ls ${WORKSPACE_DIR}/obr/javadocs/target/*.zip
    
 # rc=$? ; if [[ "${rc}" != "0" ]]; then error "Failed to create the docker image containing the javadoc" ;  exit 1 ; fi
 # success "OK"
+
+read_component_version
+download_dependencies
+check_dependencies_present
+construct_obr_pom_xml
+check_developer_attribution_present
+build_generated_pom
+h1 "Building the javadoc using the OBR..."
+generate_javadoc_pom_xml
+build_javadoc_pom
 
 success "Project ${project} built - OK - log is at ${log_file}"

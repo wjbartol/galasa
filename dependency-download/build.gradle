@@ -1,0 +1,29 @@
+
+plugins {
+    id 'java'
+}
+
+// Note: The following version number is updated using the set-version.sh tool.
+// It is used as the version number of the managers bundle, which contains a yaml
+// file which is in a release.yaml, but published to maven, so that the OBR build 
+// can pick it up later.
+version = "0.30.0"
+
+repositories {
+    maven {
+        url "$sourceMaven"
+    }
+    maven {
+        url "$centralMaven"
+    }
+    mavenLocal()
+}
+
+dependencies {
+    runtime group: 'dev.galasa', name: 'dev.galasa.managers', version: version
+}
+
+task getDeps(type: Copy) {
+    from sourceSets.main.runtimeClasspath
+    into 'build/dependencies'
+}

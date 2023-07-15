@@ -176,11 +176,14 @@ function download_dependencies {
 function check_dependencies_present {
     h2 "Checking dependencies are present..."
 
+    export framework_manifest_path=${BASEDIR}/dependency-download/build/dependencies/dev.galasa.framework.manifest-${component_version}.yaml
+    export managers_manifest_path=${BASEDIR}/dependency-download/build/dependencies/dev.galasa.managers.manifest-${component_version}.yaml
+    
     declare -a required_files=(
     ${WORKSPACE_DIR}/${project}/dev.galasa.uber.obr/pom.template
-    ${WORKSPACE_DIR}/framework/release.yaml 
+    ${framework_manifest_path} 
     ${WORKSPACE_DIR}/extensions/release.yaml 
-    ${BASEDIR}/dependency-download/build/dependencies/dev.galasa.managers-${component_version}.yaml 
+    ${managers_manifest_path}
     ${WORKSPACE_DIR}/obr/release.yaml 
     )
     for required_file in "${required_files[@]}"
@@ -234,9 +237,9 @@ function construct_obr_pom_xml {
     info "Using galasabld tool ${GALASA_BUILD_TOOL_PATH}"
 
     cmd="${GALASA_BUILD_TOOL_PATH} template \
-    --releaseMetadata ${WORKSPACE_DIR}/framework/release.yaml \
+    --releaseMetadata ${framework_manifest_path} \
     --releaseMetadata ${WORKSPACE_DIR}/extensions/release.yaml \
-    --releaseMetadata ${BASEDIR}/dependency-download/build/dependencies/dev.galasa.managers-${component_version}.yaml \
+    --releaseMetadata ${managers_manifest_path} \
     --releaseMetadata ${WORKSPACE_DIR}/obr/release.yaml \
     --template pom.template \
     --output pom.xml \

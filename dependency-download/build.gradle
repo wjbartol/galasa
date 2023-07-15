@@ -20,8 +20,12 @@ repositories {
 }
 
 dependencies {
+<<<<<<< HEAD
     runtime group: 'dev.galasa', name: 'dev.galasa.managers.manifest', version: version
     runtime group: 'dev.galasa', name: 'dev.galasa.framework.manifest', version: version
+=======
+    runtime group: 'dev.galasa', name: 'dev.galasa.managers', version: version
+>>>>>>> main
 }
 
 task getDeps(type: Copy) {

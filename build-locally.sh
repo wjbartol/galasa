@@ -158,7 +158,7 @@ function read_component_version {
 
 #------------------------------------------------------------------------------------
 function download_dependencies {
-    h2 "Downloading the managers release.yaml"
+    h2 "Downloading the dependencies to get release.yaml information"
     cd ${BASEDIR}/dependency-download
 
     gradle getDeps \
@@ -176,8 +176,8 @@ function download_dependencies {
 function check_dependencies_present {
     h2 "Checking dependencies are present..."
 
-    export framework_manifest_path=${BASEDIR}/dependency-download/build/dependencies/dev.galasa.framework.manifest-${component_version}.yaml
-    export managers_manifest_path=${BASEDIR}/dependency-download/build/dependencies/dev.galasa.managers.manifest-${component_version}.yaml
+    export framework_manifest_path=${BASEDIR}/dependency-download/build/dependencies/dev.galasa.framework.manifest.yaml
+    export managers_manifest_path=${BASEDIR}/dependency-download/build/dependencies/dev.galasa.managers.manifest.yaml
     
     declare -a required_files=(
     ${WORKSPACE_DIR}/${project}/dev.galasa.uber.obr/pom.template
@@ -337,6 +337,7 @@ function build_javadoc_pom {
 
 read_component_version
 download_dependencies
+
 check_dependencies_present
 construct_obr_pom_xml
 check_developer_attribution_present

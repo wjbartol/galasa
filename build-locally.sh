@@ -1,5 +1,10 @@
 #! /usr/bin/env bash 
 
+#
+# Copyright contributors to the Galasa project
+#
+# SPDX-License-Identifier: EPL-2.0
+#
 #-----------------------------------------------------------------------------------------                   
 #
 # Objectives: Build this repository code locally.
@@ -121,5 +126,3 @@ cat ${LOG_FILE} | grep --ignore-case "warning"
 cat ${LOG_FILE} | grep --ignore-case "error"
 cat ${LOG_FILE} | grep --ignore-case "fail"
 success "Project ${project} built - OK - log is at ${LOG_FILE}"
-
-

@@ -6,8 +6,8 @@
 	<parent>
 		<groupId>dev.galasa</groupId>
 		<artifactId>galasa-wrapping-parent</artifactId>
-		<version>0.24.0</version>
-	</parent> 
+		<version>0.30.0</version>
+	</parent>
 
 	<artifactId>gson-eclipse</artifactId>
 	<version>2.7</version>
@@ -42,7 +42,7 @@
 										com.google.gson.JsonSyntaxExtension,
 										com.google.gson.reflect,
 										com.google.gson.stream,
-										com.google.gson.GsonBuilder	
+										com.google.gson.GsonBuilder
 						</Export-Package>
 					</instructions>
 				</configuration>

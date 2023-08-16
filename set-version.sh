@@ -1,5 +1,11 @@
 #! /usr/bin/env bash 
 
+#
+# Copyright contributors to the Galasa project
+#
+# SPDX-License-Identifier: EPL-2.0
+#
+
 #-----------------------------------------------------------------------------------------                   
 #
 # Objectives: Sets the version number of this component.
@@ -166,4 +172,3 @@ mkdir -p $temp_dir
 update_release_yaml ${BASEDIR}/release.yaml $temp_dir/release.yaml $temp_dir
 
 update_dependency_versions $temp_dir
-

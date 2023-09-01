@@ -1,5 +1,11 @@
 #! /usr/bin/env bash 
 
+#
+# Copyright contributors to the Galasa project
+#
+# SPDX-License-Identifier: EPL-2.0
+#
+
 #-----------------------------------------------------------------------------------------                   
 #
 # Objectives: Build this repository code locally.
@@ -178,6 +184,8 @@ function check_dependencies_present {
 
     export framework_manifest_path=${BASEDIR}/dependency-download/build/dependencies/dev.galasa.framework.manifest.yaml
     export managers_manifest_path=${BASEDIR}/dependency-download/build/dependencies/dev.galasa.managers.manifest.yaml
+    # export framework_manifest_path=${WORKSPACE_DIR}/framework/release.yaml
+    # export managers_manifest_path=${WORKSPACE_DIR}/managers/release.yaml
     
     declare -a required_files=(
     ${WORKSPACE_DIR}/${project}/dev.galasa.uber.obr/pom.template

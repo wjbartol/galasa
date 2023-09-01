@@ -20,8 +20,8 @@ repositories {
 }
 
 dependencies {
-    runtime group: 'dev.galasa', name: 'dev.galasa.managers.manifest', version: version
-    runtime group: 'dev.galasa', name: 'dev.galasa.framework.manifest', version: version
+    runtime group: 'dev.galasa', name: 'dev.galasa.managers.manifest', version: version, ext: "yaml"
+    runtime group: 'dev.galasa', name: 'dev.galasa.framework.manifest', version: version, ext: "yaml"
 }
 
 // Download all the files we depend upon.
@@ -32,8 +32,6 @@ task downloadAllDependencies(type: Copy) {
 
 // Gets the manager dependency and renames it to remove the version number.
 task getManagerDependency(type: Copy) {
-    dependsOn downloadAllDependencies
-
     from 'build/dependencies'
     include "dev.galasa.managers.manifest-${version}.yaml"
     destinationDir file('build/dependencies/')
@@ -42,8 +40,6 @@ task getManagerDependency(type: Copy) {
 
 // Gets the framework dependency and renames it to remove the version number.
 task getFrameworkDependency(type: Copy) {
-    dependsOn downloadAllDependencies
-
     from 'build/dependencies'
     include "dev.galasa.framework.manifest-${version}.yaml"
     destinationDir file('build/dependencies/')
@@ -52,7 +48,9 @@ task getFrameworkDependency(type: Copy) {
 
 // Gets all the dependencies
 task getDeps(type: Copy) {
+    dependsOn downloadAllDependencies
     dependsOn getManagerDependency
     dependsOn getFrameworkDependency
+
 }
 

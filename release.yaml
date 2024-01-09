@@ -20,7 +20,7 @@ external:
   bundles:
   - group: com.google.code.gson
     artifact: gson
-    version: 2.9.0
+    version: 2.10.1
     obr: true
     bom: true
     mvp: true

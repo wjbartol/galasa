@@ -13,49 +13,18 @@ import org.junit.Test;
 
 public class DeployTestCatalogTest {
 
-    private class MockDeployTestCatalog extends DeployTestCatalog{
-
-        public boolean getSkip(){
-            return super.skip;
-        }
-
-        public boolean getTypoSkip() {
-            return super.typoSkip;
-        }
-
-        public boolean getCorrectSkip() {
-            return super.correctSkip;
-        }
-
-        private void setUp(boolean typo, boolean correct){
-            setTypoSkip(this.typoSkip, typo);
-            setCorrectSkip(this.correctSkip, correct);
-        }
-
-        private void setTypoSkip(boolean typoSkip, boolean typo) {
-            super.typoSkip = typo;
-        }
-        private void setCorrectSkip(boolean correctSkip, boolean correct) {
-            super.correctSkip = correct;
-        }
-    
-    }
-
     @Test
     public void setSkipTrueWhenTypoSkipIsTrue() {
         //Given...
         boolean typoSkip = true;
         boolean correctSkip = false;
-        MockDeployTestCatalog deployTest = new MockDeployTestCatalog();
-        deployTest.setUp(typoSkip, correctSkip);
+        DeployTestCatalog deployTest = new DeployTestCatalog();
         
         //When...
-        deployTest.setSkip();
+        boolean skipResult = deployTest.setSkip(correctSkip, typoSkip);
 
         //Then...
-        assertThat(deployTest.getTypoSkip()).isTrue();
-        assertThat(deployTest.getCorrectSkip()).isFalse();
-        assertThat(deployTest.getSkip()).isTrue();
+        assertThat(skipResult).isTrue();
     }
 
     @Test
@@ -63,16 +32,13 @@ public class DeployTestCatalogTest {
         //Given...
         boolean typoSkip = false;
         boolean correctSkip = false;
-        MockDeployTestCatalog deployTest = new MockDeployTestCatalog();
-        deployTest.setUp(typoSkip, correctSkip);
+        DeployTestCatalog deployTest = new DeployTestCatalog();
         
         //When...
-        deployTest.setSkip();
+        boolean skipResult = deployTest.setSkip(correctSkip, typoSkip);
 
         //Then...
-        assertThat(deployTest.getTypoSkip()).isFalse();
-        assertThat(deployTest.getCorrectSkip()).isFalse();
-        assertThat(deployTest.getSkip()).isFalse();
+        assertThat(skipResult).isFalse();
     }
 
 
@@ -81,16 +47,13 @@ public class DeployTestCatalogTest {
         //Given...
         boolean typoSkip = false;
         boolean correctSkip = true;
-        MockDeployTestCatalog deployTest = new MockDeployTestCatalog();
-        deployTest.setUp(typoSkip, correctSkip);
+        DeployTestCatalog deployTest = new DeployTestCatalog();
         
         //When...
-        deployTest.setSkip();
+        boolean skipResult = deployTest.setSkip(correctSkip, typoSkip);
 
         //Then...
-        assertThat(deployTest.getTypoSkip()).isFalse();
-        assertThat(deployTest.getCorrectSkip()).isTrue();
-        assertThat(deployTest.getSkip()).isTrue();
+        assertThat(skipResult).isTrue();
     }
 
     @Test
@@ -98,16 +61,13 @@ public class DeployTestCatalogTest {
         //Given...
         boolean typoSkip = true;
         boolean correctSkip = true;
-        MockDeployTestCatalog deployTest = new MockDeployTestCatalog();
-        deployTest.setUp(typoSkip, correctSkip);
+        DeployTestCatalog deployTest = new DeployTestCatalog();
         
         //When...
-        deployTest.setSkip();
+        boolean skipResult = deployTest.setSkip(correctSkip, typoSkip);
 
         //Then...
-        assertThat(deployTest.getTypoSkip()).isTrue();
-        assertThat(deployTest.getCorrectSkip()).isTrue();
-        assertThat(deployTest.getSkip()).isTrue();
+        assertThat(skipResult).isTrue();
     }
 
 }

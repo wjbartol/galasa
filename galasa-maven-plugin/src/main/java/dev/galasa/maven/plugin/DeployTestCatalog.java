@@ -33,37 +33,42 @@ public class DeployTestCatalog extends AbstractMojo {
     @Parameter(defaultValue = "${project}", readonly = true)
     private MavenProject project;
 
-
-    @Parameter(defaultValue = "${galasa.skip.deploytestcatatlog}", readonly = true, required = false)
-    private boolean      skipDeploy;
-
     @Parameter(defaultValue = "${galasa.test.stream}", readonly = true, required = false)
     private String       testStream;
 
     @Parameter(defaultValue = "${galasa.bootstrap}", readonly = true, required = false)
     private URL          bootstrapUrl;
 
-    protected boolean      skip;
+    private boolean      skip;
+    private boolean      skipDeploy;
 
     @Parameter(defaultValue = "${galasa.skip.bundletestcatalog}", readonly = true, required = false)
-    protected boolean      typoSkip;
+    private boolean      typoSkip;
 
     @Parameter(defaultValue = "${galasa.skip.bundletestcatalog}", readonly = true, required = false)
-    protected boolean      correctSkip;
+    private boolean      correctSkip;
 
-    protected void setSkip() {
+    @Parameter(defaultValue = "${galasa.skip.deploytestcatatlog}", readonly = true, required = false)
+    private boolean      typoSkipDeploy;
+
+    @Parameter(defaultValue = "${galasa.skip.deploytestcatalog}", readonly = true, required = false)
+    private boolean      correctSkipDeploy;
+
+
+    protected boolean setSkip(boolean correctSkip, boolean typoSkip) {
+        boolean skip = false;
         //boolean default value is false
         if (correctSkip || typoSkip) {
             //if one of the skip variables is set, we know for sure to skip
             skip = true;
-        } else {
-            skip = false;
-        }
+        } 
+        return skip;
     }
 
     public void execute() throws MojoExecutionException, MojoFailureException {
 
-        setSkip();
+        skip = setSkip(correctSkip, typoSkip);
+        skipDeploy = setSkip(correctSkip, typoSkip);
         
         if (skip || skipDeploy) {
             getLog().info("Skipping Deploy Test Catalog");

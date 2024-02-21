@@ -33,8 +33,6 @@ public class DeployTestCatalog extends AbstractMojo {
     @Parameter(defaultValue = "${project}", readonly = true)
     private MavenProject project;
 
-    @Parameter(defaultValue = "${galasa.skip.bundletestcatatlog}", readonly = true, required = false)
-    private boolean      skip;
 
     @Parameter(defaultValue = "${galasa.skip.deploytestcatatlog}", readonly = true, required = false)
     private boolean      skipDeploy;
@@ -45,8 +43,28 @@ public class DeployTestCatalog extends AbstractMojo {
     @Parameter(defaultValue = "${galasa.bootstrap}", readonly = true, required = false)
     private URL          bootstrapUrl;
 
+    protected boolean      skip;
+
+    @Parameter(defaultValue = "${galasa.skip.bundletestcatalog}", readonly = true, required = false)
+    protected boolean      typoSkip;
+
+    @Parameter(defaultValue = "${galasa.skip.bundletestcatalog}", readonly = true, required = false)
+    protected boolean      correctSkip;
+
+    protected void setSkip() {
+        //boolean default value is false
+        if (correctSkip || typoSkip) {
+            //if one of the skip variables is set, we know for sure to skip
+            skip = true;
+        } else {
+            skip = false;
+        }
+    }
+
     public void execute() throws MojoExecutionException, MojoFailureException {
 
+        setSkip();
+        
         if (skip || skipDeploy) {
             getLog().info("Skipping Deploy Test Catalog");
             return;

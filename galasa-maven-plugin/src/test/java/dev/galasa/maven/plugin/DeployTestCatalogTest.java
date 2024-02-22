@@ -14,26 +14,26 @@ import org.junit.Test;
 public class DeployTestCatalogTest {
 
     @Test
-    public void setSkipTrueWhenTypoSkipIsTrue() {
+    public void setCorrectBooleanValueTrueWhenTypoSkipIsTrue() {
         //Given...
         boolean typoSkip = true;
         boolean correctSkip = false;
         
         //When...
-        boolean skipResult = DeployTestCatalog.setSkip(correctSkip, typoSkip);
+        boolean skipResult = DeployTestCatalog.setCorrectBooleanValue(correctSkip, typoSkip);
 
         //Then...
         assertThat(skipResult).isTrue();
     }
 
     @Test
-    public void setSkipFalseWhenTypoSkipAndCorrectSkipIsFalse() {
+    public void setCorrectBooleanValueFalseWhenTypoSkipAndCorrectSkipIsFalse() {
         //Given...
         boolean typoSkip = false;
         boolean correctSkip = false;
         
         //When...
-        boolean skipResult = DeployTestCatalog.setSkip(correctSkip, typoSkip);
+        boolean skipResult = DeployTestCatalog.setCorrectBooleanValue(correctSkip, typoSkip);
 
         //Then...
         assertThat(skipResult).isFalse();
@@ -41,26 +41,26 @@ public class DeployTestCatalogTest {
 
 
     @Test
-    public void setSkipTrueWhenCorrectSkipIsTrue() {
+    public void setCorrectBooleanValueTrueWhenCorrectSkipIsTrue() {
         //Given...
         boolean typoSkip = false;
         boolean correctSkip = true;
         
         //When...
-        boolean skipResult = DeployTestCatalog.setSkip(correctSkip, typoSkip);
+        boolean skipResult = DeployTestCatalog.setCorrectBooleanValue(correctSkip, typoSkip);
 
         //Then...
         assertThat(skipResult).isTrue();
     }
 
     @Test
-    public void setSkipTrueWhenCorrectSkipAndTypoSkipIsTrue() {
+    public void setCorrectBooleanValueTrueWhenCorrectSkipAndTypoSkipIsTrue() {
         //Given...
         boolean typoSkip = true;
         boolean correctSkip = true;
         
         //When...
-        boolean skipResult = DeployTestCatalog.setSkip(correctSkip, typoSkip);
+        boolean skipResult = DeployTestCatalog.setCorrectBooleanValue(correctSkip, typoSkip);
 
         //Then...
         assertThat(skipResult).isTrue();

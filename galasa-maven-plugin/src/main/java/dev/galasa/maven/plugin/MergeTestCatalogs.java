@@ -69,7 +69,7 @@ public class MergeTestCatalogs extends AbstractMojo {
     @Parameter(defaultValue = "${galasa.skip.bundletestcatalog}", readonly = true, required = false)
     private boolean                 correctSkip;
     
-    private boolean skip = DeployTestCatalog.setSkip(correctSkip, typoSkip);
+    private boolean skip = DeployTestCatalog.setCorrectBooleanValue(correctSkip, typoSkip);
 
     @Parameter(defaultValue = "${galasa.build.job}", readonly = true, required = false)
     private String                  buildJob;

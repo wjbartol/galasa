@@ -52,10 +52,10 @@ public class DeployTestCatalog extends AbstractMojo {
     @Parameter(defaultValue = "${galasa.skip.deploytestcatalog}", readonly = true, required = false)
     private boolean      correctSkipDeploy;
     
-    private boolean      skip = setSkip(correctSkip, typoSkip);
-    private boolean      skipDeploy = setSkip(correctSkip, typoSkip);
+    private boolean      skip = setCorrectBooleanValue(correctSkip, typoSkip);
+    private boolean      skipDeploy = setCorrectBooleanValue(correctSkipDeploy, typoSkipDeploy);
 
-    protected static boolean setSkip(boolean correctSkip, boolean typoSkip) {
+    protected static boolean setCorrectBooleanValue(boolean correctSkip, boolean typoSkip) {
         boolean skip = false;
         //boolean default value is false
         if (correctSkip || typoSkip) {

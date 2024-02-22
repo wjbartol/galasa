@@ -46,7 +46,7 @@ public class BuildGherkinTestCatalog extends AbstractMojo {
     @Parameter(defaultValue = "${galasa.skip.gherkintestcatalog}", readonly = true, required = false)
     private boolean            correctSkip;
     
-    private boolean skip = DeployTestCatalog.setSkip(correctSkip, typoSkip);
+    private boolean skip = DeployTestCatalog.setCorrectBooleanValue(correctSkip, typoSkip);
 
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {

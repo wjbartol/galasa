@@ -69,7 +69,7 @@ public class BuildBundleTestCatalog extends AbstractMojo {
     @Parameter(defaultValue = "${galasa.skip.bundletestcatalog}", readonly = true, required = false)
     private boolean            correctSkip;
     
-    private boolean skip = DeployTestCatalog.setSkip(correctSkip, typoSkip);
+    private boolean skip = DeployTestCatalog.setCorrectBooleanValue(correctSkip, typoSkip);
 
     public void execute() throws MojoExecutionException, MojoFailureException {
         

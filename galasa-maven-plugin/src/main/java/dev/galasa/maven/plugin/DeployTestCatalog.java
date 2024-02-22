@@ -33,17 +33,37 @@ public class DeployTestCatalog extends AbstractMojo {
     @Parameter(defaultValue = "${project}", readonly = true)
     private MavenProject project;
 
-    @Parameter(defaultValue = "${galasa.skip.bundletestcatatlog}", readonly = true, required = false)
-    private boolean      skip;
-
-    @Parameter(defaultValue = "${galasa.skip.deploytestcatatlog}", readonly = true, required = false)
-    private boolean      skipDeploy;
-
     @Parameter(defaultValue = "${galasa.test.stream}", readonly = true, required = false)
     private String       testStream;
 
     @Parameter(defaultValue = "${galasa.bootstrap}", readonly = true, required = false)
     private URL          bootstrapUrl;
+
+    
+    @Parameter(defaultValue = "${galasa.skip.bundletestcatatlog}", readonly = true, required = false)
+    private boolean      typoSkip;
+    
+    @Parameter(defaultValue = "${galasa.skip.bundletestcatalog}", readonly = true, required = false)
+    private boolean      correctSkip;
+    
+    @Parameter(defaultValue = "${galasa.skip.deploytestcatatlog}", readonly = true, required = false)
+    private boolean      typoSkipDeploy;
+    
+    @Parameter(defaultValue = "${galasa.skip.deploytestcatalog}", readonly = true, required = false)
+    private boolean      correctSkipDeploy;
+    
+    private boolean      skip = setCorrectBooleanValue(correctSkip, typoSkip);
+    private boolean      skipDeploy = setCorrectBooleanValue(correctSkipDeploy, typoSkipDeploy);
+
+    protected static boolean setCorrectBooleanValue(boolean correctSkip, boolean typoSkip) {
+        boolean skip = false;
+        //boolean default value is false
+        if (correctSkip || typoSkip) {
+            //if one of the skip variables is set, we know for sure to skip
+            skip = true;
+        } 
+        return skip;
+    }
 
     public void execute() throws MojoExecutionException, MojoFailureException {
 

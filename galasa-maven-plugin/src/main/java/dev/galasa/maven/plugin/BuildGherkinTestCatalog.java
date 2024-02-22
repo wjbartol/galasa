@@ -39,9 +39,14 @@ public class BuildGherkinTestCatalog extends AbstractMojo {
 
     @Parameter(defaultValue = "${project.build.directory}", property = "outputDir", required = true)
     private File               outputDirectory;
-
+    
     @Parameter(defaultValue = "${galasa.skip.gherkintestcatatlog}", readonly = true, required = false)
-    private boolean            skip;
+    private boolean            typoSkip;
+    
+    @Parameter(defaultValue = "${galasa.skip.gherkintestcatalog}", readonly = true, required = false)
+    private boolean            correctSkip;
+    
+    private boolean skip = DeployTestCatalog.setCorrectBooleanValue(correctSkip, typoSkip);
 
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {

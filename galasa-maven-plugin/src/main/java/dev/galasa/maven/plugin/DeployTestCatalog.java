@@ -55,7 +55,7 @@ public class DeployTestCatalog extends AbstractMojo {
     private boolean      correctSkipDeploy;
 
 
-    protected boolean setSkip(boolean correctSkip, boolean typoSkip) {
+    protected static boolean setSkip(boolean correctSkip, boolean typoSkip) {
         boolean skip = false;
         //boolean default value is false
         if (correctSkip || typoSkip) {

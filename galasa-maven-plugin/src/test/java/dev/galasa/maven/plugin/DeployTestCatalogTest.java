@@ -18,10 +18,9 @@ public class DeployTestCatalogTest {
         //Given...
         boolean typoSkip = true;
         boolean correctSkip = false;
-        DeployTestCatalog deployTest = new DeployTestCatalog();
         
         //When...
-        boolean skipResult = deployTest.setSkip(correctSkip, typoSkip);
+        boolean skipResult = DeployTestCatalog.setSkip(correctSkip, typoSkip);
 
         //Then...
         assertThat(skipResult).isTrue();
@@ -32,10 +31,9 @@ public class DeployTestCatalogTest {
         //Given...
         boolean typoSkip = false;
         boolean correctSkip = false;
-        DeployTestCatalog deployTest = new DeployTestCatalog();
         
         //When...
-        boolean skipResult = deployTest.setSkip(correctSkip, typoSkip);
+        boolean skipResult = DeployTestCatalog.setSkip(correctSkip, typoSkip);
 
         //Then...
         assertThat(skipResult).isFalse();
@@ -47,10 +45,9 @@ public class DeployTestCatalogTest {
         //Given...
         boolean typoSkip = false;
         boolean correctSkip = true;
-        DeployTestCatalog deployTest = new DeployTestCatalog();
         
         //When...
-        boolean skipResult = deployTest.setSkip(correctSkip, typoSkip);
+        boolean skipResult = DeployTestCatalog.setSkip(correctSkip, typoSkip);
 
         //Then...
         assertThat(skipResult).isTrue();
@@ -61,10 +58,9 @@ public class DeployTestCatalogTest {
         //Given...
         boolean typoSkip = true;
         boolean correctSkip = true;
-        DeployTestCatalog deployTest = new DeployTestCatalog();
         
         //When...
-        boolean skipResult = deployTest.setSkip(correctSkip, typoSkip);
+        boolean skipResult = DeployTestCatalog.setSkip(correctSkip, typoSkip);
 
         //Then...
         assertThat(skipResult).isTrue();

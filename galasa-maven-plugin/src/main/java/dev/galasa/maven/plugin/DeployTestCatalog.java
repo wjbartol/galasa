@@ -55,6 +55,15 @@ public class DeployTestCatalog extends AbstractMojo {
     private boolean      skip = setCorrectBooleanValue(correctSkip, typoSkip);
     private boolean      skipDeploy = setCorrectBooleanValue(correctSkipDeploy, typoSkipDeploy);
 
+    /**
+     * In order to slowly deprecate the plugin with the wrong plugin spelling of 'catatlog',
+     * this function checks if either variation (the typo or correct spelling) of the plugin has been set to true,
+     * and returns true, otherwise false
+     * 
+     * @param correctSkip The correct spelling 'catalog'
+     * @param typoSkip    The wrong spelling 'catatlog'
+     * @return skip       The correct boolean value depending on the plugin variable values
+     */
     protected static boolean setCorrectBooleanValue(boolean correctSkip, boolean typoSkip) {
         boolean skip = false;
         //boolean default value is false

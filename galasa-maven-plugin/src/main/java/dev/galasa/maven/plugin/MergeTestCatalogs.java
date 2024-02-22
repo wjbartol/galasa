@@ -62,9 +62,14 @@ public class MergeTestCatalogs extends AbstractMojo {
 
     @Parameter(defaultValue = "${project.build.directory}", property = "outputDir", required = true)
     private File                    outputDirectory;
-
+    
     @Parameter(defaultValue = "${galasa.skip.bundletestcatatlog}", readonly = true, required = false)
-    private boolean                 skip;
+    private boolean                 typoSkip;
+    
+    @Parameter(defaultValue = "${galasa.skip.bundletestcatalog}", readonly = true, required = false)
+    private boolean                 correctSkip;
+    
+    private boolean skip = DeployTestCatalog.setSkip(correctSkip, typoSkip);
 
     @Parameter(defaultValue = "${galasa.build.job}", readonly = true, required = false)
     private String                  buildJob;

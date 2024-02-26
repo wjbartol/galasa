@@ -38,7 +38,6 @@ public class DeployTestCatalog extends AbstractMojo {
 
     @Parameter(defaultValue = "${galasa.bootstrap}", readonly = true, required = false)
     private URL          bootstrapUrl;
-
     
     @Parameter(defaultValue = "${galasa.skip.bundletestcatatlog}", readonly = true, required = false)
     private boolean      typoSkip;
@@ -75,6 +74,7 @@ public class DeployTestCatalog extends AbstractMojo {
     }
 
     public void execute() throws MojoExecutionException, MojoFailureException {
+        getLog().info("DeployTestCatalog - execute()");
 
         if (skip || skipDeploy) {
             getLog().info("Skipping Deploy Test Catalog");
@@ -113,7 +113,9 @@ public class DeployTestCatalog extends AbstractMojo {
             Properties bootstrapProperties = new Properties();
             try {
                 URLConnection connection = bootstrapUrl.openConnection();
+                getLog().info("URLConnection: " + connection);
                 bootstrapProperties.load(connection.getInputStream());
+                getLog().info("bootstrapProperties loaded: " + bootstrapProperties);
             } catch (Exception e) {
                 throw new MojoExecutionException("Unable to load the bootstrap properties", e);
             }

@@ -9,6 +9,7 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
+import java.text.MessageFormat;
 import java.util.Properties;
 
 import org.apache.commons.io.FileUtils;
@@ -17,6 +18,8 @@ import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
@@ -53,6 +56,8 @@ public class DeployTestCatalog extends AbstractMojo {
     
     private boolean      skip = setCorrectBooleanValue(correctSkip, typoSkip);
     private boolean      skipDeploy = setCorrectBooleanValue(correctSkipDeploy, typoSkipDeploy);
+
+    private Log logger  = LogFactory.getLog(DeployTestCatalog.class);
 
     /**
      * In order to slowly deprecate the plugin with the wrong plugin spelling of 'catatlog',
@@ -113,11 +118,14 @@ public class DeployTestCatalog extends AbstractMojo {
             Properties bootstrapProperties = new Properties();
             try {
                 URLConnection connection = bootstrapUrl.openConnection();
-                getLog().info("URLConnection: " + connection);
+                String msg = MessageFormat.format("execute(): URLConnection: connected to:{0}",connection.getURL().toString());
+                logger.info(msg);
                 bootstrapProperties.load(connection.getInputStream());
-                getLog().info("bootstrapProperties loaded: " + bootstrapProperties);
+                logger.info("execute(): bootstrapProperties loaded: " + bootstrapProperties);
             } catch (Exception e) {
-                throw new MojoExecutionException("Unable to load the bootstrap properties", e);
+                String errMsg = MessageFormat.format("execute() - Unable to load bootstrap properties, Reason: {0}", e);
+                logger.info(errMsg);
+                throw new MojoExecutionException(errMsg, e);
             }
 
             // *** Calculate the testcatalog url

@@ -228,7 +228,7 @@ public class AuthenticationServiceTest {
     // public void testCanTargetARealEcosystem() throws Exception {
     //     String refreshToken = "xxx";
     //     String clientId = "xxx";
-    //     String apiServerUrlString = "https://galasa-ecosystem1.galasa.dev/api";
+    //     String apiServerUrlString = "https:/my.server/api";
     //     HttpClient httpClient = HttpClientBuilder.create().build();
     //     URL apiServerUrl = new URL(apiServerUrlString);
     //     AuthenticationService service = new AuthenticationService(apiServerUrl, refreshToken+":"+clientId, httpClient);

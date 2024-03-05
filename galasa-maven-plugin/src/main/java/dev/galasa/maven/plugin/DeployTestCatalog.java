@@ -9,6 +9,7 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
+import java.text.MessageFormat;
 import java.util.Properties;
 
 import org.apache.commons.io.FileUtils;
@@ -46,7 +47,6 @@ public class DeployTestCatalog extends AbstractMojo {
 
     @Parameter(defaultValue = "${galasa.bootstrap}", readonly = true, required = false)
     private URL          bootstrapUrl;
-
     
     @Parameter(defaultValue = "${galasa.skip.bundletestcatatlog}", readonly = true, required = false)
     private boolean      typoSkip;
@@ -83,6 +83,7 @@ public class DeployTestCatalog extends AbstractMojo {
     }
 
     public void execute() throws MojoExecutionException, MojoFailureException {
+        getLog().info("DeployTestCatalog - execute()");
 
         if (skip || skipDeploy) {
             getLog().info("Skipping Deploy Test Catalog");
@@ -121,9 +122,14 @@ public class DeployTestCatalog extends AbstractMojo {
             Properties bootstrapProperties = new Properties();
             try {
                 URLConnection connection = bootstrapUrl.openConnection();
+                String msg = MessageFormat.format("execute(): URLConnection: connected to:{0}",connection.getURL().toString());
+                getLog().info(msg);
                 bootstrapProperties.load(connection.getInputStream());
+                getLog().info("execute(): bootstrapProperties loaded: " + bootstrapProperties);
             } catch (Exception e) {
-                throw new MojoExecutionException("Unable to load the bootstrap properties", e);
+                String errMsg = MessageFormat.format("execute() - Unable to load bootstrap properties, Reason: {0}", e);
+                getLog().info(errMsg);
+                throw new MojoExecutionException(errMsg, e);
             }
 
             // *** Calculate the testcatalog url
@@ -199,7 +205,7 @@ public class DeployTestCatalog extends AbstractMojo {
             getLog().info("Test Catalog successfully deployed to " + testCatalogUrl.toString());
 
         } catch (Throwable t) {
-            throw new MojoExecutionException("Problem merging the test catalog", t);
+            throw new MojoExecutionException("Problem publishing the test catalog", t);
         }
 
     }

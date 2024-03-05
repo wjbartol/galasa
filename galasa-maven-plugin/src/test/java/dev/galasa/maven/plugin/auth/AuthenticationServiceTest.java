@@ -10,7 +10,6 @@ import static org.assertj.core.api.Assertions.*;
 import java.io.IOException;
 import java.net.URL;
 import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.message.BasicHttpResponse;
 import org.apache.http.message.BasicStatusLine;
@@ -19,7 +18,6 @@ import com.google.gson.Gson;
 import org.apache.http.*;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.util.EntityUtils;
 import dev.galasa.maven.plugin.MockHttpClient;
 import dev.galasa.maven.plugin.auth.beans.*;
@@ -172,7 +170,6 @@ public class AuthenticationServiceTest {
 
         String expectedClientId = "asdasdasads";
         String expectedRefreshToken = "valid-token";
-        String expectedJwt = "my-jwt";
 
         MockHttpClient mockHttpClient = new MockHttpClient() {
             @Override

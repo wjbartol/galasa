@@ -18,8 +18,6 @@ import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
@@ -56,8 +54,6 @@ public class DeployTestCatalog extends AbstractMojo {
     
     private boolean      skip = setCorrectBooleanValue(correctSkip, typoSkip);
     private boolean      skipDeploy = setCorrectBooleanValue(correctSkipDeploy, typoSkipDeploy);
-
-    private Log logger  = LogFactory.getLog(DeployTestCatalog.class);
 
     /**
      * In order to slowly deprecate the plugin with the wrong plugin spelling of 'catatlog',
@@ -119,12 +115,12 @@ public class DeployTestCatalog extends AbstractMojo {
             try {
                 URLConnection connection = bootstrapUrl.openConnection();
                 String msg = MessageFormat.format("execute(): URLConnection: connected to:{0}",connection.getURL().toString());
-                logger.info(msg);
+                getLog().info(msg);
                 bootstrapProperties.load(connection.getInputStream());
-                logger.info("execute(): bootstrapProperties loaded: " + bootstrapProperties);
+                getLog().info("execute(): bootstrapProperties loaded: " + bootstrapProperties);
             } catch (Exception e) {
                 String errMsg = MessageFormat.format("execute() - Unable to load bootstrap properties, Reason: {0}", e);
-                logger.info(errMsg);
+                getLog().info(errMsg);
                 throw new MojoExecutionException(errMsg, e);
             }
 
@@ -187,7 +183,7 @@ public class DeployTestCatalog extends AbstractMojo {
             getLog().info("Test Catalog successfully deployed to " + testCatalogUrl.toString());
 
         } catch (Throwable t) {
-            throw new MojoExecutionException("Problem merging the test catalog", t);
+            throw new MojoExecutionException("Problem publishing the test catalog", t);
         }
 
     }

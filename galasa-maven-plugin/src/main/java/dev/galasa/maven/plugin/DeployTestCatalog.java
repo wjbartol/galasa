@@ -13,6 +13,8 @@ import java.util.Properties;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
+import org.apache.http.client.HttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -21,6 +23,8 @@ import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
+
+import dev.galasa.maven.plugin.auth.AuthenticationService;
 
 /**
  * Merge all the test catalogs on the dependency list
@@ -35,6 +39,10 @@ public class DeployTestCatalog extends AbstractMojo {
 
     @Parameter(defaultValue = "${galasa.test.stream}", readonly = true, required = false)
     private String       testStream;
+
+    // To deploy the test catalog we need to authenticate using this token.
+    @Parameter(defaultValue = "${galasa.token}", readonly = true , required = true)
+    private String       galasaAccessToken;
 
     @Parameter(defaultValue = "${galasa.bootstrap}", readonly = true, required = false)
     private URL          bootstrapUrl;
@@ -130,21 +138,35 @@ public class DeployTestCatalog extends AbstractMojo {
                 sTestcatalogUrl = sBootstrapUrl.substring(0, sBootstrapUrl.length() - 10) + "/testcatalog";
             }
 
-            // *** Check to see if we need authentication
-            String sAuthenticationUrl = bootstrapProperties.getProperty("framework.authentication.url");
-            if (sAuthenticationUrl != null) {
-                throw new MojoExecutionException("Unable to support Galasa authentication at the moment");
+            if (galasaAccessToken==null || galasaAccessToken.isEmpty()) {
+                throw new MojoExecutionException("No Galasa authentication token supplied. Use the galasa-token variable.");
             }
+
+            // Get a JWT we can use, based off the galasa-token
+            String jwt = null ;
+            try {
+                String apiServerUrlString = bootstrapUrl.toString().replaceAll("/bootstrap","");
+                HttpClient httpClient = HttpClientBuilder.create().build();
+                URL apiServerUrl = new URL(apiServerUrlString);
+                AuthenticationService authTokenService = new AuthenticationService(apiServerUrl,galasaAccessToken,httpClient);
+                getLog().info("Turning the galasa access token into a jwt");
+                jwt = authTokenService.getJWT();
+                getLog().info("Java Web Token (jwt) obtained from the galasa ecosystem OK.");
+            } catch( Exception ex) {
+                throw new MojoExecutionException(ex.getMessage(),ex);
+            } 
 
             // *** Get the test catalog url
             URL testCatalogUrl = new URL(sTestcatalogUrl + "/" + testStream);
 
             HttpURLConnection conn = (HttpURLConnection) testCatalogUrl.openConnection();
+            
             conn.setDoOutput(true);
             conn.setDoInput(true);
             conn.setRequestMethod("PUT");
             conn.addRequestProperty("Content-Type", "application/json");
             conn.addRequestProperty("Accept", "application/json");
+            conn.addRequestProperty("Authorization", "Bearer "+jwt);
 
             FileUtils.copyFile(artifact.getFile(), conn.getOutputStream());
             int rc = conn.getResponseCode();

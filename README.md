@@ -28,6 +28,168 @@ Environment variable over-rides:
 - `DEBUG` - Optional. Defaults to 0 (off)
 - `GPG_PASSPHRASE` - Used to sign and verify artifacts during the build
 
+## How to use the plugin
+
+### Building a test catalog for a Java bundle
+
+This goal causes a test catalog to be constructed for all the tests in the child bundles of this maven project.
+
+Goal: `bundletestcat`
+
+Phase: `package`
+
+Input Parameters/Properties:
+- `galasa.skip.bundletestcatalog` required.
+
+Output:
+A test catalog file is generated holding references to all the test classes.
+
+Example:
+```
+<plugin>
+    <groupId>dev.galasa</groupId>
+    <artifactId>galasa-maven-plugin</artifactId>
+    <extensions>true</extensions>
+    <executions>
+        <execution>
+        <id>build-testcatalog</id>
+        <phase>package</phase>
+        <goals>
+            <goal>bundletestcat</goal>
+        </goals>
+        </execution>
+    </executions>
+</plugin>
+```
+
+### Building an OBR resource
+
+Input Parameters/Properties:
+- `galasa.obr.url.type` property = "obrUrlType" optional
+- `includeSelf` optional. Default value is `false`
+
+### Publishing a test catalog to the Galasa ecosystem/server
+
+Goal: `deploytestcat`
+
+Phase: `deploy`
+
+Input Parameters/Properties:
+- `galasa.test.stream` required. A string.
+- `galasa.token` required. An access token for the galasa ecosystem.
+- `galasa.bootstrap` required. A URL to the ecosystem.
+- `galasa.skip.bundletestcatalog` optional. A boolean.
+- `galasa.skip.deploytestcatalog` optional. A boolean.
+
+For example:
+```
+<plugin>
+    <groupId>dev.galasa</groupId>
+    <artifactId>galasa-maven-plugin</artifactId>
+    <extensions>true</extensions>
+    <executions>
+        ...
+        <execution>
+            <id>deploy-testcatalog</id>
+            <phase>deploy</phase>
+            <goals>
+                <goal>deploytestcat</goal>
+            </goals>
+        </execution>
+        ...
+    </executions>
+</plugin>
+```
+
+#### Passing a secret token into a maven plugin. Method 1:
+
+The `galasa.token` maven property is used by this plugin. 
+You can set it using the following in your pom.xml like this:
+
+```
+<properties>
+    ...
+    <galasa.token>${GALASA_TOKEN}</galasa.token>
+    ...
+</properties>
+```
+
+This allows you to call maven and pass the value from the command-line
+```
+mvn clean install deploy "-DGALASA_TOKEN=${GALASA_TOKEN}"
+```
+
+This assumes you have `GALASA_TOKEN` set in your environment.
+
+Note: This method allows the caller of the command-line to pass in 
+whatever value they want, from an environment variable (`GALASA_TOKEN` in this case)
+or from any other value.
+
+This may be useful if you are deploying to multiple Galasa server environments, 
+or switching between tokens used to contact the Galasa Ecosystem.
+
+#### Passing a secret token into a maven plugin. Method 2:
+The `galasa.token` maven property is used by this plugin. 
+You can set it using the following in your pom.xml like this:
+
+```
+<properties>
+    ...
+    <galasa.token>${env.GALASA_TOKEN}</galasa.token>
+    ...
+</properties>
+```
+
+This allows you to set the GALASA_TOKEN as an environment variable, and 
+the maven plugin for Galasa can pick up the value from the environment.
+
+Note: This causes a tighter 'binding' between your environment and the maven 
+build, so all parties using this code need to use the same environment variable
+name.
+
+### Merging two test catalogs
+
+Input Parameters/Properties:
+- `galasa.skip.bundletestcatalog` optional. A boolean.
+- `galasa.build.job` optional. A string.
+
+### Building a gherkin test catalog for Gherkin features
+
+Input Parameters/Properties:
+- `galasa.skip.gherkintestcatalog` required. A boolean.
+
+
+### Building a .zip of gherkin tests
+
+This goal builds a zip file containing all the gherkin feature files.
+
+Goal: `gherkinzip`
+
+Phase: `package`
+
+Input Parameters/Properties:
+- `galasa.skip.gherkinzip` required. A boolean.
+
+
+### Calculating a git commit hash
+
+For example:
+```
+<plugin>
+    <groupId>dev.galasa</groupId>
+    <artifactId>galasa-maven-plugin</artifactId>
+    <extensions>true</extensions>
+    <executions>
+        <execution>
+            <id>process-resources</id>
+            <goals>
+                <goal>gitcommithash</goal>
+            </goals>
+        </execution>
+    </executions>
+</plugin>
+```
+
 ## License
 
 This code is under the [Eclipse Public License 2.0](https://github.com/galasa-dev/maven/blob/main/LICENSE).

@@ -7,7 +7,6 @@ package dev.galasa.maven.plugin;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.List;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.maven.model.Resource;
@@ -42,9 +41,6 @@ public class StoreGitCommitHash extends AbstractMojo {
                 && !"eclipse-plugin".equals(project.getPackaging())) {
             return;
         }
-
-//        project.addResource(null);
-        List<Resource> resources = project.getResources();
 
         if (hash == null || hash.trim().isEmpty()) {
             hash = "unknown";

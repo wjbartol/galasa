@@ -17,6 +17,7 @@ import java.util.function.Consumer;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -27,7 +28,6 @@ import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectHelper;
-import org.apache.maven.shared.utils.io.IOUtil;
 
 @Mojo(name = "gherkinzip", defaultPhase = LifecyclePhase.PACKAGE, threadSafe = true, requiresDependencyCollection = ResolutionScope.COMPILE_PLUS_RUNTIME, requiresDependencyResolution = ResolutionScope.COMPILE_PLUS_RUNTIME)
 public class BuildGherkinZip extends AbstractMojo {
@@ -68,7 +68,7 @@ public class BuildGherkinZip extends AbstractMojo {
                 ZipEntry ze = new ZipEntry(project.getBasedir().toPath().relativize(feature).toString());
                 zos.putNextEntry(ze);
                 FileInputStream fis = new FileInputStream(feature.toString());
-                IOUtil.copy(fis, zos);
+                IOUtils.copy(fis, zos);
                 zos.closeEntry();
                 fis.close();
             }

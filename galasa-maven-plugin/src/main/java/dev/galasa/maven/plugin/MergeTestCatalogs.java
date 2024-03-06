@@ -42,9 +42,6 @@ import com.google.gson.JsonObject;
 
 /**
  * Merge all the test catalogs on the dependency list
- * 
- * @author Michael Baylis
- *
  */
 @Mojo(name = "mergetestcat", defaultPhase = LifecyclePhase.PACKAGE, threadSafe = true, requiresDependencyCollection = ResolutionScope.COMPILE_PLUS_RUNTIME, requiresDependencyResolution = ResolutionScope.COMPILE_PLUS_RUNTIME)
 public class MergeTestCatalogs extends AbstractMojo {
@@ -63,13 +60,14 @@ public class MergeTestCatalogs extends AbstractMojo {
     @Parameter(defaultValue = "${project.build.directory}", property = "outputDir", required = true)
     private File                    outputDirectory;
     
+    // This spelling of the property is old/wrong/deprecated.
     @Parameter(defaultValue = "${galasa.skip.bundletestcatatlog}", readonly = true, required = false)
-    private boolean                 typoSkip;
+    private boolean                 skipBundleTestCatalogOldSpelling;
     
     @Parameter(defaultValue = "${galasa.skip.bundletestcatalog}", readonly = true, required = false)
-    private boolean                 correctSkip;
+    private boolean                 skipBundleTestCatalog;
     
-    private boolean skip = DeployTestCatalog.setCorrectBooleanValue(correctSkip, typoSkip);
+    private boolean skip = (skipBundleTestCatalog || skipBundleTestCatalogOldSpelling);
 
     @Parameter(defaultValue = "${galasa.build.job}", readonly = true, required = false)
     private String                  buildJob;

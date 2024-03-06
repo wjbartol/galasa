@@ -101,7 +101,7 @@ For example:
 </plugin>
 ```
 
-#### Passing a secret token into a maven plugin. Method 1:
+#### Passing a secret token into a maven plugin. Method 1: using ${GALASA_TOKEN}
 
 The `galasa.token` maven property is used by this plugin. 
 You can set it using the following in your pom.xml like this:
@@ -128,7 +128,7 @@ or from any other value.
 This may be useful if you are deploying to multiple Galasa server environments, 
 or switching between tokens used to contact the Galasa Ecosystem.
 
-#### Passing a secret token into a maven plugin. Method 2:
+#### Passing a secret token into a maven plugin. Method 2: using ${env.GALASA_TOKEN}
 The `galasa.token` maven property is used by this plugin. 
 You can set it using the following in your pom.xml like this:
 
@@ -146,6 +146,29 @@ the maven plugin for Galasa can pick up the value from the environment.
 Note: This causes a tighter 'binding' between your environment and the maven 
 build, so all parties using this code need to use the same environment variable
 name.
+
+### Supressing the deploy of the test catalog
+Use the `galasa.skip.bundletestcatalog` or `galasa.skip.deploytestcatalog` to control whether
+the deploy of the test catalog is skipped.
+
+If either of these flags is true, then the publication of the test catalog to the Galasa
+ecosystem will be supressed.
+
+For example, to skip both the building of the test catalog and the deployment of it, you can 
+add this to your pom.xml:
+```
+<properties>
+    ...
+	<galasa.skip.bundletestcatalog>true</galasa.skip.bundletestcatalog>
+	<galasa.skip.deploytestcatalog>true</galasa.skip.deploytestcatalog>
+    ...
+</properties>
+```
+
+Or you could pass a `-D` parameter on the command-line:
+```
+mvn deploy -Dgalasa.skip.deploytestcatalog=true
+```
 
 ### Merging two test catalogs
 

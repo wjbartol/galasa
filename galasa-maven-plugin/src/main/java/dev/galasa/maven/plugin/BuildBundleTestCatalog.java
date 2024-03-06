@@ -45,9 +45,6 @@ import com.google.gson.JsonObject;
 /**
  * Build a test catalog of all the tests within the bundle. The Test Class type
  * needs @Test to be included
- * 
- * @author Michael Baylis
- *
  */
 @Mojo(name = "bundletestcat", defaultPhase = LifecyclePhase.PACKAGE, threadSafe = true, requiresDependencyCollection = ResolutionScope.COMPILE_PLUS_RUNTIME, requiresDependencyResolution = ResolutionScope.COMPILE_PLUS_RUNTIME)
 public class BuildBundleTestCatalog extends AbstractMojo {
@@ -63,13 +60,14 @@ public class BuildBundleTestCatalog extends AbstractMojo {
     @Parameter(defaultValue = "${project.compileClasspathElements}", readonly = true, required = true)
     private List<String>       classpathElements;
 
+    // This spelling of the property is old/wrong/deprecated.
     @Parameter(defaultValue = "${galasa.skip.bundletestcatatlog}", readonly = true, required = false)
-    private boolean            typoSkip;
+    private boolean            skipBundleTestCatalogOldSpelling;
     
     @Parameter(defaultValue = "${galasa.skip.bundletestcatalog}", readonly = true, required = false)
-    private boolean            correctSkip;
+    private boolean            skipBundleTestCatalog;
     
-    private boolean skip = DeployTestCatalog.setCorrectBooleanValue(correctSkip, typoSkip);
+    private boolean skip = (skipBundleTestCatalog || skipBundleTestCatalogOldSpelling);
 
     public void execute() throws MojoExecutionException, MojoFailureException {
         

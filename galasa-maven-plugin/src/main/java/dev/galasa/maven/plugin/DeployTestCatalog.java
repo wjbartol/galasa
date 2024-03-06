@@ -30,9 +30,6 @@ import dev.galasa.maven.plugin.auth.AuthenticationService;
 
 /**
  * Merge all the test catalogs on the dependency list
- * 
- * @author Michael Baylis
- *
  */
 @Mojo(name = "deploytestcat", defaultPhase = LifecyclePhase.DEPLOY, threadSafe = true)
 public class DeployTestCatalog extends AbstractMojo {
@@ -49,45 +46,27 @@ public class DeployTestCatalog extends AbstractMojo {
     @Parameter(defaultValue = "${galasa.bootstrap}", readonly = true, required = false)
     private URL          bootstrapUrl;
     
+    // This spelling of the property is old/wrong/deprecated.
     @Parameter(defaultValue = "${galasa.skip.bundletestcatatlog}", readonly = true, required = false)
-    private boolean      typoSkip;
+    private boolean      skipBundleTestCatalogOldSpelling;
     
-    @Parameter(defaultValue = "${galasa.skip.bundletestcatalog}", readonly = true, required = false)
-    private boolean      correctSkip;
+    @Parameter(defaultValue = "${galasa.skip.bundletestcatalog}", name="skip" , readonly = true, required = false)
+    private boolean      skipBundleTestCatalog;
     
-    @Parameter(defaultValue = "${galasa.skip.deploytestcatatlog}", readonly = true, required = false)
-    private boolean      typoSkipDeploy;
+    // This spelling of the property is old/wrong/deprecated.
+    @Parameter(defaultValue = "${galasa.skip.deploytestcatatlog}" , readonly = true, required = false)
+    private boolean      skipDeployTestCatalogOldSpelling;
     
-    @Parameter(defaultValue = "${galasa.skip.deploytestcatalog}", readonly = true, required = false)
-    private boolean      correctSkipDeploy;
+    @Parameter(defaultValue = "${galasa.skip.deploytestcatalog}", name="skipDeploy" , readonly = true, required = false)
+    private boolean      skipDeployTestCatalog;
     
-    private boolean      skip = setCorrectBooleanValue(correctSkip, typoSkip);
-    private boolean      skipDeploy = setCorrectBooleanValue(correctSkipDeploy, typoSkipDeploy);
-
-    /**
-     * In order to slowly deprecate the plugin with the wrong plugin spelling of 'catatlog',
-     * this function checks if either variation (the typo or correct spelling) of the plugin has been set to true,
-     * and returns true, otherwise false
-     * 
-     * @param correctSkip The correct spelling 'catalog'
-     * @param typoSkip    The wrong spelling 'catatlog'
-     * @return skip       The correct boolean value depending on the plugin variable values
-     */
-    protected static boolean setCorrectBooleanValue(boolean correctSkip, boolean typoSkip) {
-        boolean skip = false;
-        //boolean default value is false
-        if (correctSkip || typoSkip) {
-            //if one of the skip variables is set, we know for sure to skip
-            skip = true;
-        } 
-        return skip;
-    }
+    private boolean      skip = (skipBundleTestCatalog || skipBundleTestCatalogOldSpelling);
+    private boolean      skipDeploy = (skipDeployTestCatalog || skipDeployTestCatalogOldSpelling);
 
     public void execute() throws MojoExecutionException, MojoFailureException {
         getLog().info("DeployTestCatalog - execute()");
-
         if (skip || skipDeploy) {
-            getLog().info("Skipping Deploy Test Catalog");
+            getLog().info("Skipping Deploy Test Catalog - because the property galasa.skip.deploytestcatalog or galasa.skip.bundletestcatalog is set");
             return;
         }
 

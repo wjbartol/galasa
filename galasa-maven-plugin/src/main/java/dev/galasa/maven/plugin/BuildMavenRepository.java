@@ -35,9 +35,6 @@ import org.apache.maven.project.MavenProject;
 
 /**
  * This goal will copy all artifacts to a pseudo maven repository
- * 
- * @author Michael Baylis
- *
  */
 @Mojo(name = "mavenrepository", defaultPhase = LifecyclePhase.PROCESS_RESOURCES, requiresDependencyResolution = ResolutionScope.COMPILE, threadSafe = true)
 public class BuildMavenRepository extends AbstractMojo {

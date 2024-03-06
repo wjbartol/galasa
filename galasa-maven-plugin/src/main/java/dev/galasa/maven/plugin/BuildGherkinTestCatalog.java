@@ -40,13 +40,14 @@ public class BuildGherkinTestCatalog extends AbstractMojo {
     @Parameter(defaultValue = "${project.build.directory}", property = "outputDir", required = true)
     private File               outputDirectory;
     
+    // This spelling of the property is old/wrong/deprecated.
     @Parameter(defaultValue = "${galasa.skip.gherkintestcatatlog}", readonly = true, required = false)
-    private boolean            typoSkip;
+    private boolean            skipGherkinTestCatalogOldSpelling;
     
     @Parameter(defaultValue = "${galasa.skip.gherkintestcatalog}", readonly = true, required = false)
-    private boolean            correctSkip;
+    private boolean            skipGherkinTestCatalog;
     
-    private boolean skip = DeployTestCatalog.setCorrectBooleanValue(correctSkip, typoSkip);
+    private boolean skip = (skipGherkinTestCatalog || skipGherkinTestCatalogOldSpelling);
 
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {

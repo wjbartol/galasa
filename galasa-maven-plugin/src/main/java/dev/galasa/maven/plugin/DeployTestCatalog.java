@@ -65,10 +65,8 @@ public class DeployTestCatalog extends AbstractMojo {
 
     public void execute() throws MojoExecutionException, MojoFailureException {
         getLog().info("DeployTestCatalog - execute()");
-        getLog().info("skipDeploy is "+Boolean.toString(skipDeploy));
-        getLog().info("skip is "+Boolean.toString(skip));
         if (skip || skipDeploy) {
-            getLog().info("Skipping Deploy Test Catalog - because the property galasa.skip.deploytestcatalog is set");
+            getLog().info("Skipping Deploy Test Catalog - because the property galasa.skip.deploytestcatalog or galasa.skip.bundletestcatalog is set");
             return;
         }
 

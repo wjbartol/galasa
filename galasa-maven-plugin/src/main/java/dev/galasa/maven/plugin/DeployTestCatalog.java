@@ -92,12 +92,12 @@ public class DeployTestCatalog extends AbstractMojo {
         }
 
         if (testStream == null) {
-            getLog().info("Skipping Deploy Test Catalog - test stream name is missing");
+            getLog().warn("Skipping Deploy Test Catalog - test stream name is missing");
             return;
         }
 
         if (bootstrapUrl == null) {
-            getLog().info("Skipping Deploy Test Catalog - Bootstrap URL is missing");
+            getLog().warn("Skipping Deploy Test Catalog - Bootstrap URL is missing");
             return;
         }
 
@@ -109,7 +109,7 @@ public class DeployTestCatalog extends AbstractMojo {
         Artifact testCatalogArtifact = getTestCatalogArtifact();
 
         if (testCatalogArtifact == null) {
-            getLog().info("Skipping Bundle Test Catalog deploy, no test catalog artifact present");
+            getLog().warn("Skipping Bundle Test Catalog deploy, no test catalog artifact present");
             return;
         }
 
@@ -124,10 +124,13 @@ public class DeployTestCatalog extends AbstractMojo {
         publishTestCatalogToGalasaServer(testcatalogUrl,jwt, testCatalogArtifact);
     }
 
-
     private void checkGalasaAccessTokenIsValid(String galasaAccessToken) throws MojoExecutionException {
         if (galasaAccessToken==null || galasaAccessToken.isEmpty()) {
-            throw new MojoExecutionException("No Galasa authentication token supplied. Use the galasa-token variable.");
+            String msg = "No Galasa authentication token supplied. Set the galasa.token property."+
+            " The token is required to communicate with the Galasa server."+
+            " Obtain a personal access token using the Galasa web user interface for the ecosystem you are trying to publish the test catalog to.";
+            getLog().error(msg);
+            throw new MojoExecutionException(msg);
         }
     }
 
@@ -148,7 +151,9 @@ public class DeployTestCatalog extends AbstractMojo {
         try {
             conn = (HttpURLConnection) testCatalogUrl.openConnection();
         } catch (IOException ioEx) {
-            throw new MojoExecutionException("Problem publishing the test catalog. Could not open URL connection to the Galasa server.",ioEx);
+            String msg = "Problem publishing the test catalog. Could not open URL connection to the Galasa server.";
+            getLog().error(msg,ioEx);
+            throw new MojoExecutionException(msg,ioEx);
         }
 
         if (conn==null) {
@@ -194,7 +199,9 @@ public class DeployTestCatalog extends AbstractMojo {
                 response = IOUtils.toString(is, "utf-8");
             }
         } catch(IOException ioEx) {
-            throw new MojoExecutionException("Problem publishing the test catalog. Problem dealing with response from Galasa server.",ioEx);
+            String msg = "Problem publishing the test catalog. Problem dealing with response from Galasa server.";
+            getLog().error(msg, ioEx);
+            throw new MojoExecutionException(msg,ioEx);
         } 
 
         if (rc != HttpURLConnection.HTTP_OK) {
@@ -202,6 +209,9 @@ public class DeployTestCatalog extends AbstractMojo {
             getLog().error(Integer.toString(rc) + " - " + message);
             if (!response.isEmpty()) {
                 getLog().error(response);
+                String msg = "Failed to deploy the test catalog. The server did not reply with OK (200)";
+                getLog().error(msg);
+                throw new MojoExecutionException(msg);
             }
         }
     }
@@ -211,8 +221,9 @@ public class DeployTestCatalog extends AbstractMojo {
         if (sTestcatalogUrl == null || sTestcatalogUrl.trim().isEmpty()) {
             String sBootstrapUrl = bootstrapUrl.toString();
             if (!sBootstrapUrl.endsWith("/bootstrap")) {
-                throw new MojoExecutionException(
-                        "Unable to calculate the test catalog url, the bootstrap url does not end with /bootstrap, need a framework.testcatalog.url property in the bootstrap");
+                String msg = "Unable to calculate the test catalog url, the bootstrap url does not end with /bootstrap, need a framework.testcatalog.url property in the bootstrap";
+                getLog().error(msg);
+                throw new MojoExecutionException(msg);
             }
 
             sTestcatalogUrl = sBootstrapUrl.substring(0, sBootstrapUrl.length() - 10) + "/testcatalog";
@@ -223,7 +234,9 @@ public class DeployTestCatalog extends AbstractMojo {
         try {
             testCatalogUrl = new URL(sTestcatalogUrl + "/" + testStream);
         } catch(Exception ex) {
-            throw new MojoExecutionException("Problem publishing the test catalog. Badly formed URL to the Galasa server.",ex);
+            String msg = "Problem publishing the test catalog. Badly formed URL to the Galasa server.";
+            getLog().error(msg,ex);
+            throw new MojoExecutionException(msg,ex);
         }
         return testCatalogUrl;
     }
@@ -238,7 +251,7 @@ public class DeployTestCatalog extends AbstractMojo {
             getLog().info("execute(): bootstrapProperties loaded: " + bootstrapProperties);
         } catch (Exception e) {
             String errMsg = MessageFormat.format("execute() - Unable to load bootstrap properties, Reason: {0}", e);
-            getLog().info(errMsg);
+            getLog().error(errMsg);
             throw new MojoExecutionException(errMsg, e);
         }
         return bootstrapProperties;
@@ -260,6 +273,7 @@ public class DeployTestCatalog extends AbstractMojo {
             jwt = authTokenService.getJWT();
             getLog().info("Java Web Token (jwt) obtained from the galasa ecosystem OK.");
         } catch( Exception ex) {
+            getLog().error(ex.getMessage());
             throw new MojoExecutionException(ex.getMessage(),ex);
         } 
         return jwt;

@@ -287,6 +287,11 @@ public class DeployTestCatalogTest {
 
     }
 
+    // This is my exploration unit test.
+    //
+    // The unit tests are not yet complete, as they don't test the last piece where the test catalog file is
+    // sent off to the URL.
+    // 
     // @SuppressWarnings("deprecation")
     // @Test
     // public void TestXXX() throws Exception {

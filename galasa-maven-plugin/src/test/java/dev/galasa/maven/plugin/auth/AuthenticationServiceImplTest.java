@@ -23,35 +23,35 @@ import dev.galasa.maven.plugin.MockHttpClient;
 import dev.galasa.maven.plugin.auth.beans.*;
 
 
-public class AuthenticationServiceTest { 
+public class AuthenticationServiceImplTest { 
 
     @Test
     public void testAuthServiceComplainsIfNullGalasaAuthTokenSupplied() throws Exception {
-        Exception ex = catchException( ()-> new AuthenticationService(new URL("http://not-null.com"), null, new MockHttpClient() ));
+        Exception ex = catchException( ()-> new AuthenticationServiceImpl(new URL("http://not-null.com"), null, new MockHttpClient() ));
         assertThat(ex).isInstanceOf(AuthenticationException.class);
     }
 
     @Test
     public void testAuthServiceComplainsIfNullApiServerUrlSupplied() throws Exception {
-        Exception ex = catchException( ()-> new AuthenticationService(null, "could-be-a:valid-token", new MockHttpClient()));
+        Exception ex = catchException( ()-> new AuthenticationServiceImpl(null, "could-be-a:valid-token", new MockHttpClient()));
         assertThat(ex).isInstanceOf(AuthenticationException.class);
     }
 
     @Test
     public void testAuthServiceGivenTokenWithNoSeparatorFails() throws Exception {
-        Exception ex = catchException( ()-> new AuthenticationService(new URL("http://not-null.com"), "no-separator-in-this-token", new MockHttpClient()));
+        Exception ex = catchException( ()-> new AuthenticationServiceImpl(new URL("http://not-null.com"), "no-separator-in-this-token", new MockHttpClient()));
         assertThat(ex).isInstanceOf(AuthenticationException.class);
     }
 
     @Test
     public void testAuthServiceGivenTokenWithTwoSeparatorsFails() throws Exception {
-        Exception ex = catchException( ()-> new AuthenticationService(new URL("http://not-null.com"), "too-many:separators:here", new MockHttpClient()));
+        Exception ex = catchException( ()-> new AuthenticationServiceImpl(new URL("http://not-null.com"), "too-many:separators:here", new MockHttpClient()));
         assertThat(ex).isInstanceOf(AuthenticationException.class);
     }
 
     @Test
     public void testAuthServiceGivenNullHttpClientFails() throws Exception {
-        Exception ex = catchException( ()-> new AuthenticationService(new URL("http://not-null.com"), "could-be-a:valid-token", null));
+        Exception ex = catchException( ()-> new AuthenticationServiceImpl(new URL("http://not-null.com"), "could-be-a:valid-token", null));
         assertThat(ex).isInstanceOf(AuthenticationException.class);
     }
 
@@ -74,7 +74,7 @@ public class AuthenticationServiceTest {
             }
         };
 
-        AuthenticationService service = new AuthenticationService(new URL("https://mock-service.com"), "could-be-a:valid-token", mockHttpClient);
+        AuthenticationServiceImpl service = new AuthenticationServiceImpl(new URL("https://mock-service.com"), "could-be-a:valid-token", mockHttpClient);
 
 
         Exception gotBackException = catchException(()->service.getJWT());
@@ -99,7 +99,7 @@ public class AuthenticationServiceTest {
             }
         };
 
-        AuthenticationService service = new AuthenticationService(new URL("https://mock-service.com"), "could-be-a:valid-token", mockHttpClient);
+        AuthenticationServiceImpl service = new AuthenticationServiceImpl(new URL("https://mock-service.com"), "could-be-a:valid-token", mockHttpClient);
 
 
         Exception gotBackException = catchException(()->service.getJWT());
@@ -155,7 +155,7 @@ public class AuthenticationServiceTest {
             }
         };
 
-        AuthenticationService service = new AuthenticationService(new URL("https://mock-service.com"), expectedRefreshToken+":"+expectedClientId, mockHttpClient);
+        AuthenticationServiceImpl service = new AuthenticationServiceImpl(new URL("https://mock-service.com"), expectedRefreshToken+":"+expectedClientId, mockHttpClient);
 
         String jwt = service.getJWT();
 
@@ -208,7 +208,7 @@ public class AuthenticationServiceTest {
             }
         };
 
-        AuthenticationService service = new AuthenticationService(new URL("https://mock-service.com"), expectedRefreshToken+":"+expectedClientId, mockHttpClient);
+        AuthenticationServiceImpl service = new AuthenticationServiceImpl(new URL("https://mock-service.com"), expectedRefreshToken+":"+expectedClientId, mockHttpClient);
 
         Throwable t = catchThrowable( ()-> { service.getJWT(); });
 

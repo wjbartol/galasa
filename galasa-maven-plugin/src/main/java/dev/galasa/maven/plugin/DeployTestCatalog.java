@@ -9,10 +9,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.net.URLConnection;
-import java.text.MessageFormat;
 import java.util.Properties;
-
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.client.HttpClient;
@@ -25,8 +22,9 @@ import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
-
 import dev.galasa.maven.plugin.auth.AuthenticationService;
+import dev.galasa.maven.plugin.auth.AuthenticationServiceFactory;
+import dev.galasa.maven.plugin.auth.AuthenticationServiceFactoryImpl;
 
 /**
  * Merge all the test catalogs on the dependency list
@@ -34,36 +32,42 @@ import dev.galasa.maven.plugin.auth.AuthenticationService;
 @Mojo(name = "deploytestcat", defaultPhase = LifecyclePhase.DEPLOY, threadSafe = true)
 public class DeployTestCatalog extends AbstractMojo {
     @Parameter(defaultValue = "${project}", readonly = true)
-    private MavenProject project;
+    public MavenProject project;
 
     @Parameter(defaultValue = "${galasa.test.stream}", readonly = true, required = false)
-    private String       testStream;
+    public String       testStream;
 
     // To deploy the test catalog we need to authenticate using this token.
     @Parameter(defaultValue = "${galasa.token}", readonly = true , required = false)
-    private String       galasaAccessToken;
+    public String       galasaAccessToken;
 
     @Parameter(defaultValue = "${galasa.bootstrap}", readonly = true, required = false)
-    private URL          bootstrapUrl;
+    public URL          bootstrapUrl;
     
     // This spelling of the property is old/wrong/deprecated.
     @Parameter(defaultValue = "${galasa.skip.bundletestcatatlog}", readonly = true, required = false)
-    private boolean      skipBundleTestCatalogOldSpelling;
+    public boolean      skipBundleTestCatalogOldSpelling;
     
     @Parameter(defaultValue = "${galasa.skip.bundletestcatalog}", name="skip" , readonly = true, required = false)
-    private boolean      skipBundleTestCatalog;
+    public boolean      skipBundleTestCatalog;
     
     // This spelling of the property is old/wrong/deprecated.
     @Parameter(defaultValue = "${galasa.skip.deploytestcatatlog}" , readonly = true, required = false)
-    private boolean      skipDeployTestCatalogOldSpelling;
+    public boolean      skipDeployTestCatalogOldSpelling;
     
     @Parameter(defaultValue = "${galasa.skip.deploytestcatalog}", name="skipDeploy" , readonly = true, required = false)
-    private boolean      skipDeployTestCatalog;
-    
-    private boolean      skip = (skipBundleTestCatalog || skipBundleTestCatalogOldSpelling);
-    private boolean      skipDeploy = (skipDeployTestCatalog || skipDeployTestCatalogOldSpelling);
+    public boolean      skipDeployTestCatalog;
+
+    // A protected variable so we can inject a mock factory if needed during unit testing.
+    protected AuthenticationServiceFactory authFactory = new AuthenticationServiceFactoryImpl();
+
+    protected BootstrapLoader bootstrapLoader = new BootstrapLoaderImpl();
 
     public void execute() throws MojoExecutionException, MojoFailureException {
+
+        boolean skip = (skipBundleTestCatalog || skipBundleTestCatalogOldSpelling);
+        boolean skipDeploy = (skipDeployTestCatalog || skipDeployTestCatalogOldSpelling);
+
         getLog().info("DeployTestCatalog - execute()");
         if (skip || skipDeploy) {
             getLog().info("Skipping Deploy Test Catalog - because the property galasa.skip.deploytestcatalog or galasa.skip.bundletestcatalog is set");
@@ -92,13 +96,13 @@ public class DeployTestCatalog extends AbstractMojo {
             return;
         }
 
-        Properties bootstrapProperties = getBootstrapProperties();
+        Properties bootstrapProperties = bootstrapLoader.getBootstrapProperties(bootstrapUrl,getLog());
 
-        URL testcatalogUrl = calculateTestCatalogUrl(bootstrapProperties);
+        URL testcatalogUrl = calculateTestCatalogUrl(bootstrapProperties, this.testStream, this.bootstrapUrl);
 
         checkGalasaAccessTokenIsValid(this.galasaAccessToken); 
 
-        String jwt = getAuthenticatedJwt(this.galasaAccessToken, this.bootstrapUrl) ;
+        String jwt = getAuthenticatedJwt(this.authFactory, this.galasaAccessToken, this.bootstrapUrl) ;
 
         publishTestCatalogToGalasaServer(testcatalogUrl,jwt, testCatalogArtifact);
     }
@@ -195,7 +199,8 @@ public class DeployTestCatalog extends AbstractMojo {
         }
     }
 
-    private URL calculateTestCatalogUrl(Properties bootstrapProperties) throws MojoExecutionException {
+    // Protected so we can easily unit test it without mocking framework.
+    protected URL calculateTestCatalogUrl(Properties bootstrapProperties, String testStream, URL bootstrapUrl) throws MojoExecutionException {
         String sTestcatalogUrl = bootstrapProperties.getProperty("framework.testcatalog.url");
         if (sTestcatalogUrl == null || sTestcatalogUrl.trim().isEmpty()) {
             String sBootstrapUrl = bootstrapUrl.toString();
@@ -220,34 +225,18 @@ public class DeployTestCatalog extends AbstractMojo {
         return testCatalogUrl;
     }
 
-    private Properties getBootstrapProperties() throws MojoExecutionException {
-        Properties bootstrapProperties = new Properties();
-        try {
-            URLConnection connection = bootstrapUrl.openConnection();
-            String msg = MessageFormat.format("execute(): URLConnection: connected to:{0}",connection.getURL().toString());
-            getLog().info(msg);
-            bootstrapProperties.load(connection.getInputStream());
-            getLog().info("execute(): bootstrapProperties loaded: " + bootstrapProperties);
-        } catch (Exception e) {
-            String errMsg = MessageFormat.format("execute() - Unable to load bootstrap properties, Reason: {0}", e);
-            getLog().error(errMsg);
-            throw new MojoExecutionException(errMsg, e);
-        }
-        return bootstrapProperties;
-    }
-
     /**
      * Swap the galasa token for a JWT which we can use to talk to the API server on the ecosystem.
      * @return A JWT string (Java Web Token).
      * @throws MojoExecutionException
      */
-    private String getAuthenticatedJwt(String galasaAccessToken, URL bootstrapUrl) throws MojoExecutionException {
+    private String getAuthenticatedJwt(AuthenticationServiceFactory authFactory, String galasaAccessToken, URL bootstrapUrl) throws MojoExecutionException {
         String jwt;
         try {
             String apiServerUrlString = bootstrapUrl.toString().replaceAll("/bootstrap","");
             HttpClient httpClient = HttpClientBuilder.create().build();
             URL apiServerUrl = new URL(apiServerUrlString);
-            AuthenticationService authTokenService = new AuthenticationService(apiServerUrl,galasaAccessToken,httpClient);
+            AuthenticationService authTokenService = authFactory.newAuthenticationService(apiServerUrl,galasaAccessToken,httpClient);
             getLog().info("Turning the galasa access token into a jwt");
             jwt = authTokenService.getJWT();
             getLog().info("Java Web Token (jwt) obtained from the galasa ecosystem OK.");

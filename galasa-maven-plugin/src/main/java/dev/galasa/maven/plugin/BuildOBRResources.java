@@ -59,6 +59,7 @@ public class BuildOBRResources extends AbstractMojo {
 
     private Field requirementsField;
 
+    @SuppressWarnings("deprecation")
     public void execute() throws MojoExecutionException, MojoFailureException {
 
         // give access to the requirements field in the ResourceImpl so we can remove the 

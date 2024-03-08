@@ -63,8 +63,6 @@ public class DeployTestCatalog extends AbstractMojo {
 
     protected BootstrapLoader bootstrapLoader = new BootstrapLoaderImpl();
 
-    public static final boolean DEFAULT_ASSUMPTION_AUTHENTICATION_ENABLED = false ;
-
     public void execute() throws MojoExecutionException, MojoFailureException {
 
         boolean skip = (skipBundleTestCatalog || skipBundleTestCatalogOldSpelling);

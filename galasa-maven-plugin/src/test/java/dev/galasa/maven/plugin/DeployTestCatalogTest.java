@@ -10,7 +10,6 @@ import java.util.Properties;
 import static org.assertj.core.api.Assertions.*;
 import org.junit.Test;
 import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
 
 public class DeployTestCatalogTest { 

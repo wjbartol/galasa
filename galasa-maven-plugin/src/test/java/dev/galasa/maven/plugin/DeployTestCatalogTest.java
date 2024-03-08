@@ -10,7 +10,6 @@ import java.util.Properties;
 import static org.assertj.core.api.Assertions.*;
 import org.junit.Test;
 import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
 
 public class DeployTestCatalogTest { 
@@ -254,39 +253,7 @@ public class DeployTestCatalogTest {
         assertThat(ex).hasMessageContaining("Unable to calculate the test catalog url, the bootstrap url does not end with /bootstrap, need a framework.testcatalog.url property in the bootstrap");
     }
 
-    @SuppressWarnings("deprecation")
-    @Test
-    public void TestFailsIfNoGalasaAccessToken() throws Exception {
-        DeployTestCatalog command = new DeployTestCatalog();
-        MockLog mockLog = new MockLog();
-        command.setLog(mockLog);
-
-        command.testStream = "myTestStream";
-        command.bootstrapUrl = new URL("http://myBootstrapUrl/bootstrap");
-
-        MavenProject project = new MavenProject();
-        project.setPackaging("galasa-obr");
-        command.project = project;
-
-        MockArtifact testCatalogArtifact = new MockArtifact();
-        project.addAttachedArtifact(testCatalogArtifact);
-        testCatalogArtifact.type = "json";
-        testCatalogArtifact.classifier = "testcatalog";
-        
-        // Set a mock boostrap loader...
-        command.bootstrapLoader = new BootstrapLoader() {
-            @Override
-            public Properties getBootstrapProperties(URL bootstrapUrl, Log log) throws MojoExecutionException {
-                return new Properties();
-            }
-        };
-
-        Exception ex = catchException( ()-> command.execute() );
-        assertThat(ex).isInstanceOf(MojoExecutionException.class);
-        assertThat(ex).hasMessageContaining("No Galasa authentication token supplied. Set the galasa.token property. The token is required to communicate with the Galasa server");
-
-    }
-
+ 
     // This is my exploration unit test.
     //
     // The unit tests are not yet complete, as they don't test the last piece where the test catalog file is

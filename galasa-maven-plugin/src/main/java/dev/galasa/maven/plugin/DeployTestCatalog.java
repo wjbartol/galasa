@@ -48,14 +48,14 @@ public class DeployTestCatalog extends AbstractMojo {
     @Parameter(defaultValue = "${galasa.skip.bundletestcatatlog}", readonly = true, required = false)
     public boolean      skipBundleTestCatalogOldSpelling;
     
-    @Parameter(defaultValue = "${galasa.skip.bundletestcatalog}", name="skip" , readonly = true, required = false)
+    @Parameter(defaultValue = "${galasa.skip.bundletestcatalog}", readonly = true, required = false)
     public boolean      skipBundleTestCatalog;
     
     // This spelling of the property is old/wrong/deprecated.
     @Parameter(defaultValue = "${galasa.skip.deploytestcatatlog}" , readonly = true, required = false)
     public boolean      skipDeployTestCatalogOldSpelling;
     
-    @Parameter(defaultValue = "${galasa.skip.deploytestcatalog}", name="skipDeploy" , readonly = true, required = false)
+    @Parameter(defaultValue = "${galasa.skip.deploytestcatalog}", readonly = true, required = false)
     public boolean      skipDeployTestCatalog;
 
     // A protected variable so we can inject a mock factory if needed during unit testing.
@@ -100,21 +100,14 @@ public class DeployTestCatalog extends AbstractMojo {
 
         URL testcatalogUrl = calculateTestCatalogUrl(bootstrapProperties, this.testStream, this.bootstrapUrl);
 
-        checkGalasaAccessTokenIsValid(this.galasaAccessToken); 
-
-        String jwt = getAuthenticatedJwt(this.authFactory, this.galasaAccessToken, this.bootstrapUrl) ;
+        String jwt = null ;
+        // For now, if no galasa token is supplied, that's ok. It's optional.   
+        // If no galasa access token supplied by the user, the jwt will stay as null.
+        if ( (this.galasaAccessToken!=null) && (!this.galasaAccessToken.isEmpty()) ) {
+            jwt = getAuthenticatedJwt(this.authFactory, this.galasaAccessToken, this.bootstrapUrl) ;
+        }
 
         publishTestCatalogToGalasaServer(testcatalogUrl,jwt, testCatalogArtifact);
-    }
-
-    private void checkGalasaAccessTokenIsValid(String galasaAccessToken) throws MojoExecutionException {
-        if (galasaAccessToken==null || galasaAccessToken.isEmpty()) {
-            String msg = "No Galasa authentication token supplied. Set the galasa.token property."+
-            " The token is required to communicate with the Galasa server."+
-            " Obtain a personal access token using the Galasa web user interface for the ecosystem you are trying to publish the test catalog to.";
-            getLog().error(msg);
-            throw new MojoExecutionException(msg);
-        }
     }
 
     private Artifact getTestCatalogArtifact() {
@@ -164,7 +157,13 @@ public class DeployTestCatalog extends AbstractMojo {
             conn.addRequestProperty("Content-Type", "application/json");
             conn.addRequestProperty("Accept", "application/json");
 
-            conn.addRequestProperty("Authorization", "Bearer "+jwt);
+            // Only add the jwt header if we have a jwt value.
+            if (jwt == null) {
+                getLog().info("Not sending a JWT bearer token to the server, as the galasa.token property was not supplied.");
+            } else {
+                conn.addRequestProperty("Authorization", "Bearer "+jwt);
+            }
+
             conn.addRequestProperty("ClientApiVersion","0.32.0"); // The version of the API we coded this against.
 
             FileUtils.copyFile(testCatalogArtifact.getFile(), conn.getOutputStream());

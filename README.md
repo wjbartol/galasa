@@ -76,10 +76,10 @@ Phase: `deploy`
 
 Input Parameters/Properties:
 - `galasa.test.stream` required. A string.
-- `galasa.token` required. An access token for the galasa ecosystem.
+- `galasa.token` optional. An access token for the galasa ecosystem, if that ecosytem is using authentication.
 - `galasa.bootstrap` required. A URL to the ecosystem.
-- `galasa.skip.bundletestcatalog` optional. A boolean.
-- `galasa.skip.deploytestcatalog` optional. A boolean.
+- `galasa.skip.bundletestcatalog` optional. A boolean. If set to true, the test catalog is not deployed to the Galasa server.
+- `galasa.skip.deploytestcatalog` optional. A boolean. If set to true, the test catalog is not deployed to the Galasa server.
 
 For example:
 ```

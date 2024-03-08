@@ -65,9 +65,6 @@ public class DeployTestCatalog extends AbstractMojo {
 
     public static final boolean DEFAULT_ASSUMPTION_AUTHENTICATION_ENABLED = false ;
 
-    public static final String BOOTSTRAP_PROPERTY_NAME_IS_AUTH_ENABLED = "framework.auth.isEnabled";
-
-
     public void execute() throws MojoExecutionException, MojoFailureException {
 
         boolean skip = (skipBundleTestCatalog || skipBundleTestCatalogOldSpelling);
@@ -107,34 +104,12 @@ public class DeployTestCatalog extends AbstractMojo {
 
         String jwt = null ;
         // For now, if no galasa token is supplied, that's ok. It's optional.   
-        if (this.galasaAccessToken==null || this.galasaAccessToken.isEmpty()) {
-            // No galasa access token supplied by the user. So not going to pass a JWT.
-        } else {
+        // If no galasa access token supplied by the user, the jwt will stay as null.
+        if ( (this.galasaAccessToken!=null) && (!this.galasaAccessToken.isEmpty()) ) {
             jwt = getAuthenticatedJwt(this.authFactory, this.galasaAccessToken, this.bootstrapUrl) ;
         }
 
         publishTestCatalogToGalasaServer(testcatalogUrl,jwt, testCatalogArtifact);
-    }
-
-    // Protected so that we can easily unit test this method.
-    protected boolean calculateWhetherAuthenticationIsEnabledOnServer(Properties bootstrapProperties) {
-        boolean isAuthEnabled = DEFAULT_ASSUMPTION_AUTHENTICATION_ENABLED;
-
-        String isEnabledPropStr = bootstrapProperties.getProperty(BOOTSTRAP_PROPERTY_NAME_IS_AUTH_ENABLED);
-        if (isEnabledPropStr==null) {
-            if (DEFAULT_ASSUMPTION_AUTHENTICATION_ENABLED) {
-                getLog().info("Bootstrap properties from server do not include "+BOOTSTRAP_PROPERTY_NAME_IS_AUTH_ENABLED+" so we assume server is insisting on authentication.");
-            } else {
-                getLog().info("Bootstrap properties from server do not include "+BOOTSTRAP_PROPERTY_NAME_IS_AUTH_ENABLED+" so we assume server is not insisting on authentication.");
-            }
-        } else {
-            if (isEnabledPropStr.equalsIgnoreCase("true") ) {
-                getLog().info("Bootstrap properties from server include the property "+BOOTSTRAP_PROPERTY_NAME_IS_AUTH_ENABLED+" so we know the server requires authentication.");
-                isAuthEnabled = true;
-            }
-        }
-
-        return isAuthEnabled;
     }
 
     private Artifact getTestCatalogArtifact() {
@@ -186,7 +161,7 @@ public class DeployTestCatalog extends AbstractMojo {
 
             // Only add the jwt header if we have a jwt value.
             if (jwt == null) {
-                getLog().info("Not sending a JWT bearer token to the server, as the galasa.token was not supplied.");
+                getLog().info("Not sending a JWT bearer token to the server, as the galasa.token property was not supplied.");
             } else {
                 conn.addRequestProperty("Authorization", "Bearer "+jwt);
             }

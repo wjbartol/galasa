@@ -254,51 +254,7 @@ public class DeployTestCatalogTest {
         assertThat(ex).hasMessageContaining("Unable to calculate the test catalog url, the bootstrap url does not end with /bootstrap, need a framework.testcatalog.url property in the bootstrap");
     }
 
-    @Test
-    public void testCalcServerUsesAuthenticationWhenPropMissingShouldBeFalse() {
-        DeployTestCatalog command = new DeployTestCatalog();
-        Properties props = new Properties();
-        boolean isAuthEnabled = command.calculateWhetherAuthenticationIsEnabledOnServer(props);
-        assertThat(isAuthEnabled).isFalse();
-    }
-
-    @Test
-    public void testCalcServerUsesAuthenticationWhenPropFalseShouldBeFalse() {
-        DeployTestCatalog command = new DeployTestCatalog();
-        Properties props = new Properties();
-        props.setProperty(DeployTestCatalog.BOOTSTRAP_PROPERTY_NAME_IS_AUTH_ENABLED,"false");
-        boolean isAuthEnabled = command.calculateWhetherAuthenticationIsEnabledOnServer(props);
-        assertThat(isAuthEnabled).isFalse();
-    }
-
-    @Test
-    public void testCalcServerUsesAuthenticationWhenPropTRUEShouldBeTrue() {
-        DeployTestCatalog command = new DeployTestCatalog();
-        Properties props = new Properties();
-        props.setProperty(DeployTestCatalog.BOOTSTRAP_PROPERTY_NAME_IS_AUTH_ENABLED,"TRUE");
-        boolean isAuthEnabled = command.calculateWhetherAuthenticationIsEnabledOnServer(props);
-        assertThat(isAuthEnabled).isTrue();
-    }
-
-    @Test
-    public void testCalcServerUsesAuthenticationWhenPropTrueShouldBeTrue() {
-        DeployTestCatalog command = new DeployTestCatalog();
-        Properties props = new Properties();
-        props.setProperty(DeployTestCatalog.BOOTSTRAP_PROPERTY_NAME_IS_AUTH_ENABLED,"True");
-        boolean isAuthEnabled = command.calculateWhetherAuthenticationIsEnabledOnServer(props);
-        assertThat(isAuthEnabled).isTrue();
-    }
-
-    @Test
-    public void testCalcServerUsesAuthenticationWhenProptrueShouldBeTrue() {
-        DeployTestCatalog command = new DeployTestCatalog();
-        Properties props = new Properties();
-        props.setProperty(DeployTestCatalog.BOOTSTRAP_PROPERTY_NAME_IS_AUTH_ENABLED,"true");
-        boolean isAuthEnabled = command.calculateWhetherAuthenticationIsEnabledOnServer(props);
-        assertThat(isAuthEnabled).isTrue();
-    }
-
-
+ 
     // This is my exploration unit test.
     //
     // The unit tests are not yet complete, as they don't test the last piece where the test catalog file is

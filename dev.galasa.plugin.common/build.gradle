@@ -1,0 +1,157 @@
+plugins {
+    id 'java'
+    id 'jacoco'
+    id 'maven-publish'
+    id 'signing'
+}
+
+group   = "dev.galasa"
+version = "0.32.0"
+
+repositories {
+    maven {
+       url "$sourceMaven"
+    }
+    mavenLocal()
+    maven {
+       url "$centralMaven"
+    }
+}
+
+dependencies {
+    implementation 'com.google.code.gson:gson:2.10.1'
+    implementation 'org.apache.httpcomponents:httpcore:4.4.11'
+    implementation 'org.apache.httpcomponents:httpclient:4.5.14'
+    testImplementation 'junit:junit:4.13'
+}
+
+tasks.withType(Javadoc) {
+    failOnError = false
+    enabled = true
+}
+
+task gitHash(dependsOn : 'classes') {
+    def dir    = file("${buildDir}/githash")
+    def meta   = file("${buildDir}/githash/META-INF")
+    def result = file("${buildDir}/githash/META-INF/git.hash")
+    
+    outputs.dir meta
+    tasks.jar.dependsOn('gitHash')
+    tasks.jar.from(dir)
+    
+    doLast {
+        if(!meta.exists()) {
+            meta.mkdirs()
+        }
+        
+        def hash = "unknown"
+        
+        try {
+            new ByteArrayOutputStream().withStream { os ->
+                def r = exec {
+                    commandLine 'git', 'log',  '--pretty=format:%H', '-1', '.'
+                    standardOutput = os
+                }
+            hash = os.toString()
+            }
+        } catch(Exception e) {}
+        result.write(hash)
+    }
+}
+
+java {
+    withJavadocJar()
+    withSourcesJar()
+}
+    
+tasks.withType(Javadoc) {
+    failOnError = false
+    enabled = true
+}
+
+signing {
+    sign publishing.publications
+}
+
+tasks.withType(Sign) {
+    onlyIf { isMainOrRelease.toBoolean() }
+}
+
+publishing {
+    afterEvaluate {
+        publications {
+            maven(MavenPublication) {
+                from(components.java)
+            }
+
+            withType(MavenPublication) {
+                pom {
+                    url = 'https://galasa.dev'
+                    name = 'Galasa Gradle Plugins'
+                    description = 'This project contains code common to plugins'
+                    licenses {
+                        license {
+                            name = 'Eclipse Public License - v 2.0'
+                            url = 'https://www.eclipse.org/legal/epl-2.0'
+                        }
+                    }
+                    developers {
+                        developer {
+                            name = 'Michael Baylis'
+                            email = 'Michael.Baylis@uk.ibm.com'
+                            organization = 'IBM'
+                            organizationUrl = 'https://www.ibm.com'
+                        }
+                        developer {
+                            name = 'William Yates'
+                            email = 'wyates@uk.ibm.com'
+                            organization = 'IBM'
+                            organizationUrl = 'https://www.ibm.com'
+                        }
+                        developer {
+                            name = 'Michael Cobbett'
+                            email = 'mike_cobbett@uk.ibm.com'
+                            organization = 'IBM'
+                            organizationUrl = 'https://www.ibm.com'
+                        }
+                        developer {
+                            name = 'Jade Carino'
+                            email = 'jade.carino@ibm.com'
+                            organization = 'IBM'
+                            organizationUrl = 'https://www.ibm.com'
+                        }
+                        developer {
+                            name = 'Savvas Kyriacou'
+                            email = 'savvasky@uk.ibm.com'
+                            organization = 'IBM'
+                            organizationUrl = 'https://www.ibm.com'
+                        }
+                        developer {
+                            name = 'Aaron Jhaj'
+                            email = 'aaron.jhaj@ibm.com'
+                            organization = 'IBM'
+                            organizationUrl = 'https://www.ibm.com'
+                        }
+                        developer {
+                            name = 'Eamonn Mansour'
+                            email = 'eamonn.mansour@ibm.com'
+                            organization = 'IBM'
+                            organizationUrl = 'https://www.ibm.com'
+                        }
+                    }
+                    scm {
+                        connection = 'scm:git:git:://github.com/galasa-dev/gradle'
+                        developerConnection = 'scm:git:git:://github.com/galasa-dev/gradle'
+                        url = 'https://github.com/galasa-dev/gradle'
+                    }
+                    issueManagement {
+                        system = 'GitHub'
+                        url = 'https://github.com/galasa-dev/projectmanagement/issues'
+                    }
+                }
+            }
+        }
+    }
+
+}
+

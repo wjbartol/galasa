@@ -71,7 +71,7 @@ note() { printf "\n${underline}${bold}${blue}Note:${reset} ${blue}%s${reset}\n" 
 #-----------------------------------------------------------------------------------------                   
 project="gradle"
 source_dir="."
-h1 "Building ${project}"
+
 
 # Debug or not debug ? Override using the DEBUG flag.
 if [[ -z ${DEBUG} ]]; then
@@ -119,25 +119,39 @@ log_file=${LOGS_DIR}/${project}.txt
 info "Log will be placed at ${log_file}"
 
 
-info "About to run this command:"
-cat << EOF
-gradle --no-daemon \
-${CONSOLE_FLAG} \
--Dorg.gradle.java.home=${JAVA_HOME} \
--PsourceMaven=${SOURCE_MAVEN} ${OPTIONAL_DEBUG_FLAG} \
-clean build publishToMavenLocal \
-$cmd 2>&1 > ${log_file}
-EOF
+function build_gradle_plugin() {
+    h1 "Building ${project}"
 
-gradle --no-daemon \
-${CONSOLE_FLAG} \
--Dorg.gradle.java.home=${JAVA_HOME} \
--PsourceMaven=${SOURCE_MAVEN} ${OPTIONAL_DEBUG_FLAG} \
-clean build publishToMavenLocal \
-$cmd 2>&1 > ${log_file}
+    cmd="gradle --no-daemon \
+    ${CONSOLE_FLAG} \
+    -Dorg.gradle.java.home=${JAVA_HOME} \
+    -PsourceMaven=${SOURCE_MAVEN} ${OPTIONAL_DEBUG_FLAG} \
+    clean build publishToMavenLocal \
+    --stacktrace \
+    "
 
-rc=$? ; if [[ "${rc}" != "0" ]]; then cat ${log_file} ; error "Failed to build ${project}" ; exit 1 ; fi
-cat ${log_file} | grep --ignore-case "warning"
-cat ${log_file} | grep --ignore-case "error"
-cat ${log_file} | grep --ignore-case "fail"
-success "Project ${project} built - OK - log is at ${log_file}"
+    info "About to run this command: $cmd"
+
+    $cmd > ${log_file} 2>&1
+
+    rc=$? ; if [[ "${rc}" != "0" ]]; then cat ${log_file} ; error "Failed to build ${project}. log is at ${log_file}" ; exit 1 ; fi
+    cat ${log_file} | grep --ignore-case "warning"
+    cat ${log_file} | grep --ignore-case "error"
+    cat ${log_file} | grep --ignore-case "fail"
+    success "Project ${project} built - OK - log is at ${log_file}"
+}
+
+function clean_up_m2 {
+    h1 "Cleaning up the local .m2 folder."
+    rm -fr ~/.m2/repository/dev/galasa/obr
+    rm -fr ~/.m2/repository/dev/galasa/testcatalog
+    rm -fr ~/.m2/repository/dev/galasa/githash
+    rm -fr ~/.m2/repository/dev/galasa/tests
+    rm -fr ~/.m2/repository/dev/galasa/dev.galasa.gradle.impl
+    rm -fr ~/.m2/repository/dev/galasa/dev.galasa.plugin.*
+    success "Cleaned up .m2 repository"
+}
+
+clean_up_m2
+
+build_gradle_plugin

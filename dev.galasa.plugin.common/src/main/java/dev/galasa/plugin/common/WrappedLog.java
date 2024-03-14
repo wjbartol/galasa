@@ -7,5 +7,6 @@ package dev.galasa.plugin.common;
 
 public interface WrappedLog {
     void info(String message);
+    void warn(String message);
     void error(String message);
 }

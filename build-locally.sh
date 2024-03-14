@@ -126,7 +126,7 @@ function build_gradle_plugin() {
     ${CONSOLE_FLAG} \
     -Dorg.gradle.java.home=${JAVA_HOME} \
     -PsourceMaven=${SOURCE_MAVEN} ${OPTIONAL_DEBUG_FLAG} \
-    clean build publishToMavenLocal \
+    clean build test publishToMavenLocal \
     --stacktrace \
     "
 

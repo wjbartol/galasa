@@ -16,6 +16,12 @@ import dev.galasa.plugin.common.test.MockException;
 import dev.galasa.plugin.common.test.MockLog;
 
 public class URLCalculatorTest {
+
+    // @Test
+    // public void TestFailureShowsUpWithBrokenBuild() throws Exception {
+    //     throw new Exception("Should see this test fail intentionally to test the build process is calling the tests.");
+    // }
+
     @Test
     public void TestCalculateTestCatalogUrlAddsSuffixesOk() throws Exception {
         String streamName = "mystream";

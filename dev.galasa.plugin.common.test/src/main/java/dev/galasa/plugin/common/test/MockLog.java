@@ -35,4 +35,8 @@ public class MockLog implements WrappedLog {
         logRecords.add("ERROR:"+message);
     }
     
+    @Override
+    public void warn(String message) {
+        logRecords.add("WARNING:"+message);
+    }
 }

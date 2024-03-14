@@ -21,4 +21,9 @@ public class WrappedLogGradle implements WrappedLog {
     public void info(String msg) {
         log.info(msg);
     }
+
+    @Override
+    public void warn(String msg) {
+        log.warn(msg);
+    }
 }

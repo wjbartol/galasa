@@ -80,7 +80,10 @@ public class TestCatalogArtifactDeployer<Ex extends Exception> {
             } finally {
                 conn.disconnect();
             }
-            this.log.info("Test Catalog successfully deployed to " + testCatalogUrl.toString());
+            
+            // The following should probably be an 'info' message, but if you warn in the log, then it gets displayed 
+            // on the user console, so this important event is more visible this way.
+            this.log.warn("Test Catalog successfully deployed to " + testCatalogUrl.toString());
         }
     }
 

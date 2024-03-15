@@ -35,10 +35,11 @@ import org.eclipse.aether.resolution.ArtifactRequest;
 import org.eclipse.aether.resolution.ArtifactResult;
 
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+
+import dev.galasa.plugin.common.impl.GsonFactory;
 
 /**
  * Merge all the test catalogs on the dependency list
@@ -72,6 +73,8 @@ public class MergeTestCatalogs extends AbstractMojo {
     @Parameter(defaultValue = "${galasa.build.job}", readonly = true, required = false)
     private String                  buildJob;
 
+    protected GsonFactory gsonFactory = new GsonFactory();
+
     public void execute() throws MojoExecutionException, MojoFailureException {
 
         if (skip) {
@@ -89,7 +92,8 @@ public class MergeTestCatalogs extends AbstractMojo {
         }
 
         try {
-            Gson gson = new GsonBuilder().setPrettyPrinting().create();
+
+            Gson gson = gsonFactory.getGson();
 
             // *** Create the Main
             JsonObject jsonRoot = new JsonObject();

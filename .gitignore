@@ -26,3 +26,5 @@ gradle-app.setting
 *.phd
 *.dmp
 velocity.log*
+
+temp/

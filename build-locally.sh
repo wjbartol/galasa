@@ -122,11 +122,17 @@ info "Log will be placed at ${log_file}"
 function build_gradle_plugin() {
     h1 "Building ${project}"
 
+    # TARGET_MAVEN_FOLDER=${BASEDIR}/temp/maven-repo
+    TARGET_MAVEN_FOLDER=~/.m2/repository
+    rm -fr $TARGET_MAVEN_FOLDER
+    mkdir -p $TARGET_MAVEN_FOLDER
+
     cmd="gradle --no-daemon \
     ${CONSOLE_FLAG} \
     -Dorg.gradle.java.home=${JAVA_HOME} \
     -PsourceMaven=${SOURCE_MAVEN} ${OPTIONAL_DEBUG_FLAG} \
-    clean build test publishToMavenLocal \
+    -PtargetMaven=${TARGET_MAVEN_FOLDER}
+    clean build test check publish publishToMavenLocal \
     --stacktrace \
     "
 

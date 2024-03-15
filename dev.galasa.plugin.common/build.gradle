@@ -152,6 +152,18 @@ publishing {
             }
         }
     }
+    repositories {
+        maven {
+            url  = "$targetMaven"
+            
+            if ("$targetMaven".startsWith('http')) {
+                credentials {
+                    username System.getenv('MAVENUSERNAME')
+                    password System.getenv('MAVENPASSWORD')
+                }
+            }
+        }
+    }
 
 }
 

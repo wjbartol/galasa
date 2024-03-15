@@ -7,12 +7,8 @@
 	<groupId>dev.galasa</groupId>
 	<artifactId>galasa-maven-plugin</artifactId>
 	<packaging>maven-plugin</packaging>
+	<version>0.32.0</version>
 
-	<parent>
-		<groupId>dev.galasa</groupId>
-		<artifactId>galasa-maven-plugin-parent</artifactId>
-		<version>0.32.0</version>
-	</parent>
 	
 	<description>Maven plugin for build Galasa artifacts such as the OBR, Test Catalog</description>
 	<url>https://galasa.dev</url>
@@ -82,7 +78,7 @@
 		<maven.build.timestamp.format>yyyyMMddHHmm</maven.build.timestamp.format>
 	</properties>
 
-		<dependencyManagement>
+	<dependencyManagement>
 		<dependencies>
 			<dependency>
 				<groupId>dev.galasa</groupId>
@@ -279,6 +275,26 @@
  	</dependencies>
 
 	<build>
+		<pluginManagement>
+			<plugins>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-plugin-plugin</artifactId>
+					<version>3.6.0</version>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-gpg-plugin</artifactId>
+					<version>1.5</version>
+				</plugin>
+				<plugin>
+					<groupId>com.google.code.maven-replacer-plugin</groupId>
+					<artifactId>maven-replacer-plugin</artifactId>
+					<version>1.4.0</version>
+				</plugin>
+			</plugins>
+		</pluginManagement>
+
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>

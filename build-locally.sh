@@ -122,11 +122,6 @@ info "Log will be placed at ${log_file}"
 function build_gradle_plugin() {
     h1 "Building ${project}"
 
-    # TARGET_MAVEN_FOLDER=${BASEDIR}/temp/maven-repo
-    TARGET_MAVEN_FOLDER=~/.m2/repository
-    rm -fr $TARGET_MAVEN_FOLDER
-    mkdir -p $TARGET_MAVEN_FOLDER
-
     cmd="gradle --no-daemon \
     ${CONSOLE_FLAG} \
     -Dorg.gradle.java.home=${JAVA_HOME} \
@@ -148,14 +143,17 @@ function build_gradle_plugin() {
 }
 
 function clean_up_m2 {
-    h1 "Cleaning up the local .m2 folder."
-    rm -fr ~/.m2/repository/dev/galasa/obr
-    rm -fr ~/.m2/repository/dev/galasa/testcatalog
-    rm -fr ~/.m2/repository/dev/galasa/githash
-    rm -fr ~/.m2/repository/dev/galasa/tests
-    rm -fr ~/.m2/repository/dev/galasa/dev.galasa.gradle.impl
-    rm -fr ~/.m2/repository/dev/galasa/dev.galasa.plugin.*
-    success "Cleaned up .m2 repository"
+    # TARGET_MAVEN_FOLDER=${BASEDIR}/temp/maven-repo
+    TARGET_MAVEN_FOLDER=~/.m2/repository
+    mkdir -p $TARGET_MAVEN_FOLDER
+    h1 "Cleaning up the local ${TARGET_MAVEN_FOLDER} folder."
+    rm -fr ${TARGET_MAVEN_FOLDER}/dev/galasa/obr
+    rm -fr ${TARGET_MAVEN_FOLDER}/dev/galasa/testcatalog
+    rm -fr ${TARGET_MAVEN_FOLDER}/dev/galasa/githash
+    rm -fr ${TARGET_MAVEN_FOLDER}/dev/galasa/tests
+    rm -fr ${TARGET_MAVEN_FOLDER}/dev/galasa/dev.galasa.gradle.impl
+    rm -fr ${TARGET_MAVEN_FOLDER}/dev/galasa/dev.galasa.plugin.*
+    success "Cleaned up ${TARGET_MAVEN_FOLDER} repository"
 }
 
 clean_up_m2

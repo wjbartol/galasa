@@ -1,51 +1,110 @@
 plugins {
-    id 'java'
-    id 'jacoco'
+    id 'java-gradle-plugin'
     id 'maven-publish'
     id 'signing'
 }
 
 group   = "dev.galasa"
-
-// Note: The following line is changed by the set-version.sh script.
-// It is also read by other build scrips as required.
 version = "0.33.0"
+
+repositories {
+    mavenLocal()
+    maven {
+       url "$sourceMaven"
+    }
+    maven {
+       url "$centralMaven"
+    }
+}
+
+dependencies {
+    implementation 'org.apache.felix:org.apache.felix.bundlerepository:2.0.10'
+    implementation 'org.reflections:reflections:0.9.11'
+    implementation 'com.google.code.gson:gson:2.8.5'
+    testImplementation 'junit:junit:4.13'
+    implementation project(':dev.galasa.plugin.common')
+    implementation project(':dev.galasa.plugin.common.impl')
+    testImplementation  project(':dev.galasa.plugin.common.test')
+}
+
+tasks.withType(Javadoc) {
+    failOnError = false
+    enabled = true
+}
+
+task gitHash(dependsOn : 'classes') {
+    def dir    = file("${buildDir}/githash")
+    def meta   = file("${buildDir}/githash/META-INF")
+    def result = file("${buildDir}/githash/META-INF/git.hash")
+    
+    outputs.dir meta
+    tasks.jar.dependsOn('gitHash')
+    tasks.jar.from(dir)
+    
+    doLast {
+        if(!meta.exists()) {
+            meta.mkdirs()
+        }
+        
+        def hash = "unknown"
+        
+        try {
+            new ByteArrayOutputStream().withStream { os ->
+                def r = exec {
+                    commandLine 'git', 'log',  '--pretty=format:%H', '-1', '.'
+                    standardOutput = os
+                }
+            hash = os.toString()
+            }
+        } catch(Exception e) {}
+        result.write(hash)
+    }
+}
+
+gradlePlugin {
+    // Define the plugins
+    plugins {
+        obr {
+            id = 'dev.galasa.obr'
+            implementationClass = 'dev.galasa.gradle.obr.ObrPlugin'
+        }
+        tests {
+            id = 'dev.galasa.tests'
+            implementationClass = 'dev.galasa.gradle.tests.TestsPlugin'
+        }
+        githash {
+            id = 'dev.galasa.githash'
+            implementationClass = 'dev.galasa.gradle.hashes.GitHashPlugin'
+        }
+        testcatalog {
+            id = 'dev.galasa.testcatalog'
+            implementationClass = 'dev.galasa.gradle.testcatalog.TestCatalogPlugin'
+        }
+    }
+}
+
+java {
+    withJavadocJar()
+    withSourcesJar()
+}
+    
+tasks.withType(Javadoc) {
+    failOnError = false
+    enabled = true
+}
+
 
 signing {
     sign publishing.publications
 }
 
+
+
 tasks.withType(Sign) {
     onlyIf { isMainOrRelease.toBoolean() }
 }
 
-allprojects {
-   tasks.withType(Javadoc) {
-      options.addStringOption('Xdoclint:none', '-quiet')
-   }
 
-    repositories {
-        mavenLocal()
-        maven {
-            url "https://development.galasa.dev/main/maven-repo/wrapping/"
-        }
-        gradlePluginPortal()
-        mavenCentral()
-    }
-}
-
-subprojects {
-    apply plugin: 'jacoco'
-    test {
-        finalizedBy jacocoTestReport
-    }
-    jacocoTestReport {
-        dependsOn test
-    }
-}
-
-// Publish the release.yaml as a maven artifact.
-// Note: The maven co-ordinates are versioned using the version for this bundle.
 
 publishing {
     afterEvaluate {
@@ -56,8 +115,8 @@ publishing {
             withType(MavenPublication) {
                 pom {
                     url = 'https://galasa.dev'
-                    name = 'Galasa Gradle Plugins parent'
-                    description = 'This project contains the Galasa Gradle plugins and common plugin code'
+                    name = 'Galasa Gradle Plugins'
+                    description = 'This project contains the Galasa Gradle plugins'
                     licenses {
                         license {
                             name = 'Eclipse Public License - v 2.0'
@@ -133,9 +192,5 @@ publishing {
             }
         }
     }
-
 }
-
-
-
 

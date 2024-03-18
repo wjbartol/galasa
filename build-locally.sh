@@ -71,7 +71,7 @@ note() { printf "\n${underline}${bold}${blue}Note:${reset} ${blue}%s${reset}\n" 
 #-----------------------------------------------------------------------------------------                   
 project="gradle"
 source_dir="."
-h1 "Building ${project}"
+
 
 # Debug or not debug ? Override using the DEBUG flag.
 if [[ -z ${DEBUG} ]]; then
@@ -85,7 +85,7 @@ fi
 
 # Over-rode SOURCE_MAVEN if you want to build from a different maven repo...
 if [[ -z ${SOURCE_MAVEN} ]]; then
-    export SOURCE_MAVEN=https://development.galasa.dev/main/maven-repo/obr/
+    export SOURCE_MAVEN=https://development.galasa.dev/main/maven-repo/wrapping/
     info "SOURCE_MAVEN repo defaulting to ${SOURCE_MAVEN}."
     info "Set this environment variable if you want to over-ride this value."
 else
@@ -119,25 +119,43 @@ log_file=${LOGS_DIR}/${project}.txt
 info "Log will be placed at ${log_file}"
 
 
-info "About to run this command:"
-cat << EOF
-gradle --no-daemon \
-${CONSOLE_FLAG} \
--Dorg.gradle.java.home=${JAVA_HOME} \
--PsourceMaven=${SOURCE_MAVEN} ${OPTIONAL_DEBUG_FLAG} \
-clean build publishToMavenLocal \
-$cmd 2>&1 > ${log_file}
-EOF
+function build_gradle_plugin() {
+    h1 "Building ${project}"
 
-gradle --no-daemon \
-${CONSOLE_FLAG} \
--Dorg.gradle.java.home=${JAVA_HOME} \
--PsourceMaven=${SOURCE_MAVEN} ${OPTIONAL_DEBUG_FLAG} \
-clean build publishToMavenLocal \
-$cmd 2>&1 > ${log_file}
+    cmd="gradle --no-daemon \
+    ${CONSOLE_FLAG} \
+    -Dorg.gradle.java.home=${JAVA_HOME} \
+    -PsourceMaven=${SOURCE_MAVEN} ${OPTIONAL_DEBUG_FLAG} \
+    -PtargetMaven=${TARGET_MAVEN_FOLDER}
+    clean build test check publish publishToMavenLocal \
+    --stacktrace \
+    "
 
-rc=$? ; if [[ "${rc}" != "0" ]]; then cat ${log_file} ; error "Failed to build ${project}" ; exit 1 ; fi
-cat ${log_file} | grep --ignore-case "warning"
-cat ${log_file} | grep --ignore-case "error"
-cat ${log_file} | grep --ignore-case "fail"
-success "Project ${project} built - OK - log is at ${log_file}"
+    info "About to run this command: $cmd"
+
+    $cmd > ${log_file} 2>&1
+
+    rc=$? ; if [[ "${rc}" != "0" ]]; then cat ${log_file} ; error "Failed to build ${project}. log is at ${log_file}" ; exit 1 ; fi
+    cat ${log_file} | grep --ignore-case "warning"
+    cat ${log_file} | grep --ignore-case "error"
+    cat ${log_file} | grep --ignore-case "fail"
+    success "Project ${project} built - OK - log is at ${log_file}"
+}
+
+function clean_up_m2 {
+    # TARGET_MAVEN_FOLDER=${BASEDIR}/temp/maven-repo
+    TARGET_MAVEN_FOLDER=~/.m2/repository
+    mkdir -p $TARGET_MAVEN_FOLDER
+    h1 "Cleaning up the local ${TARGET_MAVEN_FOLDER} folder."
+    rm -fr ${TARGET_MAVEN_FOLDER}/dev/galasa/obr
+    rm -fr ${TARGET_MAVEN_FOLDER}/dev/galasa/testcatalog
+    rm -fr ${TARGET_MAVEN_FOLDER}/dev/galasa/githash
+    rm -fr ${TARGET_MAVEN_FOLDER}/dev/galasa/tests
+    rm -fr ${TARGET_MAVEN_FOLDER}/dev/galasa/dev.galasa.gradle.impl
+    rm -fr ${TARGET_MAVEN_FOLDER}/dev/galasa/dev.galasa.plugin.*
+    success "Cleaned up ${TARGET_MAVEN_FOLDER} repository"
+}
+
+clean_up_m2
+
+build_gradle_plugin

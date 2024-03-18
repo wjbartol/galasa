@@ -6,58 +6,65 @@ plugins {
 }
 
 group   = "dev.galasa"
-
-// Note: The following line is changed by the set-version.sh script.
-// It is also read by other build scrips as required.
 version = "0.33.0"
+
+repositories {
+    maven {
+       url "$sourceMaven"
+    }
+    mavenLocal()
+    maven {
+       url "$centralMaven"
+    }
+}
+
+dependencies {
+    testImplementation 'junit:junit:4.13'
+    implementation 'com.google.code.gson:gson:2.10.1'
+    implementation 'commons-codec:commons-codec:1.13'
+	implementation 'commons-io:commons-io:2.15.1'
+	testImplementation 'org.assertj:assertj-core:3.25.3'
+	implementation 'org.apache.httpcomponents:httpcore:4.4.11'
+	implementation 'org.apache.httpcomponents:httpclient:4.5.14'
+    implementation project(':dev.galasa.plugin.common')
+    testImplementation project(':dev.galasa.plugin.common.test')
+}
+
+java {
+    withJavadocJar()
+    withSourcesJar()
+}
+    
+tasks.withType(Javadoc) {
+    failOnError = false
+    enabled = true
+}
+
 
 signing {
     sign publishing.publications
 }
 
+
+
 tasks.withType(Sign) {
     onlyIf { isMainOrRelease.toBoolean() }
 }
 
-allprojects {
-   tasks.withType(Javadoc) {
-      options.addStringOption('Xdoclint:none', '-quiet')
-   }
 
-    repositories {
-        mavenLocal()
-        maven {
-            url "https://development.galasa.dev/main/maven-repo/wrapping/"
-        }
-        gradlePluginPortal()
-        mavenCentral()
-    }
-}
-
-subprojects {
-    apply plugin: 'jacoco'
-    test {
-        finalizedBy jacocoTestReport
-    }
-    jacocoTestReport {
-        dependsOn test
-    }
-}
-
-// Publish the release.yaml as a maven artifact.
-// Note: The maven co-ordinates are versioned using the version for this bundle.
 
 publishing {
     afterEvaluate {
         publications {
-            pluginMaven(MavenPublication) {
+            maven(MavenPublication) {
+                from(components.java)
             }
 
             withType(MavenPublication) {
                 pom {
                     url = 'https://galasa.dev'
-                    name = 'Galasa Gradle Plugins parent'
-                    description = 'This project contains the Galasa Gradle plugins and common plugin code'
+                    name = 'Galasa Gradle Plugins'
+                    description = 'This project contains code common to plugins'
                     licenses {
                         license {
                             name = 'Eclipse Public License - v 2.0'
@@ -66,20 +73,14 @@ publishing {
                     }
                     developers {
                         developer {
-                            name = 'Michael Baylis'
-                            email = 'Michael.Baylis@uk.ibm.com'
+                            name = 'Mike Cobbett'
+                            email = 'mike.cobbett@noreply.ibm.com'
                             organization = 'IBM'
                             organizationUrl = 'https://www.ibm.com'
                         }
                         developer {
                             name = 'William Yates'
                             email = 'wyates@uk.ibm.com'
-                            organization = 'IBM'
-                            organizationUrl = 'https://www.ibm.com'
-                        }
-                        developer {
-                            name = 'Michael Cobbett'
-                            email = 'mike_cobbett@uk.ibm.com'
                             organization = 'IBM'
                             organizationUrl = 'https://www.ibm.com'
                         }
@@ -135,7 +136,4 @@ publishing {
     }
 
 }
-
-
-
 

@@ -7,6 +7,6 @@ package dev.galasa.plugin.common.impl;
 
 public class GalasaRestApiMetadataImpl {
     public String getGalasaRestApiVersion() {
-        return "0.32.0";
+        return "0.33.0";
     }
 }

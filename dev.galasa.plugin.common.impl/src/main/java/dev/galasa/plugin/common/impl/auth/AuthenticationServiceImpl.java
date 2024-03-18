@@ -27,6 +27,10 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     private static final String GALASA_TOKEN_PART_SEPARATOR = ":";
 
+    // This is the version of the API which the plugin is coded to talk to.
+    // We use it to announce to the galasa server which version of the api this client understands.
+    private static final String GALASA_API_VERSION = "0.33.0";
+
     private URL apiServerUrl ;
 
     private String galasaRefreshToken ;
@@ -150,7 +154,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         
         // Set headers..
         postRequest.setHeader("Content-Type","application/json");
-        postRequest.setHeader("ClientApiVersion","0.32.0");
+        postRequest.setHeader("ClientApiVersion", GALASA_API_VERSION);
 
         // Set the payload..
         setAuthHttpPostRequestPayload(gson, postRequest, authEndpointUrl);

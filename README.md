@@ -28,7 +28,9 @@ Environment variable over-rides:
 - `DEBUG` - Optional. Defaults to 0 (off)
 - `GPG_PASSPHRASE` - Used to sign and verify artifacts during the build
 
+
 ## How to use the plugin
+Here we discuss how to use the maven plugin when building Galasa test projects.
 
 ### Building a test catalog for a Java bundle
 

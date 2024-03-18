@@ -55,10 +55,14 @@ public class DeployTestCatalog extends AbstractMojo {
 
     public void execute() throws MojoExecutionException, MojoFailureException {
 
+
         boolean skip = (skipBundleTestCatalog || skipBundleTestCatalogOldSpelling);
         boolean skipDeploy = (skipDeployTestCatalog || skipDeployTestCatalogOldSpelling);
 
         getLog().info("DeployTestCatalog - execute()");
+
+        // If the build of the test catalog is being skipped, then also skip the deploy.
+        // Or skip the deploy if they want to explicitly.
         if (skip || skipDeploy) {
             getLog().info("Skipping Deploy Test Catalog - because the property galasa.skip.deploytestcatalog or galasa.skip.bundletestcatalog is set");
             return;

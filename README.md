@@ -78,7 +78,7 @@ Input Parameters/Properties:
 - `galasa.test.stream` required. A string.
 - `galasa.token` optional. An access token for the galasa ecosystem, if that ecosytem is using authentication.
 - `galasa.bootstrap` required. A URL to the ecosystem.
-- `galasa.skip.bundletestcatalog` optional. A boolean. If set to true, the test catalog is not deployed to the Galasa server.
+- `galasa.skip.bundletestcatalog` optional. A boolean. Controls whether the test catalog build is skipped. If set to true then no test catalog is built, so the test catalog is not deployed to the Galasa server.
 - `galasa.skip.deploytestcatalog` optional. A boolean. If set to true, the test catalog is not deployed to the Galasa server.
 
 For example:

@@ -29,10 +29,10 @@ Environment variable over-rides:
 - `GPG_PASSPHRASE` - Used to sign and verify artifacts during the build
 
 
-## How to use the plugin
+## How to use the plugin
 Here we discuss how to use the maven plugin when building Galasa test projects.
 
-### Building a test catalog for a Java bundle
+### Building a test catalog for a Java bundle
 
 This goal causes a test catalog to be constructed for all the tests in the child bundles of this maven project.
 

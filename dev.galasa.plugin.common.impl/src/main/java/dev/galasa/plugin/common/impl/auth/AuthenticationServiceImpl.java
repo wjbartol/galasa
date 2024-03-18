@@ -29,6 +29,8 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     // This is the version of the API which the plugin is coded to talk to.
     // We use it to announce to the galasa server which version of the api this client understands.
+    // Bump this version up when this plugin code is able to understand later versions of the REST api, and is re-tested.
+    // not every time it changes in the galasa framework.
     private static final String GALASA_API_VERSION = "0.33.0";
 
     private URL apiServerUrl ;

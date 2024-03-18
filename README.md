@@ -127,7 +127,7 @@ To use the Gradle OBR plugin in a Gradle test project:
     To verify that the OBR was successfully built, A `gradle build` directory will appear in your OBR directory and within it, a `galasa.obr` file should be present.
 
 6. Publishing artifacts to the local maven repository
-    If you run `gradle clean build publishMaven` then the artifacts built will be published to the local maven folders on the build machine.
+    If you run `gradle clean build publishToMavenLocal` then the artifacts built will be published to the local maven folders on the build machine.
 
 7. Deploying the test catalog to the Galasa ecosystem
     ```

@@ -28,7 +28,7 @@ public class ErrorRaiserGradleImpl implements ErrorRaiser<TestCatalogException> 
 
     @Override
     public void raiseError(Throwable cause, String template, Object... params) throws TestCatalogException {
-        String msg = MessageFormat.format(template,params)+" cause:"+cause.toString();
+        String msg = MessageFormat.format(template,params)+" cause: "+cause.toString();
         log.error(msg);
         throw new TestCatalogException(msg,cause);
     }

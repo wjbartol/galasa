@@ -44,7 +44,7 @@ public class TestCatalogDeployTask extends DefaultTask {
 
         String galasaAccessToken = extension.getToken();
 
-        // Instantiate all the classes to isolave gradle dependencies...
+        // Instantiate all the classes to isolate gradle dependencies...
         WrappedLog wrappedLog = new WrappedLogGradle(getLogger());
         PluginCommonFactory<TestCatalogException> factory = new PluginCommonFactoryImpl<TestCatalogException>();
         ErrorRaiser<TestCatalogException> errorRaiser = new ErrorRaiserGradleImpl(getLogger());

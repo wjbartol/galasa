@@ -46,26 +46,16 @@ blue=$(tput setaf 25)
 # Headers and Logging
 #
 #-----------------------------------------------------------------------------------------                   
-underline() { printf "${underline}${bold}%s${reset}\n" "$@"
-}
-h1() { printf "\n${underline}${bold}${blue}%s${reset}\n" "$@"
-}
-h2() { printf "\n${underline}${bold}${white}%s${reset}\n" "$@"
-}
-debug() { printf "${white}%s${reset}\n" "$@"
-}
-info() { printf "${white}➜ %s${reset}\n" "$@"
-}
-success() { printf "${green}✔ %s${reset}\n" "$@"
-}
-error() { printf "${red}✖ %s${reset}\n" "$@"
-}
-warn() { printf "${tan}➜ %s${reset}\n" "$@"
-}
-bold() { printf "${bold}%s${reset}\n" "$@"
-}
-note() { printf "\n${underline}${bold}${blue}Note:${reset} ${blue}%s${reset}\n" "$@"
-}
+underline() { printf "${underline}${bold}%s${reset}\n" "$@" ;}
+h1() { printf "\n${underline}${bold}${blue}%s${reset}\n" "$@" ;}
+h2() { printf "\n${underline}${bold}${white}%s${reset}\n" "$@" ;}
+debug() { printf "${white}%s${reset}\n" "$@" ;}
+info() { printf "${white}➜ %s${reset}\n" "$@" ;}
+success() { printf "${green}✔ %s${reset}\n" "$@" ;}
+error() { printf "${red}✖ %s${reset}\n" "$@" ;}
+warn() { printf "${tan}➜ %s${reset}\n" "$@" ;}
+bold() { printf "${bold}%s${reset}\n" "$@" ;}
+note() { printf "\n${underline}${bold}${blue}Note:${reset} ${blue}%s${reset}\n" "$@" ;}
 
 #-----------------------------------------------------------------------------------------                   
 # Main logic.
@@ -87,7 +77,7 @@ fi
 
 # Over-rode SOURCE_MAVEN if you want to build from a different maven repo...
 if [[ -z ${SOURCE_MAVEN} ]]; then
-    export SOURCE_MAVEN=https://development.galasa.dev/main/maven-repo/obr/
+    export SOURCE_MAVEN=https://development.galasa.dev/main/maven-repo/gradle/
     info "SOURCE_MAVEN repo defaulting to ${SOURCE_MAVEN}."
     info "Set this environment variable if you want to over-ride this value."
 else

@@ -17,7 +17,7 @@ public class DeployTestCatalogExtension {
 
     public String bootstrap;
     public String stream;
-    public String galasaToken;
+    public String token;
     
     public void setStream(String stream) {
         this.stream = stream;
@@ -27,15 +27,15 @@ public class DeployTestCatalogExtension {
         this.bootstrap = bootstrap;
     }
 
-    public void setGalasaToken(String galasaToken) {
-        this.galasaToken = galasaToken;
-        if (this.galasaToken!=null) {
-            this.galasaToken = this.galasaToken.trim();
+    public void setToken(String galasaToken) {
+        this.token = galasaToken;
+        if (this.token!=null) {
+            this.token = this.token.trim();
         }
     }
 
-    public String getGalasaToken() {
-        String token = this.galasaToken;
+    public String getToken() {
+        String token = this.token;
         return token;
     }
     

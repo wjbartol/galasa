@@ -42,7 +42,7 @@ public class TestCatalogDeployTask extends DefaultTask {
 
         Path pathArtifact = Paths.get(getInputs().getFiles().getSingleFile().toURI());
 
-        String galasaAccessToken = extension.getGalasaToken();
+        String galasaAccessToken = extension.getToken();
 
         // Instantiate all the classes to isolave gradle dependencies...
         WrappedLog wrappedLog = new WrappedLogGradle(getLogger());

@@ -16,6 +16,13 @@ import dev.galasa.plugin.common.*;
 
 import dev.galasa.plugin.common.impl.*;
 
+/**
+ * @deprecated
+ * This task is deprecated since version 0.33.0
+ * Consider using the 'galasactl' tool to update the 'location' value of your Galasa Ecosystem stream to 
+ * refer directly to the URL the test catalog file has on your published maven repository.
+ */
+@Deprecated(since="0.33.0", forRemoval=true)
 public class TestCatalogDeployTask extends DefaultTask {
 
     @TaskAction

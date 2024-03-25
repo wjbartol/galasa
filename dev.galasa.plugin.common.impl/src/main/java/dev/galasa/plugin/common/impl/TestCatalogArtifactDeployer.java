@@ -47,6 +47,10 @@ public class TestCatalogArtifactDeployer<Ex extends Exception> {
 
     public void deployToServer(URL bootstrapUrl, String testStream, String galasaAccessToken, TestCatalogArtifact<Ex> testCatalogArtifact ) throws Ex {
 
+        this.log.warn("This task/goal is deprecated and will be removed in future versions of Galasa."+
+        " Consider using the galasactl tool to set your test stream 'location' URL to refer to the location of your test "+
+        "catalog where it is located in your published maven repository.");
+
         Properties bootstrapProperties = bootstrapLoader.getBootstrapProperties(bootstrapUrl);
 
         String apiServerUrl = urlCalculator.calculateApiServerUrl(bootstrapProperties, bootstrapUrl);
@@ -84,6 +88,7 @@ public class TestCatalogArtifactDeployer<Ex extends Exception> {
             // The following should probably be an 'info' message, but if you warn in the log, then it gets displayed 
             // on the user console, so this important event is more visible this way.
             this.log.warn("Test Catalog successfully deployed to " + testCatalogUrl.toString());
+
         }
     }
 

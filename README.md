@@ -66,7 +66,8 @@ To use the Gradle OBR plugin in a Gradle test project:
     }
     ```
 
-3. To publish the test catalog to a live Galasa ecosystem, you will need the following lines in your OBR project:
+3. The following step is deprecated in v0.33.0 and will be removed in future releases:
+To publish the test catalog to a live Galasa ecosystem, you will need the following lines in your OBR project:
     ```
     deployTestCatalog {
         if ( System.getProperty("GALASA_BOOTSTRAP") != null) {
@@ -130,6 +131,8 @@ To use the Gradle OBR plugin in a Gradle test project:
     If you run `gradle clean build publishToMavenLocal` then the artifacts built will be published to the local maven folders on the build machine.
 
 7. Deploying the test catalog to the Galasa ecosystem
+
+    Old method. Deprecated in v0.33.0:
     ```
     gradle deploytestcat \
         -DGALASA_BOOTSTRAP=$GALASA_BOOTSTRAP \
@@ -137,6 +140,9 @@ To use the Gradle OBR plugin in a Gradle test project:
         -DGALASA_TOKEN=$GALASA_TOKEN
     ```
     This will pick up values for the bootstrap, stream name and galasa access token from your environmnent variables.
+
+    New method:
+    Use the `galasactl properties set` command to set the `location` field of your test stream to refer directly to the URL of the test catalog where it is available from your maven repository.
         
 
 ## To Build the plugin locally

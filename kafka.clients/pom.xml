@@ -45,8 +45,11 @@
 						<Bundle-SymbolicName>kafka.clients</Bundle-SymbolicName>
 						<Embed-Dependency>*;scope=compile</Embed-Dependency>
 						<Import-Package>
+						    org.ietf.jgss,
 							org.slf4j,
-							javax.net.ssl
+							javax.management,
+							javax.net.ssl,
+							javax.security.*
 						</Import-Package>
 						<Export-Package>
 							org.apache.kafka.clients,
@@ -54,6 +57,8 @@
 							org.apache.kafka.clients.consumer,
 							org.apache.kafka.clients.producer,
 							org.apache.kafka.common,
+							org.apache.kafka.common.metrics,
+							org.apache.kafka.common.security.plain,
 							org.apache.kafka.common.serialization,
 							org.apache.kafka.server,
 							org.apache.kafka.shaded,

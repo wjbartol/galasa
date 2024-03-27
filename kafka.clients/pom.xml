@@ -49,11 +49,7 @@
 							org.slf4j,
 							javax.management,
 							javax.net.ssl,
-							javax.security.auth,
-							javax.security.auth.callback,
-							javax.security.auth.login,
-							javax.security.auth.spi,
-							javax.security.sasl
+							javax.security.*
 						</Import-Package>
 						<Export-Package>
 							org.apache.kafka.clients,

@@ -74,7 +74,7 @@ Options are:
 Environment Variables:
 SOURCE_MAVEN :
     Used to indicate where parts of the OBR can be obtained.
-    Optional. Defaults to https://development.galasa.dev/main/maven-repo/obr/
+    Optional. Defaults to https://development.galasa.dev/main/maven-repo/managers/
      
 LOGS_DIR :
     Controls where logs are placed. 
@@ -123,7 +123,7 @@ h1 "Building ${project}"
 
 # Over-rode SOURCE_MAVEN if you want to build from a different maven repo...
 if [[ -z ${SOURCE_MAVEN} ]]; then
-    export SOURCE_MAVEN=https://development.galasa.dev/main/maven-repo/obr/
+    export SOURCE_MAVEN=https://development.galasa.dev/main/maven-repo/managers/
     info "SOURCE_MAVEN repo defaulting to ${SOURCE_MAVEN}."
     info "Set this environment variable if you want to over-ride this value."
 else

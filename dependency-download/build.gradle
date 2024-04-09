@@ -10,13 +10,13 @@ plugins {
 version = "0.33.0"
 
 repositories {
+    mavenLocal()
     maven {
         url "$sourceMaven"
     }
     maven {
         url "$centralMaven"
     }
-    mavenLocal()
 }
 
 dependencies {

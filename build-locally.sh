@@ -74,7 +74,7 @@ Options are:
 Environment Variables:
 SOURCE_MAVEN :
     Used to indicate where parts of the OBR can be obtained.
-    Optional. Defaults to https://development.galasa.dev/main/maven-repo/obr/
+    Optional. Defaults to https://development.galasa.dev/main/maven-repo/managers/
      
 LOGS_DIR :
     Controls where logs are placed. 
@@ -123,7 +123,7 @@ h1 "Building ${project}"
 
 # Over-rode SOURCE_MAVEN if you want to build from a different maven repo...
 if [[ -z ${SOURCE_MAVEN} ]]; then
-    export SOURCE_MAVEN=https://development.galasa.dev/main/maven-repo/obr/
+    export SOURCE_MAVEN=https://development.galasa.dev/main/maven-repo/managers/
     info "SOURCE_MAVEN repo defaulting to ${SOURCE_MAVEN}."
     info "Set this environment variable if you want to over-ride this value."
 else
@@ -182,10 +182,10 @@ function download_dependencies {
 function check_dependencies_present {
     h2 "Checking dependencies are present..."
 
-    export framework_manifest_path=${BASEDIR}/dependency-download/build/dependencies/dev.galasa.framework.manifest.yaml
-    export managers_manifest_path=${BASEDIR}/dependency-download/build/dependencies/dev.galasa.managers.manifest.yaml
-    # export framework_manifest_path=${WORKSPACE_DIR}/framework/release.yaml
-    # export managers_manifest_path=${WORKSPACE_DIR}/managers/release.yaml
+    # export framework_manifest_path=${BASEDIR}/dependency-download/build/dependencies/dev.galasa.framework.manifest.yaml
+    # export managers_manifest_path=${BASEDIR}/dependency-download/build/dependencies/dev.galasa.managers.manifest.yaml
+    export framework_manifest_path=${WORKSPACE_DIR}/framework/release.yaml
+    export managers_manifest_path=${WORKSPACE_DIR}/managers/release.yaml
     
     declare -a required_files=(
     ${WORKSPACE_DIR}/${project}/dev.galasa.uber.obr/pom.template

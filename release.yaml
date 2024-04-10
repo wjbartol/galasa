@@ -160,7 +160,7 @@ external:
 
   - group: org.apache.commons
     artifact: commons-compress
-    version: 1.21
+    version: 1.26.0
     obr: true
     mvp: true
     isolated: true

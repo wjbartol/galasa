@@ -17,3 +17,6 @@ Snap.*
 bin/
 lib/
 dependency-reduced-pom.xml
+
+# Don't check-in IDE specific files if we can help it.
+.vscode

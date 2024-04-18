@@ -252,7 +252,7 @@ function construct_bom_pom_xml {
     --releaseMetadata ${WORKSPACE_DIR}/obr/release.yaml \
     --template pom.template \
     --output pom.xml \
-    --obr \
+    --bom \
     "
     echo "Command is $cmd" >> ${log_file}
     $cmd 2>&1 >> ${log_file}

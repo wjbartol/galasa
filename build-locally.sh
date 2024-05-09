@@ -205,8 +205,68 @@ function check_dependencies_present {
     done
 }
 
+
 #------------------------------------------------------------------------------------
-function construct_obr_pom_xml {
+function construct_bom_pom_xml {
+    h2 "Generating a bom pom.xml from a template, using all the versions of everything..."
+
+    cd ${WORKSPACE_DIR}/${project}/galasa-bom
+
+    # What's the architecture-variable name of the build tool we want for this local build ?
+    export ARCHITECTURE=$(uname -m) # arm64 or amd64
+    export GALASA_BUILD_TOOL_NAME=galasabld-darwin-${ARCHITECTURE}
+
+    # Favour the galasabld tool if it's on the path, else use a locally-built version or fail if not available.
+    GALASABLD_ON_PATH=$(which galasabld)
+    rc=$?
+    if [[ "${rc}" == "0" ]]; then
+        info "Using the 'galasabld' tool which is on the PATH"
+        GALASA_BUILD_TOOL_PATH=${GALASABLD_ON_PATH}
+    else
+        GALASABLD_ON_PATH=$(which $GALASA_BUILD_TOOL_NAME)
+        rc=$?
+        if [[ "${rc}" == "0" ]]; then
+            info "Using the '$GALASA_BUILD_TOOL_NAME' tool which is on the PATH"
+            GALASA_BUILD_TOOL_PATH=${GALASABLD_ON_PATH}
+        else
+            info "The galasa build tool 'galasabld' or '$GALASA_BUILD_TOOL_NAME' is not on the path."
+            export GALASA_BUILD_TOOL_PATH=${WORKSPACE_DIR}/buildutils/bin/${GALASA_BUILD_TOOL_NAME}
+            if [[ ! -e ${GALASA_BUILD_TOOL_PATH} ]]; then
+                error "Cannot find the $GALASA_BUILD_TOOL_NAME tools on locally built workspace."
+                info "Try re-building the buildutils project"
+                exit 1
+            else
+                info "Using the $GALASA_BUILD_TOOL_NAME tool at ${GALASA_BUILD_TOOL_PATH}"
+            fi
+        fi
+    fi
+
+    # Check local build version
+    export GALASA_BUILD_TOOL_PATH=${WORKSPACE_DIR}/buildutils/bin/${GALASA_BUILD_TOOL_NAME}
+    info "Using galasabld tool ${GALASA_BUILD_TOOL_PATH}"
+
+    cmd="${GALASA_BUILD_TOOL_PATH} template \
+    --releaseMetadata ${framework_manifest_path} \
+    --releaseMetadata ${WORKSPACE_DIR}/extensions/release.yaml \
+    --releaseMetadata ${managers_manifest_path} \
+    --releaseMetadata ${WORKSPACE_DIR}/obr/release.yaml \
+    --template pom.template \
+    --output pom.xml \
+    --bom \
+    "
+    echo "Command is $cmd" >> ${log_file}
+    $cmd 2>&1 >> ${log_file}
+
+    rc=$? 
+    if [[ "${rc}" != "0" ]]; then 
+        error "Failed to convert release.yaml files into a pom.xml ${project}. log file is ${log_file}" 
+        exit 1 
+    fi
+    success "pom.xml built ok - log is at ${log_file}"
+}
+
+#------------------------------------------------------------------------------------
+function construct_uber_obr_pom_xml {
     h2 "Generating a pom.xml from a template, using all the versions of everything..."
 
     cd ${WORKSPACE_DIR}/${project}/dev.galasa.uber.obr
@@ -277,9 +337,30 @@ function check_developer_attribution_present {
     success "OK. Pom template contains developer attribution, which maven central needs at the point we publish."
 }
 
+
 #------------------------------------------------------------------------------------
-function build_generated_pom {
+function build_generated_bom_pom {
     h2 "Building the generated pom.xml to package-up things into an OBR we can publish..."
+    cd ${BASEDIR}/galasa-bom
+
+    mvn \
+    -Dgpg.passphrase=${GPG_PASSPHRASE} \
+    -Dgalasa.source.repo=${SOURCE_MAVEN} \
+    -Dgalasa.central.repo=https://repo.maven.apache.org/maven2/ install \
+    2>&1 >> ${log_file}
+
+    rc=$? ; if [[ "${rc}" != "0" ]]; then 
+        error "Failed to push built obr into maven repo ${project}. log file is ${log_file}"
+        exit 1 
+    fi
+    success "OK"
+}
+
+#------------------------------------------------------------------------------------
+function build_generated_uber_obr_pom {
+    h2 "Building the generated pom.xml to package-up things into an OBR we can publish..."
+    cd ${BASEDIR}/dev.galasa.uber.obr
+
     mvn \
     -Dgpg.passphrase=${GPG_PASSPHRASE} \
     -Dgalasa.source.repo=${SOURCE_MAVEN} \
@@ -347,9 +428,12 @@ read_component_version
 download_dependencies
 
 check_dependencies_present
-construct_obr_pom_xml
+construct_uber_obr_pom_xmlc
+construct_bom_pom_xml
 check_developer_attribution_present
-build_generated_pom
+build_generated_uber_obr_pom
+build_generated_bom_pom
+
 h1 "Building the javadoc using the OBR..."
 generate_javadoc_pom_xml
 build_javadoc_pom

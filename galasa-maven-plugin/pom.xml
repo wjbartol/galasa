@@ -9,7 +9,7 @@
 	<packaging>maven-plugin</packaging>
 	<version>0.33.0</version>
 
-	
+	<name>Galasa Maven Plugin</name>
 	<description>Maven plugin for build Galasa artifacts such as the OBR, Test Catalog</description>
 	<url>https://galasa.dev</url>
 

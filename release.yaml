@@ -104,6 +104,14 @@ external:
     mvp: true
     isolated: true
 
+  # - group: dev.galasa
+  #   artifact: kafka.clients
+  #   version: 3.7.0
+  #   obr: true
+  #   bom: true
+  #   isolated: true
+  #   mvp: true
+
   - group: io.prometheus
     artifact: simpleclient
     version: 0.6.0

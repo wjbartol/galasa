@@ -1,4 +1,4 @@
-#! /usr/bin/env bash 
+#! /usr/bin/env bash
 
 #
 # Copyright contributors to the Galasa project
@@ -6,11 +6,11 @@
 # SPDX-License-Identifier: EPL-2.0
 #
 
-#-----------------------------------------------------------------------------------------                   
+#-----------------------------------------------------------------------------------------
 #
 # Objectives: Build this repository code locally.
-# 
-#-----------------------------------------------------------------------------------------                   
+#
+#-----------------------------------------------------------------------------------------
 
 # Where is this script executing from ?
 BASEDIR=$(dirname "$0");pushd $BASEDIR 2>&1 >> /dev/null ;BASEDIR=$(pwd);popd 2>&1 >> /dev/null
@@ -22,11 +22,11 @@ cd "${BASEDIR}/.."
 WORKSPACE_DIR=$(pwd)
 
 
-#-----------------------------------------------------------------------------------------                   
+#-----------------------------------------------------------------------------------------
 #
 # Set Colors
 #
-#-----------------------------------------------------------------------------------------                   
+#-----------------------------------------------------------------------------------------
 bold=$(tput bold)
 underline=$(tput sgr 0 1)
 reset=$(tput sgr0)
@@ -36,11 +36,11 @@ white=$(tput setaf 7)
 tan=$(tput setaf 202)
 blue=$(tput setaf 25)
 
-#-----------------------------------------------------------------------------------------                   
+#-----------------------------------------------------------------------------------------
 #
 # Headers and Logging
 #
-#-----------------------------------------------------------------------------------------                   
+#-----------------------------------------------------------------------------------------
 underline() { printf "${underline}${bold}%s${reset}\n" "$@"
 }
 h1() { printf "\n${underline}${bold}${blue}%s${reset}\n" "$@"
@@ -62,9 +62,9 @@ bold() { printf "${bold}%s${reset}\n" "$@"
 note() { printf "\n${underline}${bold}${blue}Note:${reset} ${blue}%s${reset}\n" "$@"
 }
 
-#-----------------------------------------------------------------------------------------                   
+#-----------------------------------------------------------------------------------------
 # Functions
-#-----------------------------------------------------------------------------------------                   
+#-----------------------------------------------------------------------------------------
 function usage {
     info "Syntax: build-locally.sh [OPTIONS]"
     cat << EOF
@@ -75,23 +75,23 @@ Environment Variables:
 SOURCE_MAVEN :
     Used to indicate where parts of the OBR can be obtained.
     Optional. Defaults to https://development.galasa.dev/main/maven-repo/managers/
-     
+
 LOGS_DIR :
-    Controls where logs are placed. 
+    Controls where logs are placed.
     Optional. Defaults to creating a new temporary folder
 
 GPG_PASSPHRASE :
     Mandatory.
-    Controls how the obr is signed. Needs to be the alias of the private key of a 
+    Controls how the obr is signed. Needs to be the alias of the private key of a
     public-private gpg pair. eg: For development you could use your signing github
     passphrase.
 
 EOF
 }
 
-#-----------------------------------------------------------------------------------------                   
+#-----------------------------------------------------------------------------------------
 # Process parameters
-#-----------------------------------------------------------------------------------------                   
+#-----------------------------------------------------------------------------------------
 exportbuild_type=""
 
 while [ "$1" != "" ]; do
@@ -112,9 +112,9 @@ if [[ -z $GPG_PASSPHRASE ]]; then
     exit 1
 fi
 
-#-----------------------------------------------------------------------------------------                   
+#-----------------------------------------------------------------------------------------
 # Main logic.
-#-----------------------------------------------------------------------------------------                   
+#-----------------------------------------------------------------------------------------
 source_dir="."
 
 project=$(basename ${BASEDIR})
@@ -169,9 +169,9 @@ function download_dependencies {
 
     gradle getDeps \
         -Dgalasa.source.repo=${SOURCE_MAVEN} \
-        -Dgalasa.central.repo=https://repo.maven.apache.org/maven2/ 
+        -Dgalasa.central.repo=https://repo.maven.apache.org/maven2/
     rc=$?
-    if [[ "${rc}" != "0" ]]; then 
+    if [[ "${rc}" != "0" ]]; then
         error "Failed to download dependencies. rc=$rc"
         exit 1
     fi
@@ -186,19 +186,19 @@ function check_dependencies_present {
     export managers_manifest_path=${BASEDIR}/dependency-download/build/dependencies/dev.galasa.managers.manifest.yaml
     # export framework_manifest_path=${WORKSPACE_DIR}/framework/release.yaml
     # export managers_manifest_path=${WORKSPACE_DIR}/managers/release.yaml
-    
+
     declare -a required_files=(
     ${WORKSPACE_DIR}/${project}/dev.galasa.uber.obr/pom.template
-    ${framework_manifest_path} 
-    ${WORKSPACE_DIR}/extensions/release.yaml 
+    ${framework_manifest_path}
+    ${WORKSPACE_DIR}/extensions/release.yaml
     ${managers_manifest_path}
-    ${WORKSPACE_DIR}/obr/release.yaml 
+    ${WORKSPACE_DIR}/obr/release.yaml
     )
     for required_file in "${required_files[@]}"
     do
         if [[ -e "${required_file}" ]]; then
             success "OK - File ${required_file} is present."
-        else 
+        else
             error "File ${required_file} is required, but missing. Clone the sibling project to make sure it exists."
             exit 1
         fi
@@ -257,10 +257,10 @@ function construct_bom_pom_xml {
     echo "Command is $cmd" >> ${log_file}
     $cmd 2>&1 >> ${log_file}
 
-    rc=$? 
-    if [[ "${rc}" != "0" ]]; then 
-        error "Failed to convert release.yaml files into a pom.xml ${project}. log file is ${log_file}" 
-        exit 1 
+    rc=$?
+    if [[ "${rc}" != "0" ]]; then
+        error "Failed to convert release.yaml files into a pom.xml ${project}. log file is ${log_file}"
+        exit 1
     fi
     success "pom.xml built ok - log is at ${log_file}"
 }
@@ -316,10 +316,10 @@ function construct_uber_obr_pom_xml {
     echo "Command is $cmd" >> ${log_file}
     $cmd 2>&1 >> ${log_file}
 
-    rc=$? 
-    if [[ "${rc}" != "0" ]]; then 
-        error "Failed to convert release.yaml files into a pom.xml ${project}. log file is ${log_file}" 
-        exit 1 
+    rc=$?
+    if [[ "${rc}" != "0" ]]; then
+        error "Failed to convert release.yaml files into a pom.xml ${project}. log file is ${log_file}"
+        exit 1
     fi
     success "pom.xml built ok - log is at ${log_file}"
 }
@@ -349,9 +349,9 @@ function build_generated_bom_pom {
     -Dgalasa.central.repo=https://repo.maven.apache.org/maven2/ install \
     2>&1 >> ${log_file}
 
-    rc=$? ; if [[ "${rc}" != "0" ]]; then 
+    rc=$? ; if [[ "${rc}" != "0" ]]; then
         error "Failed to push built obr into maven repo ${project}. log file is ${log_file}"
-        exit 1 
+        exit 1
     fi
     success "OK"
 }
@@ -367,9 +367,9 @@ function build_generated_uber_obr_pom {
     -Dgalasa.central.repo=https://repo.maven.apache.org/maven2/ install \
     2>&1 >> ${log_file}
 
-    rc=$? ; if [[ "${rc}" != "0" ]]; then 
+    rc=$? ; if [[ "${rc}" != "0" ]]; then
         error "Failed to push built obr into maven repo ${project}. log file is ${log_file}"
-        exit 1 
+        exit 1
     fi
     success "OK"
 }
@@ -389,7 +389,7 @@ function generate_javadoc_pom_xml {
     --releaseMetadata ${WORKSPACE_DIR}/obr/release.yaml \
     --template pom.template \
     --output pom.xml \
-    --javadoc 
+    --javadoc
 
     rc=$? ; if [[ "${rc}" != "0" ]]; then error "Failed to create the pom.xml for javadoc" ;  exit 1 ; fi
     success "OK - pom.xml file created at ${WORKSPACE_DIR}/obr/javadocs/pom.xml"
@@ -420,7 +420,7 @@ function build_javadoc_pom {
 # #------------------------------------------------------------------------------------
 # cd ${WORKSPACE_DIR}/obr/javadocs
 # docker --file ${WORKSPACE_DIR}/automation/dockerfiles/javadocs/javadocs-image-dockerfile .
-   
+
 # rc=$? ; if [[ "${rc}" != "0" ]]; then error "Failed to create the docker image containing the javadoc" ;  exit 1 ; fi
 # success "OK"
 
@@ -428,7 +428,7 @@ read_component_version
 download_dependencies
 
 check_dependencies_present
-construct_uber_obr_pom_xmlc
+construct_uber_obr_pom_xml
 construct_bom_pom_xml
 check_developer_attribution_present
 build_generated_uber_obr_pom

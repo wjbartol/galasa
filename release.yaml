@@ -55,7 +55,7 @@ external:
 
   - group: commons-io
     artifact: commons-io
-    version: 2.9.0
+    version: 2.16.1
     obr: true
     bom: true
     mvp: true
@@ -168,14 +168,14 @@ external:
 
   - group: org.apache.commons
     artifact: commons-compress
-    version: 1.21
+    version: 1.26.0
     obr: true
     mvp: true
     isolated: true
 
   - group: org.apache.commons
     artifact: commons-lang3
-    version: 3.12.0
+    version: 3.14.0
     obr: true
     bom: true
     mvp: true

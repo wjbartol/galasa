@@ -32,7 +32,7 @@
 		<module>com.jcraft.jsch</module>
 		<module>com.auth0.jwt</module>
 		<module>com.google.gson</module>
-		<module>javax.transaction</module>
+		<module>jakarta.transaction</module>
 		<module>io.grpc.java</module>
 		<module>kafka.clients</module>
 	</modules>

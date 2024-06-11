@@ -92,7 +92,7 @@ external:
 
   - group: dev.galasa
     artifact: jta
-    version: 1.1
+    version: 1.2
     obr: true
     mvp: true
     isolated: true
@@ -103,14 +103,6 @@ external:
     obr: true
     mvp: true
     isolated: true
-
-  # - group: dev.galasa
-  #   artifact: kafka.clients
-  #   version: 3.7.0
-  #   obr: true
-  #   bom: true
-  #   isolated: true
-  #   mvp: true
 
   - group: io.prometheus
     artifact: simpleclient

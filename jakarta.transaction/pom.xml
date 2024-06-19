@@ -37,7 +37,10 @@
 						<Embed-Dependency>*;scope=compile</Embed-Dependency>
 						<Export-Package>jakarta.transaction,
 										jakarta.transaction.xa,
-										jakarta.transaction.*
+										jakarta.transaction.*,
+										jakarta.enterprise.util,
+										jakarta.enterprise.context,
+										jakarta.interceptor
 						</Export-Package>
 					</instructions>
 				</configuration>

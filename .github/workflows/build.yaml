@@ -21,13 +21,13 @@ jobs:
             uses: actions/setup-java@v4
             with:
               java-version: '11'
-              distribution: 'temurin'
+              distribution: 'semeru'
               server-id: 'github'
               server-username: GITHUB_ACTOR
               server-password: GITHUB_TOKEN
               settings-path: '~/.m2'
               gpg-private-key: ${{secrets.GPG_KEY}}
-              gpg-passphrase: GPG_PASSPHRASE
+              gpg-passphrase: $GPG_PASSPHRASE
               cache: maven
 
 

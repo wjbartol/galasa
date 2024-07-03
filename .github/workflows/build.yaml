@@ -27,7 +27,6 @@ jobs:
               server-password: GITHUB_TOKEN
               settings-path: '~/.m2'
               gpg-private-key: ${{secrets.GPG_KEY}}
-              gpg-passphrase: $GPG_PASSPHRASE
               cache: maven
 
 

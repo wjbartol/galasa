@@ -5,8 +5,8 @@ on:
     pull_request:
         branches: [main]
 env:
-  GPG_PASSPHRASE: ${{secrets.GPG_PASSPHRASE}}
-  GPG_KEY: ${{secrets.GPG_KEY}}
+  GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
+  GPG_KEY: ${{ secrets.GPG_KEY }}
 
 jobs:
     build-push-wrapping-artefacts:
@@ -26,17 +26,19 @@ jobs:
               server-username: GITHUB_ACTOR
               server-password: GITHUB_TOKEN
               settings-path: '~/.m2'
-              gpg-private-key: ${{secrets.GPG_KEY}}
+              gpg-private-key: ${{ secrets.GPG_KEY }}
               gpg-passphrase: GPG_PASSPHRASE
               cache: maven
+            env:
+              GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
 
 
           - name: Building artefacts
             env:
-              GPG_PASSPHRASE: ${{secrets.GPG_PASSPHRASE}}
-              GPG_KEY: ${{secrets.GPG_KEY}}
-              GITHUB_ACTOR: ${{github.actor}}
-              GITHUB_TOKEN: ${{github.token}}
+              GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
+              GPG_KEY: ${{ secrets.GPG_KEY }}
+              GITHUB_ACTOR: ${{ github.actor }}
+              GITHUB_TOKEN: ${{ github.token }}
             run: |
              mvn -X --batch-mode -Dgpg.passphrase=GPG_PASSPHRASE deploy \
              -Dgpg.keyname=662734DC2A745A00C08FACE175533914221FFDC2 \

@@ -50,12 +50,14 @@
 
 	<distributionManagement>
 		<repository>
-			<id>galasa.release.repo</id>
-			<url>${galasa.release.repo}</url>
+			<id>github</id>
+            <name>GitHub Apache Maven Registry</name>
+            <url>https://maven.pkg.github.com/galasa-dev/wrapping</url>
 		</repository>
 		<snapshotRepository>
-			<id>galasa.snapshot.repo</id>
-			<url>${galasa.snapshot.repo}</url>
+			<id>github</id>
+            <name>GitHub Apache Maven Registry</name>
+            <url>https://maven.pkg.github.com/galasa-dev/wrapping</url>
 		</snapshotRepository>
 	</distributionManagement>
 
@@ -102,10 +104,7 @@
 							<goal>sign</goal>
 						</goals>
 						<configuration>
-							<gpgArguments>
-								<arg>--pinentry-mode</arg>
-								<arg>loopback</arg>
-							</gpgArguments>
+						    <defaultKeyring>false</defaultKeyring>
 						</configuration>
 					</execution>
 				</executions>

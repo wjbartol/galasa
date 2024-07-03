@@ -1,0 +1,46 @@
+name: Main Build
+
+on:
+    workflow_dispatch:
+    pull_request:
+        branches: [main]
+env:
+  GPG_PASSPHRASE: ${{secrets.GPG_PASSPHRASE}}
+  GPG_KEY: ${{secrets.GPG_KEY}}
+
+jobs:
+    build-push-wrapping-artefacts:
+        name: Building and Deploying Maven artefcats
+        runs-on: ubuntu-latest
+
+        steps:
+          - name: Checkin Code
+            uses: actions/checkout@v4
+          
+          - name: Set up JDK 11
+            uses: actions/setup-java@v4
+            with:
+              java-version: '11'
+              distribution: 'temurin'
+              server-id: 'github'
+              server-username: GITHUB_ACTOR
+              server-password: GITHUB_TOKEN
+              settings-path: '~/.m2'
+              gpg-private-key: ${{secrets.GPG_KEY}}
+              gpg-passphrase: GPG_PASSPHRASE
+              cache: maven
+
+
+          - name: Building artefacts
+            env:
+              GPG_PASSPHRASE: ${{secrets.GPG_PASSPHRASE}}
+              GPG_KEY: ${{secrets.GPG_KEY}}
+              GITHUB_ACTOR: ${{github.actor}}
+              GITHUB_TOKEN: ${{github.token}}
+            run: |
+             mvn -X --batch-mode -Dgpg.passphrase=GPG_PASSPHRASE deploy \
+             -Dgpg.keyname=662734DC2A745A00C08FACE175533914221FFDC2 \
+             -Dgalasa.source.repo=https://repo.maven.apache.org/maven2/ \
+             -Dgalasa.central.repo=https://repo.maven.apache.org/maven2/   \
+             -Dgalasa.release.repo=https://maven.pkg.github.com/galasa-dev/wrapping \
+             -Dgalasa.jacocoEnabled=true -Dgalasa.isRelease=true

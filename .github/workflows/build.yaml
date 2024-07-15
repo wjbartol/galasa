@@ -2,14 +2,32 @@ name: Main build
 
 on:
     workflow_dispatch:
-    pull_request:
+    push:
         branches: [main]
 
+env:
+  NAMESPACE: galasa-dev
+
 jobs:
+    delete-previous-packages:
+      name: Delete previous versions
+      runs-on: ubuntu-latest
+      strategy:
+          matrix: 
+            name: [galasa-gradle-parent, githash.dev.galasa.githash.gradle.plugin,obr.dev.galasa.obr.gradle.plugin,tests.dev.galasa.tests.gradle.plugin,dev.galasa.gradle.impl,testcatalog.dev.galasa.testcatalog.gradle.plugin,dev.galasa.plugin.common,dev.galasa.plugin.common.impl,dev.galasa.plugin.common.test]
+
+      steps:
+        - name: Delete previous versions
+          uses: actions/delete-package-versions@v5
+          with:
+           package-name: 'dev.galasa.${{matrix.name}}'
+           package-type: 'maven'
+
     build-gradle:
         name: build and Test Gradle 
+        needs: delete-previous-packages
+        if: always()
         runs-on: ubuntu-latest
-
         steps:
             - name: Checkout Code
               uses: actions/checkout@v4
@@ -18,7 +36,7 @@ jobs:
               uses: actions/setup-java@v4
               with:
                 java-version: '11'
-                distribution: 'temurin'
+                distribution: 'semeru'
             
             - name: Setup Gradle
               uses: gradle/actions/setup-gradle@v3
@@ -33,8 +51,8 @@ jobs:
                 ORG_GRADLE_PROJECT_signingPassword: ${{ secrets.GPG_PASSPHRASE }}
               run: |
                 gradle check publish --scan \
-                -PsourceMaven=https://repo.maven.apache.org/maven2/  \
+                -PsourceMaven=https://repo.maven.apache.org/maven2/ \
                 -PcentralMaven=https://repo.maven.apache.org/maven2/ \
-                -PtargetMaven=https://maven.pkg.github.com/galasa-dev/gradle  \
+                -PtargetMaven=https://maven.pkg.github.com/${{env.NAMESPACE}}/gradle \
                 -PjacocoEnabled=true \
                 -PisMainOrRelease=true

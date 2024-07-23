@@ -18,70 +18,79 @@ jobs:
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
+
+      - name: Login to ArgoCD and recycle application
+        env: 
+          ARGOCD_TOKEN: ${{ secrets.ARGOCD_TOKEN }}
+        run: |
+          docker run --rm -v ${{ github.workspace }}:/var/workspace ghcr.io/galasa-dev/argocdcli:main -c "argocd login argocd.galasa.dev --auth-token ${{ env.ARGOCD_TOKEN }} --grpc-web && argocd app actions run main-maven-repos restart --kind Deployment --resource-name gradle-main --server argocd.galasa.dev"
+
       
-      - name: Setup JDK 
-        uses: actions/setup-java@v4
-        with:
-          java-version: '11'
-          distribution: 'semeru'
+      # - name: Setup JDK 
+      #   uses: actions/setup-java@v4
+      #   with:
+      #     java-version: '11'
+      #     distribution: 'semeru'
 
-      # The githash is added to the development Maven registry to show what commit level it contains
-      - name: Print githash
-        run: |
-          echo $GITHUB_SHA > ./gradle.githash
+      # # The githash is added to the development Maven registry to show what commit level it contains
+      # - name: Print githash
+      #   run: |
+      #     echo $GITHUB_SHA > ./gradle.githash
 
-      - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v3
-        with:
-          gradle-version: 6.9.2
+      # - name: Setup Gradle
+      #   uses: gradle/actions/setup-gradle@v3
+      #   with:
+      #     gradle-version: 6.9.2
 
-      - name: Build Gradle source code
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          ORG_GRADLE_PROJECT_signingKeyId:  ${{ secrets.GPG_KEYID }}
-          ORG_GRADLE_PROJECT_signingKey: ${{ secrets.GPG_KEY }}
-          ORG_GRADLE_PROJECT_signingPassword: ${{ secrets.GPG_PASSPHRASE }}
-        run: |
-          gradle check publish \
-          -PsourceMaven=https://repo.maven.apache.org/maven2/ \
-          -PcentralMaven=https://repo.maven.apache.org/maven2/ \
-          -PtargetMaven=${{ github.workspace }}/repo \
-          -PjacocoEnabled=true \
-          -PisMainOrRelease=true
+      # - name: Build Gradle source code
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      #     ORG_GRADLE_PROJECT_signingKeyId:  ${{ secrets.GPG_KEYID }}
+      #     ORG_GRADLE_PROJECT_signingKey: ${{ secrets.GPG_KEY }}
+      #     ORG_GRADLE_PROJECT_signingPassword: ${{ secrets.GPG_PASSPHRASE }}
+      #   run: |
+      #     gradle check publish \
+      #     -PsourceMaven=https://repo.maven.apache.org/maven2/ \
+      #     -PcentralMaven=https://repo.maven.apache.org/maven2/ \
+      #     -PtargetMaven=${{ github.workspace }}/repo \
+      #     -PjacocoEnabled=true \
+      #     -PisMainOrRelease=true
           
-      - name: Login to Github Container Registry
-        uses: docker/login-action@v3
-        with:
-          registry: ${{ env.REGISTRY }}
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
+      # - name: Login to Github Container Registry
+      #   uses: docker/login-action@v3
+      #   with:
+      #     registry: ${{ env.REGISTRY }}
+      #     username: ${{ github.actor }}
+      #     password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Extract metadata for Gradle image
-        id: metadata
-        uses: docker/metadata-action@9ec57ed1fcdbf14dcef7dfbe97b2010124a938b7
-        with:
-          images: ${{ env.REGISTRY }}/${{ env.NAMESPACE }}/gradle-maven-artefacts
+      # - name: Extract metadata for Gradle image
+      #   id: metadata
+      #   uses: docker/metadata-action@9ec57ed1fcdbf14dcef7dfbe97b2010124a938b7
+      #   with:
+      #     images: ${{ env.REGISTRY }}/${{ env.NAMESPACE }}/gradle-maven-artefacts
 
-      - name: Build Gradle image for development Maven registry
-        id: build
-        uses: docker/build-push-action@v5
-        with:
-          context: .
-          file: dockerfiles/dockerfile.gradle
-          push: true
-          tags: ${{ steps.metadata.outputs.tags }}
-          labels: ${{ steps.metadata.outputs.labels }}
-          # dockerRepository will change to ghcr.io once the Wrapping image is available there
-          build-args: |
-            dockerRepository=harbor.galasa.dev
-            tag=${{ env.BRANCH }}
+      # - name: Build Gradle image for development Maven registry
+      #   id: build
+      #   uses: docker/build-push-action@v5
+      #   with:
+      #     context: .
+      #     file: dockerfiles/dockerfile.gradle
+      #     push: true
+      #     tags: ${{ steps.metadata.outputs.tags }}
+      #     labels: ${{ steps.metadata.outputs.labels }}
+      #     # dockerRepository will change to ghcr.io once the Wrapping image is available there
+      #     build-args: |
+      #       dockerRepository=harbor.galasa.dev
+      #       tag=${{ env.BRANCH }}
 
       # Login to ArgoCD
       # Recycle the application managed by ArgoCD which deploys the development Maven registry
       # This will supply it with the latest artefacts
-      - name: Login to ArgoCD and recycle application
-        run: |
-          docker run --rm -v ghcr.io/galasa-dev/argocdcli:main "argocd login argocd.galasa.dev --auth-token ${{ secrets.ARGOCD_TOKEN }} --grpc-web; argocd app actions run main-maven-repos restart --kind Deployment --resource-name gradle-main --server argocd.galasa.dev"
+      # - name: Login to ArgoCD and recycle application
+      #   env: 
+      #     ARGOCD_TOKEN: ${{ secrets.ARGOCD_TOKEN }}
+      #   run: |
+      #     docker run --rm -v ${{ github.workspace }}:/var/workspace ghcr.io/galasa-dev/argocdcli:main -c "argocd login argocd.galasa.dev --auth-token ${{ env.ARGOCD_TOKEN }} --grpc-web && argocd app actions run main-maven-repos restart --kind Deployment --resource-name gradle-main --server argocd.galasa.dev"
 
       # Recycle the application managed by ArgoCD which deploys the development Maven registry
       # This will supply it with the latest artefacts

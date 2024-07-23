@@ -11,7 +11,7 @@ env:
 
 jobs:
     build-gradle:
-        name: build and Test Gradle 
+        name: Build Gradle source code and Docker image
         runs-on: ubuntu-latest
 
         steps:
@@ -37,7 +37,7 @@ jobs:
               with:
                 gradle-version: 6.9.2
 
-            - name: Test and Build Gradle
+            - name: Build Gradle source code
               run: |
                gradle check publish \
                -PsourceMaven=https://repo.maven.apache.org/maven2/ \

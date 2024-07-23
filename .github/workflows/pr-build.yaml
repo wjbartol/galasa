@@ -28,6 +28,10 @@ jobs:
               run: |
                 echo $GITHUB_SHA > ./gradle.githash
 
+            - name: Check githash
+              run: |
+                cat ./gradle.githash
+
             - name: Setup Gradle
               uses: gradle/actions/setup-gradle@v3
               with:
@@ -35,7 +39,7 @@ jobs:
 
             - name: Test and Build Gradle
               run: |
-               gradle clean build \
+               gradle check publish \
                -PsourceMaven=https://repo.maven.apache.org/maven2/ \
                -PcentralMaven=https://repo.maven.apache.org/maven2/ \
                -PtargetMaven=${{ github.workspace }}/repo

@@ -6,28 +6,13 @@ on:
     branches: [main]
 
 env:
+  REGISTRY: ghcr.io
   NAMESPACE: galasa-dev
   BRANCH: main
 
 jobs:
-  # delete-previous-packages:
-  #   name: Delete previous versions
-  #   runs-on: ubuntu-latest
-  #   strategy:
-  #       matrix: 
-  #         name: [galasa-gradle-parent, githash.dev.galasa.githash.gradle.plugin,obr.dev.galasa.obr.gradle.plugin,tests.dev.galasa.tests.gradle.plugin,dev.galasa.gradle.impl,testcatalog.dev.galasa.testcatalog.gradle.plugin,dev.galasa.plugin.common,dev.galasa.plugin.common.impl,dev.galasa.plugin.common.test]
-
-  #   steps:
-  #     - name: Delete previous versions
-  #       uses: actions/delete-package-versions@v5
-  #       with:
-  #         package-name: 'dev.galasa.${{matrix.name}}'
-  #         package-type: 'maven'
-
   build-gradle:
-    name: build and Test Gradle 
-    # needs: delete-previous-packages
-    # if: always()
+    name: Build Gradle source code and Docker image for development Maven registry
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Code
@@ -49,7 +34,7 @@ jobs:
         with:
           gradle-version: 6.9.2
 
-      - name: Test and Build Gradle
+      - name: Build Gradle source code
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           ORG_GRADLE_PROJECT_signingKeyId:  ${{ secrets.GPG_KEYID }}
@@ -70,7 +55,7 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Extract metadata for Gradle Image
+      - name: Extract metadata for Gradle image
         id: metadata
         uses: docker/metadata-action@9ec57ed1fcdbf14dcef7dfbe97b2010124a938b7
         with:

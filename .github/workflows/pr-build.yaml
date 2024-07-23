@@ -1,12 +1,13 @@
 name: PR build
 
 on:
-    workflow_dispatch:
-    pull_request:
-        branches: [main]
+  workflow_dispatch:
+  pull_request:
+      branches: [main]
 
 env:
   NAMESPACE: galasa-dev
+  IMAGE_TAG: ${{ github.event.number }}
 
 jobs:
     build-gradle:
@@ -23,6 +24,10 @@ jobs:
                 java-version: '11'
                 distribution: 'semeru'
 
+            - name: Print githash
+              run: |
+                echo $GITHUB_SHA > ./gradle.githash
+
             - name: Setup Gradle
               uses: gradle/actions/setup-gradle@v3
               with:
@@ -33,4 +38,10 @@ jobs:
                gradle clean build \
                -PsourceMaven=https://repo.maven.apache.org/maven2/ \
                -PcentralMaven=https://repo.maven.apache.org/maven2/ \
-               -PtargetMaven=https://maven.pkg.github.com/${{env.NAMESPACE}}/gradle/
+               -PtargetMaven=${{ github.workspace }}/repo
+
+            # This Docker image will not be used, it's just to test that the Docker build should work
+            - name: Build and test Gradle image
+              run: |
+                docker build -t gradle-maven-artefacts:${{env.IMAGE_TAG}} --build-arg tag=main --build-arg dockerRepository=harbor.galasa.dev -f dockerfiles/dockerfile.gradle .
+                docker run --rm gradle-maven-artefacts:${{env.IMAGE_TAG}}

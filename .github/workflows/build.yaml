@@ -2,8 +2,7 @@ name: Main build
 
 on:
   workflow_dispatch:
-  # push:
-  pull_request:
+  push:
     branches: [main]
 
 env:
@@ -62,6 +61,7 @@ jobs:
         with:
           images: ${{ env.REGISTRY }}/${{ env.NAMESPACE }}/gradle-maven-artefacts
 
+      # A Docker image containing the built Maven artefacts is deployed to the dev Maven registry
       - name: Build Gradle image for development Maven registry
         id: build
         uses: docker/build-push-action@v5
@@ -71,7 +71,7 @@ jobs:
           push: true
           tags: ${{ steps.metadata.outputs.tags }}
           labels: ${{ steps.metadata.outputs.labels }}
-          # dockerRepository will change to ghcr.io once the Wrapping image is available there
+            # Temporary: dockerRepository will change to ghcr.io once the Wrapping image is available there
           build-args: |
             dockerRepository=harbor.galasa.dev
             tag=${{ env.BRANCH }}

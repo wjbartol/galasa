@@ -19,13 +19,18 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
 
-      - name: Login to ArgoCD and recycle application
+      - name: Recycle application in ArgoCD
         env: 
-          ARGOCD_TOKEN: ${{ secrets.ARGOCD_TOKEN }}
+          ARGOCD_AUTH_TOKEN: ${{ secrets.ARGOCD_TOKEN }}
         run: |
-          docker run --rm -v ${{ github.workspace }}:/var/workspace ghcr.io/galasa-dev/argocdcli:main "login argocd.galasa.dev --auth-token ${{ env.ARGOCD_TOKEN }} --grpc-web && app actions run main-maven-repos restart --kind Deployment --resource-name gradle-main --server argocd.galasa.dev"
-
+          docker run --rm -v ${{ github.workspace }}:/var/workspace ghcr.io/galasa-dev/argocdcli:main app actions run main-maven-repos restart --kind Deployment --resource-name gradle-main --server argocd.galasa.dev
+          
       
+      
+      #  login argocd.galasa.dev --auth-token ${{ env.ARGOCD_TOKEN }} --grpc-web
+      # && app actions run main-maven-repos restart --kind Deployment --resource-name gradle-main --server argocd.galasa.dev"
+
+
       # - name: Setup JDK 
       #   uses: actions/setup-java@v4
       #   with:

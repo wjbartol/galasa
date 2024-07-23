@@ -41,27 +41,29 @@ jobs:
           -PtargetMaven=${{ github.workspace }}/repo
 
       # This Docker image will not be used, it's just to test that the Docker build should work
-      # - name: Build and test Gradle image
-      #   run: |
-      #     docker build -t gradle-maven-artefacts:${{env.IMAGE_TAG}} --build-arg tag=main --build-arg dockerRepository=harbor.galasa.dev -f dockerfiles/dockerfile.gradle .
-      #     docker run --rm gradle-maven-artefacts:${{env.IMAGE_TAG}}
+      - name: Build and test Gradle image
+        env:
+          CONTEXTROOT: main/maven-repo/gradle
+        run: |
+          docker build -t gradle-maven-artefacts:${{env.IMAGE_TAG}} --build-arg tag=main --build-arg dockerRepository=harbor.galasa.dev -f dockerfiles/dockerfile.gradle .
+          docker run --rm gradle-maven-artefacts:${{env.IMAGE_TAG}}
 
-      - name: Extract metadata for Gradle image
-        id: metadata
-        uses: docker/metadata-action@9ec57ed1fcdbf14dcef7dfbe97b2010124a938b7
-        with:
-          images: ${{ env.REGISTRY }}/${{ env.NAMESPACE }}/gradle-maven-artefacts
+      # - name: Extract metadata for Gradle image
+      #   id: metadata
+      #   uses: docker/metadata-action@9ec57ed1fcdbf14dcef7dfbe97b2010124a938b7
+      #   with:
+      #     images: ${{ env.REGISTRY }}/${{ env.NAMESPACE }}/gradle-maven-artefacts
 
-      - name: Build Gradle image for development Maven registry
-        id: build
-        uses: docker/build-push-action@v5
-        with:
-          context: .
-          file: dockerfiles/dockerfile.gradle
-          push: false
-          tags: ${{ steps.metadata.outputs.tags }}
-          labels: ${{ steps.metadata.outputs.labels }}
-          # dockerRepository will change to ghcr.io once the Wrapping image is available there
-          build-args: |
-            dockerRepository=harbor.galasa.dev
-            tag=${{ env.BRANCH }}
+      # - name: Build Gradle image for development Maven registry
+      #   id: build
+      #   uses: docker/build-push-action@v5
+      #   with:
+      #     context: .
+      #     file: dockerfiles/dockerfile.gradle
+      #     push: false
+      #     tags: ${{ steps.metadata.outputs.tags }}
+      #     labels: ${{ steps.metadata.outputs.labels }}
+      #     # dockerRepository will change to ghcr.io once the Wrapping image is available there
+      #     build-args: |
+      #       dockerRepository=harbor.galasa.dev
+      #       tag=${{ env.BRANCH }}

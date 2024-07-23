@@ -2,7 +2,8 @@ name: Main build
 
 on:
   workflow_dispatch:
-  push:
+  # push:
+  pull_request:
     branches: [main]
 
 env:
@@ -41,7 +42,7 @@ jobs:
           ORG_GRADLE_PROJECT_signingKey: ${{ secrets.GPG_KEY }}
           ORG_GRADLE_PROJECT_signingPassword: ${{ secrets.GPG_PASSPHRASE }}
         run: |
-          gradle check publish --scan \
+          gradle check publish \
           -PsourceMaven=https://repo.maven.apache.org/maven2/ \
           -PcentralMaven=https://repo.maven.apache.org/maven2/ \
           -PtargetMaven=${{ github.workspace }}/repo \
@@ -74,3 +75,16 @@ jobs:
           build-args: |
             dockerRepository=harbor.galasa.dev
             tag=${{ env.BRANCH }}
+
+      # Login to ArgoCD
+      # Recycle the application managed by ArgoCD which deploys the development Maven registry
+      # This will supply it with the latest artefacts
+      - name: Login to ArgoCD and recycle application
+        run: |
+          docker run --rm -v ghcr.io/galasa-dev/argocdcli:main "argocd login argocd.galasa.dev --auth-token ${{ secrets.ARGOCD_TOKEN }} --grpc-web; argocd app actions run main-maven-repos restart --kind Deployment --resource-name gradle-main --server argocd.galasa.dev"
+
+      # Recycle the application managed by ArgoCD which deploys the development Maven registry
+      # This will supply it with the latest artefacts
+      # - name: Recycle ArgoCD application
+      #   run: |
+      #     argocd app actions run main-maven-repos restart --kind Deployment --resource-name gradle-main --server argocd.galasa.dev

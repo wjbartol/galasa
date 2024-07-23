@@ -67,4 +67,4 @@ jobs:
           # dockerRepository will change to ghcr.io once the Wrapping image is available there
           build-args: |
             dockerRepository=harbor.galasa.dev
-            tag=${{ env.BRANCH }}
+            tag=main

@@ -1,4 +1,4 @@
-name: Main Build
+name: Main build
 
 on:
   workflow_dispatch:
@@ -6,41 +6,116 @@ on:
     branches: [main]
 
 env:
-  GPG_PASSPHRASE: ${{secrets.GPG_PASSPHRASE}}
-  GPG_KEY: ${{secrets.GPG_KEY}}
+  REGISTRY: ghcr.io
+  NAMESPACE: galasa-dev
+  BRANCH: main
 
 jobs:
-    build-push-wrapping-artefacts:
-        name: Building and Deploying Maven artefcats
-        runs-on: ubuntu-latest
+  build-wrapping:
+    name: Build Wrapping source code and Docker image for development Maven registry
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+      
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          java-version: '11'
+          distribution: 'semeru'
+          cache: maven
 
-        steps:
-          - name: Checkin Code
-            uses: actions/checkout@v4
+      # The githash is added to the development Maven registry to show what commit level it contains
+      - name: Print githash
+        run: |
+          echo $GITHUB_SHA > ./wrapping.githash
+
+      # Copy secrets into files to use in workflow
+      - name: Make secrets directory
+        run : |
+          mkdir /home/runner/work/secrets
+      - name: Copy settings.xml
+        env:
+          MAVEN_SETTINGS_XML: ${{ secrets.MAVEN_SETTINGS_XML }}
+        run : |
+          echo $MAVEN_SETTINGS_XML > /home/runner/work/secrets/settings.xml
+      - name: Copy GPG passphrase
+        env:
+          GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
+        run : |
+          echo $GPG_PASSPHRASE > /home/runner/work/secrets/passphrase.file
+      - name: Copy GPG key
+        env:
+          GPG_KEY_BASE64: ${{ secrets.GPG_KEY }}
+        run : |
+          echo $GPG_KEY_BASE64 |  base64 --decode > /home/runner/work/secrets/galasa.gpg
           
-          - name: Set up JDK 11
-            uses: actions/setup-java@v4
-            with:
-              java-version: '11'
-              distribution: 'semeru'
-              server-id: 'github'
-              server-username: GITHUB_ACTOR
-              server-password: GITHUB_TOKEN
-              settings-path: '~/.m2'
-              gpg-private-key: ${{secrets.GPG_KEY}}
-              cache: maven
+      # Set up Maven GPG directory
+      - name: Make GPG home directory
+        run: |
+          mkdir /home/runner/work/gpg
+      
+      - name: Change directory permissions
+        run: |
+          chmod '700' /home/runner/work/gpg
 
+      - name: Import GPG
+        run: |
+          gpg --homedir /home/runner/work/gpg --pinentry-mode loopback --passphrase-file /home/runner/work/secrets/passphrase.file --import /home/runner/work/secrets/galasa.gpg
+      
+      - name: Copy custom settings.xml
+        run: |
+          cp /home/runner/work/secrets/settings.xml /home/runner/work/gpg/settings.xml
 
-          - name: Building artefacts
-            env:
-              GPG_PASSPHRASE: ${{secrets.GPG_PASSPHRASE}}
-              GPG_KEY: ${{secrets.GPG_KEY}}
-              GITHUB_ACTOR: ${{github.actor}}
-              GITHUB_TOKEN: ${{github.token}}
-            run: |
-             mvn -X --batch-mode -Dgpg.passphrase=GPG_PASSPHRASE deploy \
-             -Dgpg.keyname=662734DC2A745A00C08FACE175533914221FFDC2 \
-             -Dgalasa.source.repo=https://repo.maven.apache.org/maven2/ \
-             -Dgalasa.central.repo=https://repo.maven.apache.org/maven2/   \
-             -Dgalasa.release.repo=https://maven.pkg.github.com/galasa-dev/wrapping \
-             -Dgalasa.jacocoEnabled=true -Dgalasa.isRelease=true
+      # Make directory to deploy Maven artefacts to in the build
+      - name: Make artefacts directory
+        run : |
+          mkdir ${{ github.workspace }}/repo
+
+      - name: Building Wrapping source code
+        run: |
+          mvn deploy \
+          -Dgalasa.source.repo=https://repo.maven.apache.org/maven2/ \
+          -Dgalasa.central.repo=https://repo.maven.apache.org/maven2/ \
+          -Dgalasa.release.repo=file:${{ github.workspace }}/repo \
+          -Dgalasa.jacocoEnabled=true \
+          -Dgalasa.isRelease=true \
+          --batch-mode --errors --fail-at-end \
+          --settings  /home/runner/work/gpg/settings.xml
+
+      - name: Login to Github Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract metadata for Wrapping image
+        id: metadata
+        uses: docker/metadata-action@9ec57ed1fcdbf14dcef7dfbe97b2010124a938b7
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.NAMESPACE }}/wrapping-maven-artefacts
+
+      # A Docker image containing the built Maven artefacts is deployed to the dev Maven registry
+      - name: Build Wrapping image for development Maven registry
+        id: build
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: dockerfiles/dockerfile.wrapping
+          push: true
+          tags: ${{ steps.metadata.outputs.tags }}
+          labels: ${{ steps.metadata.outputs.labels }}
+            # Temporary: dockerRepository will change to ghcr.io once the Wrapping image is available there
+          build-args: |
+            dockerRepository=harbor.galasa.dev
+            baseVersion=latest
+
+      # Recycle the development Maven registry app in ArgoCD
+      # Authenticate using a token passed in as an environment variable
+      - name: Recycle application in ArgoCD
+        env: 
+          ARGOCD_AUTH_TOKEN: ${{ secrets.ARGOCD_TOKEN }}
+        run: |
+          docker run --env ARGOCD_AUTH_TOKEN=${{ env.ARGOCD_AUTH_TOKEN }} --rm -v ${{ github.workspace }}:/var/workspace ghcr.io/galasa-dev/argocdcli:main app actions run gh-maven-repos restart --kind Deployment --resource-name wrapping-gh --server argocd.galasa.dev
+          

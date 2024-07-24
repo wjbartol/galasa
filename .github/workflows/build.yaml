@@ -11,7 +11,7 @@ env:
 
 jobs:
   build-wrapping:
-    name: Build Wrapping source code and Docker image for development Maven registry
+    name: Build Maven source code and Docker image for development Maven registry
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Code

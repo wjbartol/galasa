@@ -39,7 +39,7 @@ jobs:
           -Dgpg.skip=true \
           -Dgalasa.source.repo=https://development.galasa.dev/gh/maven-repo/gradle"\
           -Dgalasa.central.repo=https://repo.maven.apache.org/maven2/"\
-          -Dgalasa.release.repo=file:${{ github.workspace }}/repo --batch-mode --errors --fail-at-end 
+          -Dgalasa.release.repo=${{ github.workspace }}/repo --batch-mode --errors --fail-at-end 
 
       - name: Build maven Image for testing
         uses: docker/build-push-action@v5

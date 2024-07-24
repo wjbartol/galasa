@@ -66,10 +66,6 @@ jobs:
       - name: Copy custom settings.xml
         run: |
           cp /home/runner/work/secrets/settings.xml /home/runner/work/gpg/settings.xml
-
-      - name: Make artefacts directory
-        run : |
-          mkdir ${{ github.workspace }}/repo
       
       - name: Building Maven source code
         run: |
@@ -77,11 +73,10 @@ jobs:
           -Dgalasa.source.repo=https://development.galasa.dev/gh/maven-repo/gradle \
           -Dgalasa.central.repo=https://repo.maven.apache.org/maven2/ \
           -Dgalasa.release.repo=file:${{ github.workspace }}/repo \
-          --batch-mode --errors --fail-at-end 
-          --settings  /home/runner/work/gpg/settings.xml
+          --batch-mode --errors --fail-at-end \
+          --settings /home/runner/work/gpg/settings.xml
 
-
-      - name: Build maven Image for testing
+      - name: Build Maven image for testing
         uses: docker/build-push-action@v5
         with:
             context: .

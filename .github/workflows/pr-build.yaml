@@ -35,11 +35,9 @@ jobs:
       
       - name: Building Maven source code
         run: |
-          mvn -f galasa-maven-plugin/pom.xml deploy \
-          -Dgpg.skip=true \
+          mvn -f galasa-maven-plugin/pom.xml deploy -Dgpg.skip=true 
           -Dgalasa.source.repo=https://development.galasa.dev/gh/maven-repo/gradle"\
-          -Dgalasa.central.repo=https://repo.maven.apache.org/maven2/"\
-          -Dgalasa.release.repo=${{ github.workspace }}/repo --batch-mode --errors --fail-at-end 
+          -Dgalasa.central.repo=https://repo.maven.apache.org/maven2/" -Dgalasa.release.repo=${{ github.workspace }}/repo --batch-mode --errors --fail-at-end 
 
       - name: Build maven Image for testing
         uses: docker/build-push-action@v5

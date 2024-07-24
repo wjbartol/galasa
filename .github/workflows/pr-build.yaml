@@ -1,0 +1,61 @@
+name: PR build
+
+on:
+  workflow_dispatch:
+  pull_request:
+      branches: [main]
+
+env:
+  REGISTRY: ghcr.io
+  NAMESPACE: galasa-dev
+
+jobs:
+    build-wrapping:
+        name: Build Wrapping source code and Docker image
+        runs-on: ubuntu-latest
+
+        steps:
+          - name: Checkout Code
+            uses: actions/checkout@v4
+          
+          - name: Set up JDK
+            uses: actions/setup-java@v4
+            with:
+              java-version: '11'
+              distribution: 'semeru'
+              cache: maven
+
+          # The githash is added to the development Maven registry to show what commit level it contains
+          - name: Print githash
+            run: |
+              echo $GITHUB_SHA > ./wrapping.githash
+          
+          - name: Building Wrapping source code
+            run: |
+              mvn deploy \
+              -Dgpg.skip=true \
+              -Dgalasa.source.repo=https://repo.maven.apache.org/maven2/ \
+              -Dgalasa.central.repo=https://repo.maven.apache.org/maven2/ \
+              -Dgalasa.release.repo=${{ github.workspace }}/repo \
+              --batch-mode --errors --fail-at-end
+          
+          - name: Extract metadata for Wrapping image
+            id: metadata
+            uses: docker/metadata-action@9ec57ed1fcdbf14dcef7dfbe97b2010124a938b7
+            with:
+              images: ${{ env.REGISTRY }}/${{ env.NAMESPACE }}/wrapping-maven-artefacts
+
+          # This Docker image will not be used, it's just to test that the Docker build should work
+          - name: Build Wrapping image
+            id: build
+            uses: docker/build-push-action@v5
+            with:
+              context: .
+              file: dockerfiles/dockerfile.wrapping
+              push: false
+              tags: ${{ steps.metadata.outputs.tags }}
+              labels: ${{ steps.metadata.outputs.labels }}
+              # dockerRepository will change to ghcr.io once the Wrapping image is available there
+              build-args: |
+                dockerRepository=harbor.galasa.dev
+                baseVersion=latest

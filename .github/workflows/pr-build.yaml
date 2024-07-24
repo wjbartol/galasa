@@ -82,7 +82,7 @@ jobs:
               -Dgpg.skip=true \
               -Dgalasa.source.repo=https://repo.maven.apache.org/maven2/ \
               -Dgalasa.central.repo=https://repo.maven.apache.org/maven2/ \
-              -Dgalasa.release.repo=${{ github.workspace }}/repo \
+              -Dgalasa.release.repo=file:${{ github.workspace }}/repo \
               --batch-mode --errors --fail-at-end \
               --settings  /home/runner/work/gpg/settings.xml
           

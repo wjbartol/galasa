@@ -66,6 +66,11 @@ jobs:
           - name: Copy custom settings.xml
             run: |
               cp /home/runner/work/secrets/settings.xml /home/runner/work/gpg/settings.xml
+
+          # Make directory to deploy Maven artefacts to in the build
+          - name: Make artefacts directory
+            run : |
+              mkdir ${{ github.workspace }}/repo
           
           - name: Building Wrapping source code
             run: |

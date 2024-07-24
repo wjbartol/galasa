@@ -25,6 +25,10 @@ jobs:
               distribution: 'semeru'
               cache: maven
 
+          - name: Get Maven version
+            run : |
+              mvn --version
+
           # The githash is added to the development Maven registry to show what commit level it contains
           - name: Print githash
             run: |

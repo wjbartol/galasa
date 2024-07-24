@@ -29,6 +29,34 @@ jobs:
           - name: Print githash
             run: |
               echo $GITHUB_SHA > ./wrapping.githash
+
+          # Copy secrets into files to use in workflow
+          - name: Copy settings.xml
+            run : |
+              echo ${{ secrets.MAVEN_SETTINGS_XML }} > /home/runner/work/settings.xml
+          - name: Copy GPG passphrase
+            run : |
+              echo ${{ secrets.GPG_PASSPHRASE }} > /home/runner/work/passphrase.file
+          - name: Copy GPG key
+            run : |
+              echo ${{ secrets.GPG_KEY }} |  base64 --decode > /home/runner/work/galasa.gpg
+              
+          # Set up Maven GPG directory
+          - name: Make GPG home directory
+            run: |
+              mkdir /home/runner/work/gpg
+          
+          - name: Change directory permissions
+            run: |
+              chmod '700' /home/runner/work/gpg
+
+          - name: Import GPG
+            run: |
+              gpg --homedir /home/runner/work/gpg --pinentry-mode loopback --passphrase-file /home/runner/work/passphrase.file --import /home/runner/work/galasa.gpg
+          
+          - name: Copy custom settings.xml
+            run: |
+              cp /home/runner/work/settings.xml /home/runner/work/gpg/settings.xml
           
           - name: Building Wrapping source code
             run: |
@@ -37,7 +65,8 @@ jobs:
               -Dgalasa.source.repo=https://repo.maven.apache.org/maven2/ \
               -Dgalasa.central.repo=https://repo.maven.apache.org/maven2/ \
               -Dgalasa.release.repo=${{ github.workspace }}/repo \
-              --batch-mode --errors --fail-at-end
+              --batch-mode --errors --fail-at-end \
+              --settings  /home/runner/work/gpg/settings.xml
           
           - name: Extract metadata for Wrapping image
             id: metadata

@@ -102,8 +102,8 @@ jobs:
           tags: ${{ steps.metadata.outputs.tags }}
           labels: ${{ steps.metadata.outputs.labels }}
           build-args: |
-            dockerRepository=harbor.galasa.dev
-            tag=main
+            dockerRepository=ghcr.io
+            tag=${{ env.BRANCH }}
 
       # Recycle the development Maven registry app in ArgoCD
       # Authenticate using a token passed in as an environment variable

@@ -84,5 +84,5 @@ jobs:
             load: true
             tags: maven:test
             build-args: |
-              dockerRepository=harbor.galasa.dev
+              dockerRepository=ghcr.io
               tag=main

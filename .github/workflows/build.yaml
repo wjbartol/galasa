@@ -106,9 +106,8 @@ jobs:
           push: true
           tags: ${{ steps.metadata.outputs.tags }}
           labels: ${{ steps.metadata.outputs.labels }}
-            # Temporary: dockerRepository will change to ghcr.io once the Wrapping image is available there
           build-args: |
-            dockerRepository=harbor.galasa.dev
+            dockerRepository=ghcr.io
             baseVersion=latest
 
       # Recycle the development Maven registry app in ArgoCD

@@ -49,21 +49,13 @@ jobs:
           run: |
             echo $GITHUB_SHA > ./obr.githash
         
-        - name: Move release.yaml files to galasa-bom
-          run: |
-           mkdir ${{github.workspace}}/obr/galasa-bom/framework && cp ${{github.workspace}}/framework/release.yaml ${{github.workspace}}/obr/galasa-bom/framework
-           mkdir ${{github.workspace}}/obr/galasa-bom/managers && cp ${{github.workspace}}/managers/release.yaml ${{github.workspace}}/obr/galasa-bom/managers
-           mkdir ${{github.workspace}}/obr/galasa-bom/extensions && cp ${{github.workspace}}/extensions/release.yaml ${{github.workspace}}/obr/galasa-bom/extensions
-           cp ${{github.workspace}}/obr/release.yaml ${{github.workspace}}/obr/galasa-bom/
-
         - name:  Pull and run the docker image
           run: |
-           docker run --rm -v ${{github.workspace}}/obr/galasa-bom:/var/obr/galasa-bom ghcr.io/${{env.NAMESPACE}}/galasabld-amd64:${{env.IMAGE_TAG}} template --releaseMetadata var/obr/galasa-bom/framework/release.yaml --releaseMetadata /var/obr/galasa-bom/extensions/release.yaml --releaseMetadata /var/obr/galasa-bom/managers/release.yaml --releaseMetadata /var/obr/galasa-bom/release.yaml --template /var/obr/galasa-bom/pom.template --output /var/obr/galasa-bom/pom.xml --bom
+           docker run --rm -v ${{github.workspace}}:/var/root/ ghcr.io/${{env.NAMESPACE}}/galasabld-amd64:${{env.IMAGE_TAG}} template --releaseMetadata var/root/framework/release.yaml --releaseMetadata /var/root/extensions/release.yaml --releaseMetadata /var/root/managers/release.yaml --releaseMetadata /var/root/obr/release.yaml --template /var/root/obr/galasa-bom/pom.template --output /var/root/obr/galasa-bom/pom.xml --bom
            
-        - name: Display pom.xml and remove unwanted files
+        - name: Display pom.xml 
           run: |
            cat ${{github.workspace}}/obr/galasa-bom/pom.xml
-           rm -rf ${{github.workspace}}/obr/galasa-bom/framework, ${{github.workspace}}/obr/galasa-bom/managers, ${{github.workspace}}/obr/galasa-bom/extensions, ${{github.workspace}}/obr/galasa-bom/release.yaml
         
         - name: Build Obr using maven in directory galasa-bom
           run: |
@@ -73,21 +65,13 @@ jobs:
            -Dgalasa.release.repo=file:${{ github.workspace }}/obr/repo \
            --batch-mode --errors --fail-at-end
         
-        - name: Move release.yaml files to dev.galasa.uber.obr
-          run: |
-           mkdir ${{github.workspace}}/obr/dev.galasa.uber.obr/framework && cp ${{github.workspace}}/framework/release.yaml ${{github.workspace}}/obr/dev.galasa.uber.obr/framework
-           mkdir ${{github.workspace}}/obr/dev.galasa.uber.obr/managers && cp ${{github.workspace}}/managers/release.yaml ${{github.workspace}}/obr/dev.galasa.uber.obr/managers
-           mkdir ${{github.workspace}}/obr/dev.galasa.uber.obr/extensions && cp ${{github.workspace}}/extensions/release.yaml ${{github.workspace}}/obr/dev.galasa.uber.obr/extensions
-           cp ${{github.workspace}}/obr/release.yaml ${{github.workspace}}/obr/dev.galasa.uber.obr/
-    
         - name:  Pull and run the docker image
           run: |
-           docker run --rm -v ${{github.workspace}}/obr/dev.galasa.uber.obr:/var/obr/dev.galasa.uber.obr ghcr.io/${{env.NAMESPACE}}/galasabld-amd64:${{env.IMAGE_TAG}} template --releaseMetadata var/obr/dev.galasa.uber.obr/framework/release.yaml --releaseMetadata /var/obr/dev.galasa.uber.obr/extensions/release.yaml --releaseMetadata /var/obr/dev.galasa.uber.obr/managers/release.yaml --releaseMetadata /var/obr/dev.galasa.uber.obr/release.yaml --template /var/obr/dev.galasa.uber.obr/pom.template --output /var/obr/dev.galasa.uber.obr/pom.xml --obr
+           docker run --rm -v ${{github.workspace}}:/var/root/ ghcr.io/${{env.NAMESPACE}}/galasabld-amd64:${{env.IMAGE_TAG}} template --releaseMetadata var/root/framework/release.yaml --releaseMetadata /var/root/extensions/release.yaml --releaseMetadata /var/root/managers/release.yaml --releaseMetadata /var/root/obr/release.yaml --template /var/root/obr/dev.galasa.uber.obr/pom.template --output /var/root/obr/dev.galasa.uber.obr/pom.xml --obr
             
-        - name: Display pom.xml and remove unwanted files
+        - name: Display pom.xml 
           run: |
            cat ${{github.workspace}}/obr/dev.galasa.uber.obr/pom.xml
-           rm -rf ${{github.workspace}}/obr/dev.galasa.uber.obr/framework, ${{github.workspace}}/obr/dev.galasa.uber.obr/managers, ${{github.workspace}}/obr/dev.galasa.uber.obr/extensions, ${{github.workspace}}/obr/dev.galasa.uber.obr/release.yaml
          
         - name: Build Obr using maven in directory dev.galasa.uber.obr
           run: |

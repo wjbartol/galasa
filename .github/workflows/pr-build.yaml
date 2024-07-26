@@ -1,0 +1,58 @@
+name: PR build
+
+on:
+  pull_request:
+    branches: [main]
+
+env:
+  REGISTRY: ghcr.io
+  NAMESPACE: jaydee029
+  
+jobs:
+  build-framework:
+    name: Build Framework using openapi2beans and gradle
+    runs-on: ubuntu-latest
+
+    steps:
+        - name: Checkout Code
+          uses: actions/checkout@v4
+          with:
+            path: obr
+      
+        - name: Checkout framework
+          uses: actions/checkout@v4
+          with:
+            repository: ${{env.NAMESPACE}}/framework
+            path: framework
+        
+        - name: Checkout managers
+          uses: actions/checkout@v4
+          with:
+            repository: ${{env.NAMESPACE}}/managers
+            path: managers
+    
+        - name: Checkout extensions
+          uses: actions/checkout@v4
+          with:
+            repository: ${{env.NAMESPACE}}/extensions
+            path: extensions
+        
+        - name: Set up JDK
+          uses: actions/setup-java@v4
+          with:
+            java-version: '11'
+            distribution: 'semeru'
+            cache: maven
+    
+        - name: Print githash
+          run: |
+            echo $GITHUB_SHA > ./maven.githash
+        
+        
+        - name: Set context
+          run: |
+           cd ${{github.workspace}}/obr/galasa-bom
+           ls
+    
+    
+      

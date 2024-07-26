@@ -130,7 +130,7 @@ jobs:
         
         - name:  Pull and run the docker image
           run: |
-             docker run --rm -v ${{github.workspace}}:/var/root/ ghcr.io/${{env.NAMESPACE}}/galasabld-amd64:${{env.IMAGE_TAG}} template --releaseMetadata var/root/framework/release.yaml --releaseMetadata /var/root/extensions/release.yaml --releaseMetadata /var/root/managers/release.yaml --releaseMetadata /var/root/obr/javadocs/release.yaml --template /var/root/obr/javadocs/pom.template --output /var/root/obr/javadocs/pom.xml --javadoc
+             docker run --rm -v ${{github.workspace}}:/var/root/ ghcr.io/${{env.NAMESPACE}}/galasabld-amd64:${{env.IMAGE_TAG}} template --releaseMetadata var/root/framework/release.yaml --releaseMetadata /var/root/extensions/release.yaml --releaseMetadata /var/root/managers/release.yaml --releaseMetadata /var/root/obr/release.yaml --template /var/root/obr/javadocs/pom.template --output /var/root/obr/javadocs/pom.xml --javadoc
              
         - name: Display pom.xml 
           run: |

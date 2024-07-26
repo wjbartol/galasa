@@ -10,8 +10,8 @@ env:
   IMAGE_TAG: main
   
 jobs:
-  build-framework:
-    name: Build Framework using openapi2beans and gradle
+  build-obr:
+    name: Build OBR using galasabld image and maven
     runs-on: ubuntu-latest
 
     steps:
@@ -47,23 +47,143 @@ jobs:
     
         - name: Print githash
           run: |
-            echo $GITHUB_SHA > ./maven.githash
+            echo $GITHUB_SHA > ./obr.githash
         
-        - name: Move release.yaml files
+        - name: Move release.yaml files to galasa-bom
           run: |
            mkdir ${{github.workspace}}/obr/galasa-bom/framework && mv ${{github.workspace}}/framework/release.yaml ${{github.workspace}}/obr/galasa-bom/framework
            mkdir ${{github.workspace}}/obr/galasa-bom/managers && mv ${{github.workspace}}/managers/release.yaml ${{github.workspace}}/obr/galasa-bom/managers
            mkdir ${{github.workspace}}/obr/galasa-bom/extensions && mv ${{github.workspace}}/extensions/release.yaml ${{github.workspace}}/obr/galasa-bom/extensions
            mv ${{github.workspace}}/obr/release.yaml ${{github.workspace}}/obr/galasa-bom/
 
-        - name: Set context and run the docker image
+        - name:  Pull and run the docker image
           run: |
            docker run --rm -v ${{github.workspace}}/obr/galasa-bom:/var/obr/galasa-bom ghcr.io/${{env.NAMESPACE}}/galasabld-amd64:${{env.IMAGE_TAG}} template --releaseMetadata var/obr/galasa-bom/framework/release.yaml --releaseMetadata /var/obr/galasa-bom/extensions/release.yaml --releaseMetadata /var/obr/galasa-bom/managers/release.yaml --releaseMetadata /var/obr/galasa-bom/release.yaml --template /var/obr/galasa-bom/pom.template --output /var/obr/galasa-bom/pom.xml --bom
-           cd ${{github.workspace}}/obr/galasa-bom
-           ls
+           
+        - name: Display pom.xml and remove unwanted files
+          run: |
            cat ${{github.workspace}}/obr/galasa-bom/pom.xml
+           rm -rf ${{github.workspace}}/obr/galasa-bom/framework, ${{github.workspace}}/obr/galasa-bom/managers, ${{github.workspace}}/obr/galasa-bom/extensions, ${{github.workspace}}/obr/galasa-bom/release.yaml
         
+        - name: Build Obr using maven in directory galasa-bom
+          run: |
+           mvn -f ${{github.workspace}}/obr/galasa-bom/pom.xml deploy -Dgpg.skip=true \
+           -Dgalasa.source.repo=https://development.galasa.dev/gh/maven-repo/managers \
+           -Dgalasa.central.repo=https://repo.maven.apache.org/maven2/ \
+           -Dgalasa.release.repo=file:${{ github.workspace }}/obr/repo \
+           --batch-mode --errors --fail-at-end
+        
+        - name: Move release.yaml files to dev.galasa.uber.obr
+          run: |
+           mkdir ${{github.workspace}}/obr/dev.galasa.uber.obr/framework && mv ${{github.workspace}}/framework/release.yaml ${{github.workspace}}/obr/dev.galasa.uber.obr/framework
+           mkdir ${{github.workspace}}/obr/dev.galasa.uber.obr/managers && mv ${{github.workspace}}/managers/release.yaml ${{github.workspace}}/obr/dev.galasa.uber.obr/managers
+           mkdir ${{github.workspace}}/obr/dev.galasa.uber.obr/extensions && mv ${{github.workspace}}/extensions/release.yaml ${{github.workspace}}/obr/dev.galasa.uber.obr/extensions
+           mv ${{github.workspace}}/obr/release.yaml ${{github.workspace}}/obr/dev.galasa.uber.obr/
+    
+        - name:  Pull and run the docker image
+          run: |
+           docker run --rm -v ${{github.workspace}}/obr/dev.galasa.uber.obr:/var/obr/dev.galasa.uber.obr ghcr.io/${{env.NAMESPACE}}/galasabld-amd64:${{env.IMAGE_TAG}} template --releaseMetadata var/obr/dev.galasa.uber.obr/framework/release.yaml --releaseMetadata /var/obr/dev.galasa.uber.obr/extensions/release.yaml --releaseMetadata /var/obr/dev.galasa.uber.obr/managers/release.yaml --releaseMetadata /var/obr/dev.galasa.uber.obr/release.yaml --template /var/obr/dev.galasa.uber.obr/pom.template --output /var/obr/dev.galasa.uber.obr/pom.xml --obr
+            
+        - name: Display pom.xml and remove unwanted files
+          run: |
+           cat ${{github.workspace}}/obr/dev.galasa.uber.obr/pom.xml
+           rm -rf ${{github.workspace}}/obr/dev.galasa.uber.obr/framework, ${{github.workspace}}/obr/dev.galasa.uber.obr/managers, ${{github.workspace}}/obr/dev.galasa.uber.obr/extensions, ${{github.workspace}}/obr/dev.galasa.uber.obr/release.yaml
+         
+        - name: Build Obr using maven in directory dev.galasa.uber.obr
+          run: |
+            mvn -f ${{github.workspace}}/obr/dev.galasa.uber.obr/pom.xml deploy -Dgpg.skip=true \
+            -Dgalasa.source.repo=https://development.galasa.dev/gh/maven-repo/managers \
+            -Dgalasa.central.repo=https://repo.maven.apache.org/maven2/ \
+            -Dgalasa.release.repo=file:${{ github.workspace }}/obr/repo \
+            --batch-mode --errors --fail-at-end
+        
+        - name: Build OBR image for testing
+          uses: docker/build-push-action@v5
+          with:
+            context: .
+            file: ${{github.workspace}}/obr/dockerfiles/dockerfile.obr
+            load: true
+            tags: obr:test
+            build-args: |
+              dockerRepository=${{env.REGISTRY}}
+              tag= ${{env.IMAGE_TAG}}
 
     
-    
+  build-obr-javadocs:
+    name: Build OBR javadocs using galasabld image and maven
+    runs-on: ubuntu-latest
+    needs: build-obr
+
+    steps:
+        - name: Checkout Code
+          uses: actions/checkout@v4
+          with:
+            path: obr
       
+        - name: Checkout framework
+          uses: actions/checkout@v4
+          with:
+            repository: ${{env.NAMESPACE}}/framework
+            path: framework
+        
+        - name: Checkout managers
+          uses: actions/checkout@v4
+          with:
+            repository: ${{env.NAMESPACE}}/managers
+            path: managers
+    
+        - name: Checkout extensions
+          uses: actions/checkout@v4
+          with:
+            repository: ${{env.NAMESPACE}}/extensions
+            path: extensions
+
+        - name: Set up JDK
+          uses: actions/setup-java@v4
+          with:
+            java-version: '11'
+            distribution: 'semeru'
+            cache: maven
+        
+        - name: Move release.yaml files to javadocs
+          run: |
+            mkdir ${{github.workspace}}/obr/javadocs/framework && mv ${{github.workspace}}/framework/release.yaml ${{github.workspace}}/obr/javadocs/framework
+            mkdir ${{github.workspace}}/obr/javadocs/managers && mv ${{github.workspace}}/managers/release.yaml ${{github.workspace}}/obr/javadocs/managers
+            mkdir ${{github.workspace}}/obr/javadocs/extensions && mv ${{github.workspace}}/extensions/release.yaml ${{github.workspace}}/obr/javadocs/extensions
+            mv ${{github.workspace}}/obr/release.yaml ${{github.workspace}}/obr/javadocs/
+  
+        - name:  Pull and run the docker image
+          run: |
+             docker run --rm -v ${{github.workspace}}/obr/javadocs:/var/obr/javadocs ghcr.io/${{env.NAMESPACE}}/galasabld-amd64:${{env.IMAGE_TAG}} template --releaseMetadata var/obr/javadocs/framework/release.yaml --releaseMetadata /var/obr/javadocs/extensions/release.yaml --releaseMetadata /var/obr/javadocs/managers/release.yaml --releaseMetadata /var/obr/javadocs/release.yaml --template /var/obr/javadocs/pom.template --output /var/obr/javadocs/pom.xml --javadoc
+             
+        - name: Display pom.xml and remove unwanted files
+          run: |
+            cat ${{github.workspace}}/obr/javadocs/pom.xml
+            rm -rf ${{github.workspace}}/obr/javadocs/framework, ${{github.workspace}}/obr/javadocs/managers, ${{github.workspace}}/obr/javadocs/extensions, ${{github.workspace}}/obr/javadocs/release.yaml
+          
+        - name: Build javadoc site using maven in directory javadocs
+          run: |
+            mvn -f ${{github.workspace}}/obr/javadocs/pom.xml deploy -Dgpg.skip=true \
+            -Dgalasa.source.repo=https://development.galasa.dev/gh/maven-repo/managers \
+            -Dgalasa.central.repo=https://repo.maven.apache.org/maven2/ \
+            -Dgalasa.release.repo=file:${{ github.workspace }}/obr/javadocs/docker/repo \
+            -Dmaven.javadoc.failOnError=false --batch-mode --errors --fail-at-end
+        
+        - name: Build javadocsite Image for testing
+          uses: docker/build-push-action@v5
+          with:
+            context: .
+            file: ${{github.workspace}}/obr/dockerfiles/dockerfile.javadocsite
+            load: true
+            tags: javadocsite:test
+
+        - name: Build Javadoc Maven repo Image for testing
+          uses: docker/build-push-action@v5
+          with:
+            context: .
+            file: ${{github.workspace}}/obr/dockerfiles/dockerfile.javadocmavenrepo
+            load: true
+            tags: javadocmavenrepo:test
+            build-args: |
+              dockerRepository=${{env.REGISTRY}}
+              tag= latest

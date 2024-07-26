@@ -58,7 +58,7 @@ jobs:
 
         - name: Set context and run the docker image
           run: |
-           docker run --rm -v ${{github.workspace}}/obr/galasa-bom:/var/obr/galasa-bom ghcr.io/${{env.NAMESPACE}}/galasabld-amd64:${{env.IMAGE_TAG}} template --releaseMetadata var/obr/galasa-bom/framework/release.yaml --releaseMetadata /var/obr/galasa-bom/extensions/release.yaml --releaseMetadata /var/obr/galasa-bom/managers/release.yaml --releaseMetadata /var/obr/galasa-bom/release.yaml --template /var/obr/galasa-bom/pom.template --output pom.xml --bom
+           docker run --rm -v ${{github.workspace}}/obr/galasa-bom:/var/obr/galasa-bom ghcr.io/${{env.NAMESPACE}}/galasabld-amd64:${{env.IMAGE_TAG}} template --releaseMetadata var/obr/galasa-bom/framework/release.yaml --releaseMetadata /var/obr/galasa-bom/extensions/release.yaml --releaseMetadata /var/obr/galasa-bom/managers/release.yaml --releaseMetadata /var/obr/galasa-bom/release.yaml --template /var/obr/galasa-bom/pom.template --output /var/obr/galasa-bom/pom.xml --bom
            cd ${{github.workspace}}/obr/galasa-bom
            ls
            cat ${{github.workspace}}/obr/galasa-bom/pom.xml

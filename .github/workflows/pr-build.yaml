@@ -52,7 +52,11 @@ jobs:
         - name: Set context
           run: |
            cd ${{github.workspace}}/obr/galasa-bom
+        
+        - name: check context
+          run: |
            ls
+
     
     
       

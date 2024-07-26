@@ -7,6 +7,7 @@ on:
 env:
   REGISTRY: ghcr.io
   NAMESPACE: jaydee029
+  IMAGE_TAG: main
   
 jobs:
   build-framework:
@@ -49,13 +50,12 @@ jobs:
             echo $GITHUB_SHA > ./maven.githash
         
         
-        - name: Set context
+        - name: Set context and run the docker image
           run: |
            cd ${{github.workspace}}/obr/galasa-bom
+           docker run ghcr.io/${{env.NAMESPACE}}/galasabld-amd64:${{env.IMAGE_TAG}} template --releaseMetadata ${{github.workspace}}/framework/release.yaml --releaseMetadata ${{github.workspace}}/extensions/release.yaml --releaseMetadata ${{github.workspace}}/managers/release.yaml --releaseMetadata ${{github.workspace}}/obr/release.yaml --template pom.template --output pom.xml --bom
+           cat pom.xml
         
-        - name: check context
-          run: |
-           ls
 
     
     

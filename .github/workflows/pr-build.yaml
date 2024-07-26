@@ -96,6 +96,7 @@ jobs:
   build-obr-javadocs:
     name: Build OBR javadocs using galasabld image and maven
     runs-on: ubuntu-latest
+    needs: build-obr
 
     steps:
         - name: Checkout Code

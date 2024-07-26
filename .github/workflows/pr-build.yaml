@@ -51,10 +51,10 @@ jobs:
         
         - name: Move release.yaml files to galasa-bom
           run: |
-           mkdir ${{github.workspace}}/obr/galasa-bom/framework && mv ${{github.workspace}}/framework/release.yaml ${{github.workspace}}/obr/galasa-bom/framework
-           mkdir ${{github.workspace}}/obr/galasa-bom/managers && mv ${{github.workspace}}/managers/release.yaml ${{github.workspace}}/obr/galasa-bom/managers
-           mkdir ${{github.workspace}}/obr/galasa-bom/extensions && mv ${{github.workspace}}/extensions/release.yaml ${{github.workspace}}/obr/galasa-bom/extensions
-           mv ${{github.workspace}}/obr/release.yaml ${{github.workspace}}/obr/galasa-bom/
+           mkdir ${{github.workspace}}/obr/galasa-bom/framework && cp ${{github.workspace}}/framework/release.yaml ${{github.workspace}}/obr/galasa-bom/framework
+           mkdir ${{github.workspace}}/obr/galasa-bom/managers && cp ${{github.workspace}}/managers/release.yaml ${{github.workspace}}/obr/galasa-bom/managers
+           mkdir ${{github.workspace}}/obr/galasa-bom/extensions && cp ${{github.workspace}}/extensions/release.yaml ${{github.workspace}}/obr/galasa-bom/extensions
+           cp ${{github.workspace}}/obr/release.yaml ${{github.workspace}}/obr/galasa-bom/
 
         - name:  Pull and run the docker image
           run: |
@@ -75,10 +75,10 @@ jobs:
         
         - name: Move release.yaml files to dev.galasa.uber.obr
           run: |
-           mkdir ${{github.workspace}}/obr/dev.galasa.uber.obr/framework && mv ${{github.workspace}}/framework/release.yaml ${{github.workspace}}/obr/dev.galasa.uber.obr/framework
-           mkdir ${{github.workspace}}/obr/dev.galasa.uber.obr/managers && mv ${{github.workspace}}/managers/release.yaml ${{github.workspace}}/obr/dev.galasa.uber.obr/managers
-           mkdir ${{github.workspace}}/obr/dev.galasa.uber.obr/extensions && mv ${{github.workspace}}/extensions/release.yaml ${{github.workspace}}/obr/dev.galasa.uber.obr/extensions
-           mv ${{github.workspace}}/obr/release.yaml ${{github.workspace}}/obr/dev.galasa.uber.obr/
+           mkdir ${{github.workspace}}/obr/dev.galasa.uber.obr/framework && cp ${{github.workspace}}/framework/release.yaml ${{github.workspace}}/obr/dev.galasa.uber.obr/framework
+           mkdir ${{github.workspace}}/obr/dev.galasa.uber.obr/managers && cp ${{github.workspace}}/managers/release.yaml ${{github.workspace}}/obr/dev.galasa.uber.obr/managers
+           mkdir ${{github.workspace}}/obr/dev.galasa.uber.obr/extensions && cp ${{github.workspace}}/extensions/release.yaml ${{github.workspace}}/obr/dev.galasa.uber.obr/extensions
+           cp ${{github.workspace}}/obr/release.yaml ${{github.workspace}}/obr/dev.galasa.uber.obr/
     
         - name:  Pull and run the docker image
           run: |
@@ -147,10 +147,10 @@ jobs:
         
         - name: Move release.yaml files to javadocs
           run: |
-            mkdir ${{github.workspace}}/obr/javadocs/framework && mv ${{github.workspace}}/framework/release.yaml ${{github.workspace}}/obr/javadocs/framework
-            mkdir ${{github.workspace}}/obr/javadocs/managers && mv ${{github.workspace}}/managers/release.yaml ${{github.workspace}}/obr/javadocs/managers
-            mkdir ${{github.workspace}}/obr/javadocs/extensions && mv ${{github.workspace}}/extensions/release.yaml ${{github.workspace}}/obr/javadocs/extensions
-            mv ${{github.workspace}}/obr/release.yaml ${{github.workspace}}/obr/javadocs/
+            mkdir ${{github.workspace}}/obr/javadocs/framework && cp ${{github.workspace}}/framework/release.yaml ${{github.workspace}}/obr/javadocs/framework
+            mkdir ${{github.workspace}}/obr/javadocs/managers && cp ${{github.workspace}}/managers/release.yaml ${{github.workspace}}/obr/javadocs/managers
+            mkdir ${{github.workspace}}/obr/javadocs/extensions && cp ${{github.workspace}}/extensions/release.yaml ${{github.workspace}}/obr/javadocs/extensions
+            cp ${{github.workspace}}/obr/release.yaml ${{github.workspace}}/obr/javadocs/
   
         - name:  Pull and run the docker image
           run: |

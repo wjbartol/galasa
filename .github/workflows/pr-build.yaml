@@ -96,7 +96,6 @@ jobs:
   build-obr-javadocs:
     name: Build OBR javadocs using galasabld image and maven
     runs-on: ubuntu-latest
-    needs: build-obr
 
     steps:
         - name: Checkout Code
@@ -129,21 +128,13 @@ jobs:
             distribution: 'semeru'
             cache: maven
         
-        - name: Move release.yaml files to javadocs
-          run: |
-            mkdir ${{github.workspace}}/obr/javadocs/framework && cp ${{github.workspace}}/framework/release.yaml ${{github.workspace}}/obr/javadocs/framework
-            mkdir ${{github.workspace}}/obr/javadocs/managers && cp ${{github.workspace}}/managers/release.yaml ${{github.workspace}}/obr/javadocs/managers
-            mkdir ${{github.workspace}}/obr/javadocs/extensions && cp ${{github.workspace}}/extensions/release.yaml ${{github.workspace}}/obr/javadocs/extensions
-            cp ${{github.workspace}}/obr/release.yaml ${{github.workspace}}/obr/javadocs/
-  
         - name:  Pull and run the docker image
           run: |
-             docker run --rm -v ${{github.workspace}}/obr/javadocs:/var/obr/javadocs ghcr.io/${{env.NAMESPACE}}/galasabld-amd64:${{env.IMAGE_TAG}} template --releaseMetadata var/obr/javadocs/framework/release.yaml --releaseMetadata /var/obr/javadocs/extensions/release.yaml --releaseMetadata /var/obr/javadocs/managers/release.yaml --releaseMetadata /var/obr/javadocs/release.yaml --template /var/obr/javadocs/pom.template --output /var/obr/javadocs/pom.xml --javadoc
+             docker run --rm -v ${{github.workspace}}:/var/root/ ghcr.io/${{env.NAMESPACE}}/galasabld-amd64:${{env.IMAGE_TAG}} template --releaseMetadata var/root/framework/release.yaml --releaseMetadata /var/root/extensions/release.yaml --releaseMetadata /var/root/managers/release.yaml --releaseMetadata /var/root/obr/javadocs/release.yaml --template /var/root/obr/javadocs/pom.template --output /var/root/obr/javadocs/pom.xml --javadoc
              
-        - name: Display pom.xml and remove unwanted files
+        - name: Display pom.xml 
           run: |
             cat ${{github.workspace}}/obr/javadocs/pom.xml
-            rm -rf ${{github.workspace}}/obr/javadocs/framework, ${{github.workspace}}/obr/javadocs/managers, ${{github.workspace}}/obr/javadocs/extensions, ${{github.workspace}}/obr/javadocs/release.yaml
           
         - name: Build javadoc site using maven in directory javadocs
           run: |

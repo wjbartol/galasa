@@ -20,6 +20,7 @@ import java.util.Map.Entry;
 
 import org.gradle.api.DefaultTask;
 import org.gradle.api.Task;
+import org.gradle.api.file.Directory;
 import org.gradle.api.tasks.SourceSet;
 import org.gradle.api.tasks.SourceSetContainer;
 import org.gradle.api.tasks.TaskAction;
@@ -252,10 +253,10 @@ public class TestCatalogBuildTask extends DefaultTask {
         jarTask.getDependsOn().add(this);
 
         //*** Create the directories so Gradle does not moan
-        File dirGenTestCatalog = new File(getProject().getBuildDir(),"gentestcatalog");
-        File dirGenTestCatalogMeta = new File(dirGenTestCatalog,"META-INF");
+        Directory dirGenTestCatalog = getProject().getLayout().getBuildDirectory().dir("gentestcatalog").get();
+        Directory dirGenTestCatalogMeta = dirGenTestCatalog.dir("META-INF");
         //*** dont need to create the file here, just indicate where it will be on the outputs
-        this.testCatalog = new File(dirGenTestCatalogMeta,"testcatalog.json");
+        this.testCatalog = dirGenTestCatalogMeta.file("testcatalog.json").getAsFile();
 
         //*** Tell the JAR task we want to it to include the meta-inf and json file
         jarTask.from(dirGenTestCatalog);

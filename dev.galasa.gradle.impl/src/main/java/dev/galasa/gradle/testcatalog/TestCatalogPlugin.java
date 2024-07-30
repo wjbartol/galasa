@@ -15,8 +15,14 @@ import org.gradle.api.component.AdhocComponentWithVariants;
 import org.gradle.api.component.SoftwareComponentFactory;
 import org.gradle.api.internal.artifacts.ArtifactAttributes;
 import org.gradle.api.internal.artifacts.dsl.LazyPublishArtifact;
+import org.gradle.api.internal.file.FileResolver;
+import org.gradle.api.internal.project.ProjectInternal;
+import org.gradle.api.internal.tasks.TaskDependencyFactory;
 import org.gradle.api.provider.Provider;
 import org.gradle.api.publish.plugins.PublishingPlugin;
+
+import dev.galasa.gradle.common.GradleCompatibilityService;
+import dev.galasa.gradle.common.ICompatibilityService;
 
 /**
  * Build testcatalog artifact
@@ -24,10 +30,13 @@ import org.gradle.api.publish.plugins.PublishingPlugin;
 public class TestCatalogPlugin implements Plugin<Project> {
     
     private final SoftwareComponentFactory softwareComponentFactory;
+    private final TaskDependencyFactory taskDependencyFactory;
+    private final ICompatibilityService compatibilityService = new GradleCompatibilityService();
 
     @Inject
-    public TestCatalogPlugin(SoftwareComponentFactory softwareComponentFactory) {
+    public TestCatalogPlugin(SoftwareComponentFactory softwareComponentFactory, TaskDependencyFactory taskDependencyFactory) {
         this.softwareComponentFactory = softwareComponentFactory;
+        this.taskDependencyFactory = taskDependencyFactory;
     }
     
     public void apply(Project project) {
@@ -65,8 +74,21 @@ public class TestCatalogPlugin implements Plugin<Project> {
         
         // Create the Publish Artifact that the task will be creating and add it the 
         // configuration outbound list
-        LazyPublishArtifact artifact = new LazyPublishArtifact(provider);
-        project.getConfigurations().getByName("galasamergetestcat").getOutgoing().artifact(artifact);
+        try {
+            LazyPublishArtifact artifact;
+            if (compatibilityService.isCurrentVersionLaterThanGradle8()) {
+                // Create the artifact using the Gradle 8.x constructor
+                artifact = LazyPublishArtifact.class
+                    .getConstructor(Provider.class, FileResolver.class, TaskDependencyFactory.class)
+                    .newInstance(provider, ((ProjectInternal) project).getFileResolver(), taskDependencyFactory);
+            } else {
+                // Create the artifact using the Gradle 6.x/7.x constructor
+                artifact = LazyPublishArtifact.class.getConstructor(Provider.class).newInstance(provider);
+            }
+            project.getConfigurations().getByName("galasamergetestcat").getOutgoing().artifact(artifact);
+        } catch (ReflectiveOperationException err) {
+            throw new IllegalArgumentException("Incompatible LazyPublishArtifact constructor for Gradle version " + project.getGradle().getGradleVersion());
+        }
     }
 
     private void createTestcatDeployTask(Project project) {

@@ -22,6 +22,8 @@ import org.gradle.api.artifacts.Configuration;
 import org.gradle.api.artifacts.ConfigurationContainer;
 import org.gradle.api.artifacts.ResolvedArtifact;
 import org.gradle.api.artifacts.ResolvedDependency;
+import org.gradle.api.file.RegularFile;
+import org.gradle.api.provider.Provider;
 import org.gradle.api.tasks.TaskAction;
 
 import com.google.gson.Gson;
@@ -201,7 +203,8 @@ public class TestCatalogBuildTask extends DefaultTask {
 
     public void apply() {
         // Run during apply phase, need to decide on the output file name
-        this.testCatalog = new File(getProject().getBuildDir(),"testcatalog.json");
+        Provider<RegularFile> testCatalogFile = getProject().getLayout().getBuildDirectory().file("testcatalog.json");
+        this.testCatalog = testCatalogFile.get().getAsFile();
         getOutputs().file(testCatalog);
 
         ConfigurationContainer configurations = getProject().getConfigurations();

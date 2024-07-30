@@ -82,16 +82,16 @@ jobs:
           run: |
               cp /home/runner/work/secrets/settings.xml /home/runner/work/gpg/settings.xml
         
-        - name:  Pull and run the docker image
+        - name:  Generate Galasa BOM
           run: |
            docker run --rm -v ${{github.workspace}}:/var/root/ ghcr.io/${{env.NAMESPACE}}/galasabld-amd64:${{env.IMAGE_TAG}} template --releaseMetadata var/root/framework/release.yaml --releaseMetadata /var/root/extensions/release.yaml --releaseMetadata /var/root/managers/release.yaml --releaseMetadata /var/root/obr/release.yaml --template /var/root/obr/galasa-bom/pom.template --output /var/root/obr/galasa-bom/pom.xml --bom
            
-        - name: Display pom.xml 
+        - name: Display Galasa BOM pom.xml
           run: |
            cat ${{github.workspace}}/obr/galasa-bom/pom.xml
           
         
-        - name: Build Obr using maven in directory galasa-bom
+        - name: Build Galasa BOM with maven
           run: |
            mvn -f ${{github.workspace}}/obr/galasa-bom/pom.xml deploy -Dgpg.skip=true \
            -Dgalasa.source.repo=https://development.galasa.dev/gh/maven-repo/managers \
@@ -100,18 +100,18 @@ jobs:
            --batch-mode --errors --fail-at-end \
            --settings  /home/runner/work/gpg/settings.xml
         
-        - name:  Pull and run the docker image
+        - name:  Generate Galasa OBR
           run: |
            docker run --rm -v ${{github.workspace}}:/var/root/ ghcr.io/${{env.NAMESPACE}}/galasabld-amd64:${{env.IMAGE_TAG}} template --releaseMetadata var/root/framework/release.yaml --releaseMetadata /var/root/extensions/release.yaml --releaseMetadata /var/root/managers/release.yaml --releaseMetadata /var/root/obr/release.yaml --template /var/root/obr/dev.galasa.uber.obr/pom.template --output /var/root/obr/dev.galasa.uber.obr/pom.xml --obr
             
-        - name: Display pom.xml 
+        - name: Display Galasa OBR pom.xml
           run: |
            cat ${{github.workspace}}/obr/dev.galasa.uber.obr/pom.xml
          
-        - name: Build Obr using maven in directory dev.galasa.uber.obr
+        - name: Build Galasa OBR with maven
           run: |
             mvn -f ${{github.workspace}}/obr/dev.galasa.uber.obr/pom.xml deploy -Dgpg.skip=true \
-            -Dgalasa.source.repo=https://development.galasa.dev/main/maven-repo/managers \
+            -Dgalasa.source.repo=https://development.galasa.dev/gh/maven-repo/managers \
             -Dgalasa.central.repo=https://repo.maven.apache.org/maven2/ \
             -Dgalasa.release.repo=file:${{ github.workspace }}/obr/repo \
             --batch-mode --errors --fail-at-end \
@@ -126,7 +126,7 @@ jobs:
             tags: obr:test
             build-args: |
               dockerRepository=${{env.REGISTRY}}
-              tag= ${{env.IMAGE_TAG}}
+              tag=${{env.IMAGE_TAG}}
 
     
   build-obr-javadocs:
@@ -161,7 +161,7 @@ jobs:
         - name: Set up JDK
           uses: actions/setup-java@v4
           with:
-            java-version: '11'
+            java-version: '18'
             distribution: 'semeru'
             cache: maven
         
@@ -200,15 +200,15 @@ jobs:
           run: |
             cp /home/runner/work/secrets/settings.xml /home/runner/work/gpg/settings.xml
             
-        - name:  Pull and run the docker image
+        - name: Build Galasa Javadoc
           run: |
              docker run --rm -v ${{github.workspace}}:/var/root/ ghcr.io/${{env.NAMESPACE}}/galasabld-amd64:${{env.IMAGE_TAG}} template --releaseMetadata var/root/framework/release.yaml --releaseMetadata /var/root/extensions/release.yaml --releaseMetadata /var/root/managers/release.yaml --releaseMetadata /var/root/obr/release.yaml --template /var/root/obr/javadocs/pom.template --output /var/root/obr/javadocs/pom.xml --javadoc
              
-        - name: Display pom.xml 
+        - name: Display Galasa Javadoc pom.xml 
           run: |
             cat ${{github.workspace}}/obr/javadocs/pom.xml
           
-        - name: Build javadoc site using maven in directory javadocs
+        - name: Build javadoc site using maven
           run: |
             mvn -f ${{github.workspace}}/obr/javadocs/pom.xml deploy -Dgpg.skip=true \
             -Dgalasa.source.repo=https://development.galasa.dev/gh/maven-repo/managers \
@@ -234,4 +234,4 @@ jobs:
             tags: javadocmavenrepo:test
             build-args: |
               dockerRepository=${{env.REGISTRY}}
-              tag= latest
+              tag=latest

@@ -95,8 +95,8 @@ jobs:
         run: |
           docker run --env ARGOCD_AUTH_TOKEN=${{ env.ARGOCD_AUTH_TOKEN }} --rm -v ${{ github.workspace }}:/var/workspace ghcr.io/galasa-dev/argocdcli:main app wait gh-maven-repos --resource apps:Deployment:gradle-gh --health --server argocd.galasa.dev
 
-  call-maven-workflow:
-    needs: build-gradle
-    uses: galasa-dev/maven/.github/workflows/build.yaml@main
-    with:
-      branch: ${{ env.BRANCH }}
+  # call-maven-workflow:
+  #   needs: build-gradle
+  #   uses: galasa-dev/maven/.github/workflows/build.yaml@main
+  #   with:
+  #     branch: ${{ env.BRANCH }}

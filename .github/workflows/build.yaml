@@ -3,13 +3,17 @@ name: Main build
 on:
   workflow_dispatch:
   workflow_call:
+    inputs:
+      branch:
+        required: false
+        type: string
   push:
     branches: [main]
 
 env:
   REGISTRY: ghcr.io
   NAMESPACE: galasa-dev
-  BRANCH: main
+  BRANCH: ${{ inputs.branch }} || ${{ github.ref_name }}
 
 jobs:
   build-gradle:
@@ -94,3 +98,5 @@ jobs:
   call-maven-workflow:
     needs: build-gradle
     uses: galasa-dev/maven/.github/workflows/build.yaml@main
+    with:
+      branch: ${{ env.BRANCH }}

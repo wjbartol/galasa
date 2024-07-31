@@ -2,18 +2,13 @@ name: Main build
 
 on:
   workflow_dispatch:
-  workflow_call:
-    inputs:
-      branch:
-        required: false
-        type: string
   push:
     branches: [main]
 
 env:
   REGISTRY: ghcr.io
   NAMESPACE: galasa-dev
-  BRANCH: ${{ inputs.branch }} || ${{ github.ref_name }}
+  BRANCH: ${{ github.ref_name }}
 
 jobs:
   build-gradle:
@@ -94,9 +89,3 @@ jobs:
           ARGOCD_AUTH_TOKEN: ${{ secrets.ARGOCD_TOKEN }}
         run: |
           docker run --env ARGOCD_AUTH_TOKEN=${{ env.ARGOCD_AUTH_TOKEN }} --rm -v ${{ github.workspace }}:/var/workspace ghcr.io/galasa-dev/argocdcli:main app wait gh-maven-repos --resource apps:Deployment:gradle-gh --health --server argocd.galasa.dev
-
-  # call-maven-workflow:
-  #   needs: build-gradle
-  #   uses: galasa-dev/maven/.github/workflows/build.yaml@main
-  #   with:
-  #     branch: ${{ env.BRANCH }}

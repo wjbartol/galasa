@@ -8,7 +8,7 @@ on:
 env:
   REGISTRY: ghcr.io
   NAMESPACE: galasa-dev
-  BRANCH: main
+  BRANCH: ${{ github.ref_name }}
 
 jobs:
   build-wrapping:
@@ -32,22 +32,22 @@ jobs:
 
       # Copy secrets into files to use in workflow
       - name: Make secrets directory
-        run : |
+        run: |
           mkdir /home/runner/work/secrets
       - name: Copy settings.xml
         env:
           MAVEN_SETTINGS_XML: ${{ secrets.MAVEN_SETTINGS_XML }}
-        run : |
+        run: |
           echo $MAVEN_SETTINGS_XML > /home/runner/work/secrets/settings.xml
       - name: Copy GPG passphrase
         env:
           GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
-        run : |
+        run: |
           echo $GPG_PASSPHRASE > /home/runner/work/secrets/passphrase.file
       - name: Copy GPG key
         env:
           GPG_KEY_BASE64: ${{ secrets.GPG_KEY }}
-        run : |
+        run: |
           echo $GPG_KEY_BASE64 |  base64 --decode > /home/runner/work/secrets/galasa.gpg
           
       # Set up Maven GPG directory
@@ -69,7 +69,7 @@ jobs:
 
       # Make directory to deploy Maven artefacts to in the build
       - name: Make artefacts directory
-        run : |
+        run: |
           mkdir ${{ github.workspace }}/repo
 
       - name: Building Wrapping source code
@@ -128,4 +128,5 @@ jobs:
   call-gradle-workflow:
     needs: build-wrapping
     uses: galasa-dev/gradle/.github/workflows/build.yaml@main
-          
+    with:
+      branch: ${{ env.BRANCH }}

@@ -125,8 +125,14 @@ jobs:
         run: |
           docker run --env ARGOCD_AUTH_TOKEN=${{ env.ARGOCD_AUTH_TOKEN }} --rm -v ${{ github.workspace }}:/var/workspace ghcr.io/galasa-dev/argocdcli:main app wait gh-maven-repos --resource apps:Deployment:wrapping-gh --health --server argocd.galasa.dev
 
-  call-gradle-workflow:
-    needs: build-wrapping
-    uses: galasa-dev/gradle/.github/workflows/build.yaml@main
-    with:
-      branch: ${{ github.ref_name }}
+  trigger-gradle-workflow:
+    name: Trigger Gradle workflow
+    runs-on: ubuntu-latest
+    needs: build-wrapping 
+
+    steps:
+      - name: Trigger Gradle workflow dispatch event with GitHub CLI
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh workflow run build.yaml --repo https://github.com/galasa-dev/gradle

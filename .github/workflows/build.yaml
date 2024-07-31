@@ -129,4 +129,4 @@ jobs:
     needs: build-wrapping
     uses: galasa-dev/gradle/.github/workflows/build.yaml@main
     with:
-      branch: ${{ env.BRANCH }}
+      branch: ${{ github.ref_name }}

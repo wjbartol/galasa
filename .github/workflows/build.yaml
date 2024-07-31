@@ -2,6 +2,7 @@ name: Main build
 
 on:
   workflow_dispatch:
+  workflow_call:
   push:
     branches: [main]
 
@@ -82,4 +83,14 @@ jobs:
           ARGOCD_AUTH_TOKEN: ${{ secrets.ARGOCD_TOKEN }}
         run: |
           docker run --env ARGOCD_AUTH_TOKEN=${{ env.ARGOCD_AUTH_TOKEN }} --rm -v ${{ github.workspace }}:/var/workspace ghcr.io/galasa-dev/argocdcli:main app actions run gh-maven-repos restart --kind Deployment --resource-name gradle-gh --server argocd.galasa.dev
-          
+
+      # Wait for the application to show as healthy in ArgoCD
+      - name: Wait for app health in ArgoCD
+        env: 
+          ARGOCD_AUTH_TOKEN: ${{ secrets.ARGOCD_TOKEN }}
+        run: |
+          docker run --env ARGOCD_AUTH_TOKEN=${{ env.ARGOCD_AUTH_TOKEN }} --rm -v ${{ github.workspace }}:/var/workspace ghcr.io/galasa-dev/argocdcli:main app wait gh-maven-repos --resource apps:Deployment:gradle-gh --health --server argocd.galasa.dev
+
+  call-maven-workflow:
+    needs: build-gradle
+    uses: galasa-dev/maven/.github/workflows/build.yaml@main

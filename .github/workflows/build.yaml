@@ -1,14 +1,15 @@
-name: PR build
+name: Main build
 
 on:
-  pull_request:
+  push:
     branches: [main]
 
 env:
   REGISTRY: ghcr.io
   NAMESPACE: galasa-dev
   IMAGE_TAG: main
-  
+  ARGOCD_AUTH_TOKEN: ${{ secrets.ARGOCD_TOKEN }}
+
 jobs:
   build-obr:
     name: Build OBR using galasabld image and maven
@@ -93,7 +94,7 @@ jobs:
         
         - name: Build Galasa BOM with maven
           run: |
-           mvn -f ${{github.workspace}}/obr/galasa-bom/pom.xml deploy -Dgpg.skip=true \
+           mvn -f ${{github.workspace}}/obr/galasa-bom/pom.xml deploy \
            -Dgalasa.source.repo=https://development.galasa.dev/gh/maven-repo/managers \
            -Dgalasa.central.repo=https://repo.maven.apache.org/maven2/ \
            -Dgalasa.release.repo=file:${{ github.workspace }}/obr/repo \
@@ -110,23 +111,42 @@ jobs:
          
         - name: Build Galasa OBR with maven
           run: |
-            mvn -f ${{github.workspace}}/obr/dev.galasa.uber.obr/pom.xml deploy -Dgpg.skip=true \
+            mvn -f ${{github.workspace}}/obr/dev.galasa.uber.obr/pom.xml deploy \
             -Dgalasa.source.repo=https://development.galasa.dev/gh/maven-repo/managers \
             -Dgalasa.central.repo=https://repo.maven.apache.org/maven2/ \
             -Dgalasa.release.repo=file:${{ github.workspace }}/obr/repo \
             --batch-mode --errors --fail-at-end \
             --settings  /home/runner/work/gpg/settings.xml
         
-        - name: Build OBR image for testing
+        - name: Login to Github Container Registry
+          uses: docker/login-action@v3
+          with:
+            registry: ${{ env.REGISTRY }}
+            username: ${{ github.actor }}
+            password: ${{ secrets.GITHUB_TOKEN }}
+      
+        - name: Extract metadata for OBR image
+          id: metadata
+          uses: docker/metadata-action@9ec57ed1fcdbf14dcef7dfbe97b2010124a938b7
+          with:
+            images: ${{ env.REGISTRY }}/${{ env.NAMESPACE }}/obr-maven-artefacts
+    
+        - name: Build and Push OBR image 
+          id: build
           uses: docker/build-push-action@v5
           with:
             context: .
             file: ${{github.workspace}}/obr/dockerfiles/dockerfile.obr
-            load: true
-            tags: obr:test
+            push: true
+            tags: ${{ steps.metadata.outputs.tags }}
+            labels: ${{ steps.metadata.outputs.labels }}
             build-args: |
-              dockerRepository=${{env.REGISTRY}}
-              tag=${{env.IMAGE_TAG}}
+                dockerRepository=${{env.REGISTRY}}
+                tag=${{ env.IMAGE_TAG }}
+        
+        - name: Recycle OBR application in ArgoCD
+          run: |
+            docker run --env ARGOCD_AUTH_TOKEN=${{ env.ARGOCD_AUTH_TOKEN }} --rm -v ${{ github.workspace }}:/var/workspace ghcr.io/galasa-dev/argocdcli:main app actions run gh-maven-repos restart --kind Deployment --resource-name obr-gh --server argocd.galasa.dev
 
     
   build-obr-javadocs:
@@ -209,28 +229,59 @@ jobs:
           
         - name: Build javadoc site using maven
           run: |
-            mvn -f ${{github.workspace}}/obr/javadocs/pom.xml deploy -Dgpg.skip=true \
+            mvn -f ${{github.workspace}}/obr/javadocs/pom.xml deploy \
             -Dgalasa.source.repo=https://development.galasa.dev/gh/maven-repo/managers \
             -Dgalasa.central.repo=https://repo.maven.apache.org/maven2/ \
             -Dgalasa.release.repo=file:${{ github.workspace }}/obr/javadocs/docker/repo \
             -Dmaven.javadoc.failOnError=false --batch-mode --errors --fail-at-end \
             --settings  /home/runner/work/gpg/settings.xml
         
-        - name: Build javadocsite Image for testing
+        - name: Login to Github Container Registry
+          uses: docker/login-action@v3
+          with:
+            registry: ${{ env.REGISTRY }}
+            username: ${{ github.actor }}
+            password: ${{ secrets.GITHUB_TOKEN }}
+      
+        - name: Extract metadata for Javadocsite image
+          id: metadata-javadocsite
+          uses: docker/metadata-action@9ec57ed1fcdbf14dcef7dfbe97b2010124a938b7
+          with:
+            images: ${{ env.REGISTRY }}/${{ env.NAMESPACE }}/javadocsite
+    
+        - name: Build and Push Javadocsite image 
+          id: build-javadocsite
           uses: docker/build-push-action@v5
           with:
             context: .
             file: ${{github.workspace}}/obr/dockerfiles/dockerfile.javadocsite
-            load: true
-            tags: javadocsite:test
-
-        - name: Build Javadoc Maven repo Image for testing
+            push: true
+            tags: ${{ steps.metadata-javadocsite.outputs.tags }}
+            labels: ${{ steps.metadata-javadocsite.outputs.labels }}
+        
+        - name: Recycle javadocsite application in ArgoCD
+          run: |
+            docker run --env ARGOCD_AUTH_TOKEN=${{ env.ARGOCD_AUTH_TOKEN }} --rm -v ${{ github.workspace }}:/var/workspace ghcr.io/galasa-dev/argocdcli:main app actions run gh-maven-repos restart --kind Deployment --resource-name javadocsite-gh --server argocd.galasa.dev
+        
+        - name: Extract metadata for JavadocMavenrepo image
+          id: metadata
+          uses: docker/metadata-action@9ec57ed1fcdbf14dcef7dfbe97b2010124a938b7
+          with:
+            images: ${{ env.REGISTRY }}/${{ env.NAMESPACE }}/javadoc-maven-artefacts
+      
+        - name: Build and Push JavadocMavenrepo image 
+          id: build
           uses: docker/build-push-action@v5
           with:
             context: .
             file: ${{github.workspace}}/obr/dockerfiles/dockerfile.javadocmavenrepo
-            load: true
-            tags: javadocmavenrepo:test
+            push: true
+            tags: ${{ steps.metadata.outputs.tags }}
+            labels: ${{ steps.metadata.outputs.labels }}
             build-args: |
               dockerRepository=${{env.REGISTRY}}
               baseVersion=latest
+            
+        - name: Recycle JavadocMavenrepo application in ArgoCD
+          run: |
+            docker run --env ARGOCD_AUTH_TOKEN=${{ env.ARGOCD_AUTH_TOKEN }} --rm -v ${{ github.workspace }}:/var/workspace ghcr.io/galasa-dev/argocdcli:main app actions run gh-maven-repos restart --kind Deployment --resource-name Javadoc-gh --server argocd.galasa.dev

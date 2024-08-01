@@ -46,6 +46,7 @@ jobs:
           cache: maven
   
       - name: Print githash
+        working-directory: obr
         run: |
           echo $GITHUB_SHA > ./obr.githash
 
@@ -123,8 +124,8 @@ jobs:
       - name: Build OBR image for testing
         uses: docker/build-push-action@v5
         with:
-          context: .
-          file: ${{ github.workspace }}/obr/dockerfiles/dockerfile.obr
+          context: obr
+          file: obr/dockerfiles/dockerfile.obr
           load: true
           tags: obr-maven-artefacts:test
           build-args: |
@@ -222,16 +223,16 @@ jobs:
       - name: Build Javadoc site image for testing
         uses: docker/build-push-action@v5
         with:
-          context: .
-          file: ${{ github.workspace }}/obr/dockerfiles/dockerfile.javadocsite
+          context: obr
+          file: obr/dockerfiles/dockerfile.javadocsite
           load: true
           tags: javadocsite:test
 
       - name: Build Javadoc Maven repo image for testing
         uses: docker/build-push-action@v5
         with:
-          context: .
-          file: ${{ github.workspace }}/obr/dockerfiles/dockerfile.javadocmavenrepo
+          context: obr
+          file: obr/dockerfiles/dockerfile.javadocmavenrepo
           load: true
           tags: javadoc-maven-artefacts:test
           build-args: |
@@ -289,7 +290,39 @@ jobs:
       - name: Build OBR generic image for testing
         uses: docker/build-push-action@v5
         with:
-          context: .
-          file: ${{ github.workspace }}/obr/dockerfiles/dockerfile.obrgeneric
+          context: obr
+          file: obr/dockerfiles/dockerfile.obrgeneric
           load: true
           tags: obr-generic:test
+
+      - name: Copy files from kubectl image for Galasa boot embedded image
+        run: |
+          docker run --rm -v ${{ github.workspace }}:/var/root/ ghcr.io/galasa-dev/kubectl:main cp -vr /opt/k8s/bin/kubectl 
+          var/root/obr/dockerfiles/trace-log4j.properties 
+          var/root/obr/obr-generic/
+
+      - name: Build Galasa boot embedded image for testing
+        uses: docker/build-push-action@v5
+        with:
+          context: obr
+          file: obr/dockerfiles/dockerfile.bootembedded
+          load: true
+          tags: galasa-boot-embedded-x86_64:test
+          # These need updating...
+          build-args: |
+            tag=main
+            dockerRepository=harbor.galasa.dev
+            jdkImage=harbor.galasa.dev/docker_proxy_cache/library/openjdk:11
+
+      # - name: Build Galasa IBM boot embedded image for testing
+      #   uses: docker/build-push-action@v5
+      #   with:
+      #     context: obr
+      #     file: obr/dockerfiles/dockerfile.ibmbootembedded
+      #     load: true
+      #     tags: galasa-ibm-boot-embedded-x86_64:test
+      #     # These need updating...
+      #     build-args: |
+      #       tag=main
+      #       dockerRepository=harbor.galasa.dev
+      #       platform=x86_64

@@ -12,7 +12,6 @@ import java.lang.reflect.Field;
 import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -31,7 +30,9 @@ import org.gradle.api.artifacts.Configuration;
 import org.gradle.api.artifacts.ConfigurationContainer;
 import org.gradle.api.artifacts.ResolvedArtifact;
 import org.gradle.api.artifacts.ResolvedDependency;
+import org.gradle.api.file.RegularFile;
 import org.gradle.api.logging.Logger;
+import org.gradle.api.provider.Provider;
 import org.gradle.api.tasks.TaskAction;
 
 public class ObrBuildTask extends DefaultTask {
@@ -200,8 +201,8 @@ public class ObrBuildTask extends DefaultTask {
 
     public void apply() {
         // Run during apply phase, need to decide on the output file name
-        Path buildDirectory = Paths.get(project.getBuildDir().toURI());
-        this.pathObr = buildDirectory.resolve("galasa.obr");
+        Provider<RegularFile> obrFile = project.getLayout().getBuildDirectory().file("galasa.obr");
+        this.pathObr = obrFile.get().getAsFile().toPath();
         getOutputs().file(pathObr);
         
         ConfigurationContainer configurations = project.getConfigurations();

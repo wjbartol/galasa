@@ -13,6 +13,7 @@ import java.nio.file.Paths;
 
 import org.gradle.api.DefaultTask;
 import org.gradle.api.Task;
+import org.gradle.api.file.Directory;
 import org.gradle.api.tasks.SourceSet;
 import org.gradle.api.tasks.SourceSetContainer;
 import org.gradle.api.tasks.TaskAction;
@@ -57,17 +58,15 @@ public class GitHashBuildTask extends DefaultTask {
         Jar jarTask = (Jar) getProject().getTasks().getByName("jar");
         jarTask.getDependsOn().add(this);
 
-        //*** Create the directories so Gradle does not moan
-        File dirGenTestCatalog = new File(getProject().getBuildDir(),"hashes");
-        File dirGenTestCatalogMeta = new File(dirGenTestCatalog,"META-INF");
-        //*** dont need to create the file here, just indicate where it will be on the outputs
-        this.gitHash = new File(dirGenTestCatalogMeta,"git.hash");
+        //*** Create the directories so Gradle does not moan)
+        Directory dirHashes = getProject().getLayout().getBuildDirectory().dir("hashes").get();
+        Directory dirHashesMeta = dirHashes.dir("META-INF");
+
+        this.gitHash = dirHashesMeta.file("git.hash").getAsFile();
 
         //*** Tell the JAR task we want to it to include the meta-inf and json file
-        jarTask.from(dirGenTestCatalog);
-
+        jarTask.from(dirHashes);
         //*** Mark the meta-inf file as output for caching purposes
-        getOutputs().dir(dirGenTestCatalog);
+        getOutputs().dir(dirHashes);
     }
-
 }

@@ -240,7 +240,7 @@ jobs:
             baseVersion=latest
   
   build-obr-generic:
-    name: Build OBR generic using galasabld image and maven
+    name: Build OBR embedded and boot images using galasabld and maven
     runs-on: ubuntu-latest
     needs: [build-obr, build-obr-javadocs]
 
@@ -295,7 +295,7 @@ jobs:
           load: true
           tags: obr-generic:test
 
-      - name: Copy files from kubectl image for Galasa boot embedded image
+      - name: Copy files from kubectl image for Galasa boot embedded images
         run: |
           docker run --rm -v ${{ github.workspace }}:/var/root/ ghcr.io/galasa-dev/kubectl:main cp -vr /opt/k8s/bin/kubectl 
           var/root/obr/dockerfiles/trace-log4j.properties 

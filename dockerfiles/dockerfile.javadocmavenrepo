@@ -2,4 +2,4 @@ ARG baseVersion
 ARG dockerRepository
 FROM ${dockerRepository}/galasa-dev/base-image:${baseVersion}
 
-COPY obr/javadocs/docker/repo/ /usr/local/apache2/htdocs/
+COPY javadocs/docker/repo/ /usr/local/apache2/htdocs/

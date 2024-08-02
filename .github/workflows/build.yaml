@@ -48,6 +48,7 @@ jobs:
           cache: maven
   
       - name: Print githash
+        working-directory: obr
         run: |
           echo $GITHUB_SHA > ./obr.githash
 
@@ -137,8 +138,8 @@ jobs:
         id: build
         uses: docker/build-push-action@v5
         with:
-          context: .
-          file: ${{ github.workspace }}/obr/dockerfiles/dockerfile.obr
+          context: obr
+          file: obr/dockerfiles/dockerfile.obr
           push: true
           tags: ${{ steps.metadata.outputs.tags }}
           labels: ${{ steps.metadata.outputs.labels }}
@@ -258,8 +259,8 @@ jobs:
         id: build-javadocsite
         uses: docker/build-push-action@v5
         with:
-          context: .
-          file: ${{ github.workspace }}/obr/dockerfiles/dockerfile.javadocsite
+          context: obr
+          file: obr/dockerfiles/dockerfile.javadocsite
           push: true
           tags: ${{ steps.metadata-javadocsite.outputs.tags }}
           labels: ${{ steps.metadata-javadocsite.outputs.labels }}
@@ -282,8 +283,8 @@ jobs:
         id: build
         uses: docker/build-push-action@v5
         with:
-          context: .
-          file: ${{ github.workspace }}/obr/dockerfiles/dockerfile.javadocmavenrepo
+          context: obr
+          file: obr/dockerfiles/dockerfile.javadocmavenrepo
           push: true
           tags: ${{ steps.metadata.outputs.tags }}
           labels: ${{ steps.metadata.outputs.labels }}

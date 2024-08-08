@@ -300,7 +300,7 @@ jobs:
           mkdir -p /opt/k8s/bin
           curl -L https://dl.k8s.io/release/v1.22.0/bin/linux/amd64/kubectl -o /opt/k8s/bin/kubectl
           chmod +x /opt/k8s/bin/kubectl
-          cp -vr /opt/k8s/bin/kubectl /obr/dockerfiles/trace-log4j.properties /obr/obr-generic/
+          cp -vr /opt/k8s/bin/kubectl /obr/dockerfiles/trace-log4j.properties ${{github.workspace}}/obr/obr-generic/
 
       - name: Build Galasa boot embedded image for testing
         uses: docker/build-push-action@v5

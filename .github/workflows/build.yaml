@@ -407,9 +407,10 @@ jobs:
 
       - name: Copy files from kubectl image for Galasa boot embedded images
         run: |
-          docker run --rm -v ${{ github.workspace }}:/var/root/ ghcr.io/galasa-dev/kubectl:main cp -vr /opt/k8s/bin/kubectl 
-          var/root/obr/dockerfiles/trace-log4j.properties 
-          var/root/obr/obr-generic/
+          mkdir -p /opt/k8s/bin
+          curl -L https://dl.k8s.io/release/v1.22.0/bin/linux/amd64/kubectl -o /opt/k8s/bin/kubectl
+          chmod +x /opt/k8s/bin/kubectl
+          cp -vr /opt/k8s/bin/kubectl obr/dockerfiles/trace-log4j.properties /obr/obr-generic/
 
       - name: Extract metadata for Galasa boot embedded image
         id: metadata-boot-embedded

@@ -279,13 +279,13 @@ jobs:
       - name: Build Galasa OBR generic pom.xml with maven
         working-directory: ${{ github.workspace }}/obr/obr-generic
         run: |
-          mvn -f pom.xml process-sources \
-          -Dgpg.skip=true \
-          -Dgalasa.source.repo=https://development.galasa.dev/gh/maven-repo/obr \
-          -Dgalasa.central.repo=https://repo.maven.apache.org/maven2/ \
-          dev.galasa:galasa-maven-plugin:0.15.0:obrembedded \
-          --batch-mode --errors --fail-at-end \
-          --settings settings.xml
+         mvn -f pom.xml process-sources \
+         -Dgpg.skip=true \
+         -Dgalasa.source.repo=https://development.galasa.dev/gh/maven-repo/obr \
+         -Dgalasa.central.repo=https://repo.maven.apache.org/maven2/ \
+         dev.galasa:galasa-maven-plugin:0.15.0:obrembedded \
+         --batch-mode --errors --fail-at-end \
+         --settings settings.xml
         
       - name: Build OBR generic image for testing
         uses: docker/build-push-action@v5
@@ -297,9 +297,10 @@ jobs:
 
       - name: Copy files from kubectl image for Galasa boot embedded images
         run: |
-          docker run --rm -v ${{ github.workspace }}:/var/root/ ghcr.io/galasa-dev/kubectl:main cp -vr /opt/k8s/bin/kubectl 
-          var/root/obr/dockerfiles/trace-log4j.properties 
-          var/root/obr/obr-generic/
+          mkdir -p /opt/k8s/bin
+          curl -L https://dl.k8s.io/release/v1.22.0/bin/linux/amd64/kubectl -o /opt/k8s/bin/kubectl
+          chmod +x /opt/k8s/bin/kubectl
+          cp -vr /opt/k8s/bin/kubectl ${{github.workspace}}/obr/dockerfiles/trace-log4j.properties ${{github.workspace}}/obr/obr-generic/
 
       - name: Build Galasa boot embedded image for testing
         uses: docker/build-push-action@v5
@@ -310,19 +311,19 @@ jobs:
           tags: galasa-boot-embedded-x86_64:test
           # These need updating...
           build-args: |
-            tag=main
-            dockerRepository=harbor.galasa.dev
+            tag=${{env.IMAGE_TAG}}
+            dockerRepository=${{env.REGISTRY}}
             jdkImage=harbor.galasa.dev/docker_proxy_cache/library/openjdk:11
 
-      # - name: Build Galasa IBM boot embedded image for testing
-      #   uses: docker/build-push-action@v5
-      #   with:
-      #     context: obr
-      #     file: obr/dockerfiles/dockerfile.ibmbootembedded
-      #     load: true
-      #     tags: galasa-ibm-boot-embedded-x86_64:test
-      #     # These need updating...
-      #     build-args: |
-      #       tag=main
-      #       dockerRepository=harbor.galasa.dev
-      #       platform=x86_64
+      - name: Build Galasa IBM boot embedded image for testing
+        uses: docker/build-push-action@v5
+        with:
+           context: obr
+           file: obr/dockerfiles/dockerfile.ibmbootembedded
+           load: true
+           tags: galasa-ibm-boot-embedded-x86_64:test
+           # These need updating...
+           build-args: |
+             tag=${{env.IMAGE_TAG}}
+             dockerRepository=${{env.REGISTRY}}
+             platform=x86_64

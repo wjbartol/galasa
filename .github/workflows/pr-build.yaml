@@ -6,7 +6,7 @@ on:
 
 env:
   REGISTRY: ghcr.io
-  NAMESPACE: galasa-dev
+  NAMESPACE: jaydee029
   IMAGE_TAG: main
   
 jobs:

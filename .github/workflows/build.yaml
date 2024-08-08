@@ -410,7 +410,7 @@ jobs:
           mkdir -p /opt/k8s/bin
           curl -L https://dl.k8s.io/release/v1.22.0/bin/linux/amd64/kubectl -o /opt/k8s/bin/kubectl
           chmod +x /opt/k8s/bin/kubectl
-          cp -vr /opt/k8s/bin/kubectl obr/dockerfiles/trace-log4j.properties /obr/obr-generic/
+          cp -vr /opt/k8s/bin/kubectl ${{github.workspace}}/obr/dockerfiles/trace-log4j.properties ${{github.workspace}}/obr/obr-generic/
 
       - name: Extract metadata for Galasa boot embedded image
         id: metadata-boot-embedded
@@ -429,8 +429,8 @@ jobs:
           labels: ${{ steps.metadata-boot-embedded.outputs.labels }}
           # These need updating...
           build-args: |
-            tag=main
-            dockerRepository=harbor.galasa.dev
+            tag=${{env.IMAGE_TAG}}
+            dockerRepository=${{env.REGISTRY}}
             jdkImage=harbor.galasa.dev/docker_proxy_cache/library/openjdk:11
 
       - name: Extract metadata for Galasa IBM boot embedded image
@@ -450,6 +450,6 @@ jobs:
           labels: ${{ steps.metadata-ibm-boot-embedded.outputs.labels }}
           # These need updating...
           build-args: |
-            tag=main
-            dockerRepository=harbor.galasa.dev
+            tag=${{env.IMAGE_TAG}}
+            dockerRepository=${{env.REGISTRY}}
             platform=x86_64

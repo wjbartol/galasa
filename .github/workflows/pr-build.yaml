@@ -242,7 +242,7 @@ jobs:
   build-obr-generic:
     name: Build OBR embedded and boot images using galasabld and maven
     runs-on: ubuntu-latest
-    needs: [build-obr, build-obr-javadocs]
+    #needs: [build-obr, build-obr-javadocs]
 
     steps:
       - name: Checkout Code

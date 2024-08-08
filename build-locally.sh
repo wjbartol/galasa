@@ -166,6 +166,41 @@ info "Log will be placed at ${log_file}"
 date > ${log_file}
 
 #------------------------------------------------------------------------------------
+function get_galasabld_binary_location {
+    # What's the architecture-variable name of the build tool we want for this local build ?
+    export ARCHITECTURE=$(uname -m) # arm64 or amd64
+    if [ $ARCHITECTURE == "x86_64" ]; then
+        export ARCHITECTURE="amd64"
+    fi
+    export GALASA_BUILD_TOOL_NAME=galasabld-darwin-${ARCHITECTURE}
+
+    # Favour the galasabld tool if it's on the path, else use a locally-built version or fail if not available.
+    GALASABLD_ON_PATH=$(which galasabld)
+    rc=$?
+    if [[ "${rc}" == "0" ]]; then
+        info "Using the 'galasabld' tool which is on the PATH"
+        GALASA_BUILD_TOOL_PATH=${GALASABLD_ON_PATH}
+    else
+        GALASABLD_ON_PATH=$(which $GALASA_BUILD_TOOL_NAME)
+        rc=$?
+        if [[ "${rc}" == "0" ]]; then
+            info "Using the '$GALASA_BUILD_TOOL_NAME' tool which is on the PATH"
+            GALASA_BUILD_TOOL_PATH=${GALASABLD_ON_PATH}
+        else
+            info "The galasa build tool 'galasabld' or '$GALASA_BUILD_TOOL_NAME' is not on the path."
+            export GALASA_BUILD_TOOL_PATH=${WORKSPACE_DIR}/buildutils/bin/${GALASA_BUILD_TOOL_NAME}
+            if [[ ! -e ${GALASA_BUILD_TOOL_PATH} ]]; then
+                error "Cannot find the $GALASA_BUILD_TOOL_NAME tools on locally built workspace."
+                info "Try re-building the buildutils project"
+                exit 1
+            else
+                info "Using the $GALASA_BUILD_TOOL_NAME tool at ${GALASA_BUILD_TOOL_PATH}"
+            fi
+        fi
+    fi
+}
+
+#------------------------------------------------------------------------------------
 function read_component_version {
     h2 "Getting the component version"
     export component_version=$(cat release.yaml | grep "version" | head -1 | cut -f2 -d':' | xargs)
@@ -222,34 +257,6 @@ function construct_bom_pom_xml {
 
     cd ${WORKSPACE_DIR}/${project}/galasa-bom
 
-    # What's the architecture-variable name of the build tool we want for this local build ?
-    export ARCHITECTURE=$(uname -m) # arm64 or amd64
-    export GALASA_BUILD_TOOL_NAME=galasabld-darwin-${ARCHITECTURE}
-
-    # Favour the galasabld tool if it's on the path, else use a locally-built version or fail if not available.
-    GALASABLD_ON_PATH=$(which galasabld)
-    rc=$?
-    if [[ "${rc}" == "0" ]]; then
-        info "Using the 'galasabld' tool which is on the PATH"
-        GALASA_BUILD_TOOL_PATH=${GALASABLD_ON_PATH}
-    else
-        GALASABLD_ON_PATH=$(which $GALASA_BUILD_TOOL_NAME)
-        rc=$?
-        if [[ "${rc}" == "0" ]]; then
-            info "Using the '$GALASA_BUILD_TOOL_NAME' tool which is on the PATH"
-            GALASA_BUILD_TOOL_PATH=${GALASABLD_ON_PATH}
-        else
-            info "The galasa build tool 'galasabld' or '$GALASA_BUILD_TOOL_NAME' is not on the path."
-            export GALASA_BUILD_TOOL_PATH=${WORKSPACE_DIR}/buildutils/bin/${GALASA_BUILD_TOOL_NAME}
-            if [[ ! -e ${GALASA_BUILD_TOOL_PATH} ]]; then
-                error "Cannot find the $GALASA_BUILD_TOOL_NAME tools on locally built workspace."
-                info "Try re-building the buildutils project"
-                exit 1
-            else
-                info "Using the $GALASA_BUILD_TOOL_NAME tool at ${GALASA_BUILD_TOOL_PATH}"
-            fi
-        fi
-    fi
 
     # Check local build version
     export GALASA_BUILD_TOOL_PATH=${WORKSPACE_DIR}/buildutils/bin/${GALASA_BUILD_TOOL_NAME}
@@ -280,35 +287,6 @@ function construct_uber_obr_pom_xml {
     h2 "Generating a pom.xml from a template, using all the versions of everything..."
 
     cd ${WORKSPACE_DIR}/${project}/dev.galasa.uber.obr
-
-    # What's the architecture-variable name of the build tool we want for this local build ?
-    export ARCHITECTURE=$(uname -m) # arm64 or amd64
-    export GALASA_BUILD_TOOL_NAME=galasabld-darwin-${ARCHITECTURE}
-
-    # Favour the galasabld tool if it's on the path, else use a locally-built version or fail if not available.
-    GALASABLD_ON_PATH=$(which galasabld)
-    rc=$?
-    if [[ "${rc}" == "0" ]]; then
-        info "Using the 'galasabld' tool which is on the PATH"
-        GALASA_BUILD_TOOL_PATH=${GALASABLD_ON_PATH}
-    else
-        GALASABLD_ON_PATH=$(which $GALASA_BUILD_TOOL_NAME)
-        rc=$?
-        if [[ "${rc}" == "0" ]]; then
-            info "Using the '$GALASA_BUILD_TOOL_NAME' tool which is on the PATH"
-            GALASA_BUILD_TOOL_PATH=${GALASABLD_ON_PATH}
-        else
-            info "The galasa build tool 'galasabld' or '$GALASA_BUILD_TOOL_NAME' is not on the path."
-            export GALASA_BUILD_TOOL_PATH=${WORKSPACE_DIR}/buildutils/bin/${GALASA_BUILD_TOOL_NAME}
-            if [[ ! -e ${GALASA_BUILD_TOOL_PATH} ]]; then
-                error "Cannot find the $GALASA_BUILD_TOOL_NAME tools on locally built workspace."
-                info "Try re-building the buildutils project"
-                exit 1
-            else
-                info "Using the $GALASA_BUILD_TOOL_NAME tool at ${GALASA_BUILD_TOOL_PATH}"
-            fi
-        fi
-    fi
 
     # Check local build version
     export GALASA_BUILD_TOOL_PATH=${WORKSPACE_DIR}/buildutils/bin/${GALASA_BUILD_TOOL_NAME}
@@ -460,7 +438,7 @@ function check_secrets {
 
 read_component_version
 download_dependencies
-
+get_galasabld_binary_location
 check_dependencies_present
 construct_uber_obr_pom_xml
 construct_bom_pom_xml

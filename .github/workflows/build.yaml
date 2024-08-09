@@ -2,6 +2,23 @@ name: Main build
 
 on:
   workflow_dispatch:
+    inputs:
+      jacocoEnabled:
+        description: 'Enable Jacoco code coverage (set to "false" for release builds)'
+        required: true
+        default: 'true'
+        type: choice
+        options:
+        - 'true'
+        - 'false'
+      isMainOrRelease:
+        description: 'This build is for the main branch or a release (set to "false" for development branch builds)'
+        required: true
+        default: 'true'
+        type: choice
+        options:
+        - 'true'
+        - 'false'
   push:
     branches: [main]
 

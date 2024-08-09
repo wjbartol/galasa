@@ -2,6 +2,23 @@ name: Main build
 
 on:
   workflow_dispatch:
+    inputs:
+      jacocoEnabled:
+        description: 'Enable Jacoco code coverage (set to "false" for release builds)'
+        required: true
+        default: 'true'
+        type: choice
+        options:
+        - 'true'
+        - 'false'
+      isMainOrRelease:
+        description: 'This build is for the main branch or a release (set to "false" for development branch builds)'
+        required: true
+        default: 'true'
+        type: choice
+        options:
+        - 'true'
+        - 'false'
   push:
     branches: [main]
 
@@ -9,6 +26,7 @@ env:
   REGISTRY: ghcr.io
   NAMESPACE: galasa-dev
   BRANCH: ${{ github.ref_name }}
+  ARGO_APP: gh # TODO: remove this parameter and just use env.BRANCH once we update development.galasa.dev/main with these workflows.
 
 jobs:
   log-github-ref:
@@ -17,7 +35,7 @@ jobs:
     steps:
       - name: Log GitHub ref of workflow
         run: |
-          echo "This workflow is running on GitHub ref ${{ github.ref_name }}"
+          echo "This workflow is running on GitHub ref ${{ env.BRANCH }}"
 
   build-wrapping:
     name: Build Wrapping source code and Docker image for development Maven registry
@@ -86,10 +104,10 @@ jobs:
           -Dgalasa.source.repo=https://repo.maven.apache.org/maven2/ \
           -Dgalasa.central.repo=https://repo.maven.apache.org/maven2/ \
           -Dgalasa.release.repo=file:${{ github.workspace }}/repo \
-          -Dgalasa.jacocoEnabled=true \
-          -Dgalasa.isRelease=true \
+          -Dgalasa.jacocoEnabled=${{ inputs.jacocoEnabled }} \
+          -Dgalasa.isRelease=${{ inputs.isMainOrRelease }} \
           --batch-mode --errors --fail-at-end \
-          --settings  /home/runner/work/gpg/settings.xml
+          --settings /home/runner/work/gpg/settings.xml
 
       - name: Login to Github Container Registry
         uses: docker/login-action@v3
@@ -124,14 +142,14 @@ jobs:
         env: 
           ARGOCD_AUTH_TOKEN: ${{ secrets.ARGOCD_TOKEN }}
         run: |
-          docker run --env ARGOCD_AUTH_TOKEN=${{ env.ARGOCD_AUTH_TOKEN }} --rm -v ${{ github.workspace }}:/var/workspace ghcr.io/galasa-dev/argocdcli:main app actions run gh-maven-repos restart --kind Deployment --resource-name wrapping-gh --server argocd.galasa.dev
+          docker run --env ARGOCD_AUTH_TOKEN=${{ env.ARGOCD_AUTH_TOKEN }} --rm -v ${{ github.workspace }}:/var/workspace ghcr.io/galasa-dev/argocdcli:main app actions run ${{ env.ARGO_APP }}-maven-repos restart --kind Deployment --resource-name wrapping-${{ env.ARGO_APP }} --server argocd.galasa.dev
 
       # Wait for the application to show as healthy in ArgoCD
       - name: Wait for app health in ArgoCD
         env: 
           ARGOCD_AUTH_TOKEN: ${{ secrets.ARGOCD_TOKEN }}
         run: |
-          docker run --env ARGOCD_AUTH_TOKEN=${{ env.ARGOCD_AUTH_TOKEN }} --rm -v ${{ github.workspace }}:/var/workspace ghcr.io/galasa-dev/argocdcli:main app wait gh-maven-repos --resource apps:Deployment:wrapping-gh --health --server argocd.galasa.dev
+          docker run --env ARGOCD_AUTH_TOKEN=${{ env.ARGOCD_AUTH_TOKEN }} --rm -v ${{ github.workspace }}:/var/workspace ghcr.io/galasa-dev/argocdcli:main app wait ${{ env.ARGO_APP }}-maven-repos --resource apps:Deployment:wrapping-${{ env.ARGO_APP }} --health --server argocd.galasa.dev
 
   trigger-gradle-workflow:
     name: Trigger Gradle workflow
@@ -143,4 +161,4 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GALASA_TEAM_GITHUB_TOKEN }}
         run: |
-          gh workflow run build.yaml --repo https://github.com/galasa-dev/gradle
+          gh workflow run build.yaml --repo https://github.com/galasa-dev/gradle --ref ${{ env.BRANCH }} -f jacocoEnabled=${{ inputs.jacocoEnabled }} -f isMainOrRelease=${{ inputs.isMainOrRelease }}

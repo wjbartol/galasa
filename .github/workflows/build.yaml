@@ -98,7 +98,20 @@ jobs:
         run: |
           mkdir ${{ github.workspace }}/repo
 
+      - name: Build Wrapping source code
+        if: github.event_name == 'push'
+        run : |
+          mvn deploy \
+          -Dgalasa.source.repo=https://repo.maven.apache.org/maven2/ \
+          -Dgalasa.central.repo=https://repo.maven.apache.org/maven2/ \
+          -Dgalasa.release.repo=file:${{ github.workspace }}/repo \
+          -Dgalasa.jacocoEnabled=true \
+          -Dgalasa.isRelease=true \
+          --batch-mode --errors --fail-at-end \
+          --settings /home/runner/work/gpg/settings.xml
+
       - name: Building Wrapping source code
+        if: github.event_name == 'workflow_dispatch' # Use the input values provided by the workflow dispatch.
         run: |
           mvn deploy \
           -Dgalasa.source.repo=https://repo.maven.apache.org/maven2/ \
@@ -158,6 +171,14 @@ jobs:
 
     steps:
       - name: Trigger Gradle workflow dispatch event with GitHub CLI
+        if: github.event_name == 'push'
+        env:
+          GH_TOKEN: ${{ secrets.GALASA_TEAM_GITHUB_TOKEN }}
+        run: |
+          gh workflow run build.yaml --repo https://github.com/galasa-dev/gradle
+
+      - name: Trigger Gradle workflow dispatch event with GitHub CLI
+        if: github.event_name == 'workflow_dispatch'
         env:
           GH_TOKEN: ${{ secrets.GALASA_TEAM_GITHUB_TOKEN }}
         run: |

@@ -26,7 +26,7 @@ env:
   REGISTRY: ghcr.io
   NAMESPACE: galasa-dev
   BRANCH: ${{ github.ref_name }}
-  ARGO_APP: gh # TODO: remove this parameter and just use env.BRANCH once we update development.galasa.dev/main with these workflows.
+  ARGO_APP_BRANCH: gh # TODO: remove this parameter and just use env.BRANCH once we update development.galasa.dev/main with these workflows.
 
 jobs:
   log-github-ref:
@@ -98,7 +98,20 @@ jobs:
         run: |
           mkdir ${{ github.workspace }}/repo
 
+      - name: Build Wrapping source code
+        if: github.event_name == 'push'
+        run : |
+          mvn deploy \
+          -Dgalasa.source.repo=https://repo.maven.apache.org/maven2/ \
+          -Dgalasa.central.repo=https://repo.maven.apache.org/maven2/ \
+          -Dgalasa.release.repo=file:${{ github.workspace }}/repo \
+          -Dgalasa.jacocoEnabled=true \
+          -Dgalasa.isRelease=true \
+          --batch-mode --errors --fail-at-end \
+          --settings /home/runner/work/gpg/settings.xml
+
       - name: Building Wrapping source code
+        if: github.event_name == 'workflow_dispatch' # Use the input values provided by the workflow dispatch.
         run: |
           mvn deploy \
           -Dgalasa.source.repo=https://repo.maven.apache.org/maven2/ \
@@ -142,14 +155,14 @@ jobs:
         env: 
           ARGOCD_AUTH_TOKEN: ${{ secrets.ARGOCD_TOKEN }}
         run: |
-          docker run --env ARGOCD_AUTH_TOKEN=${{ env.ARGOCD_AUTH_TOKEN }} --rm -v ${{ github.workspace }}:/var/workspace ghcr.io/galasa-dev/argocdcli:main app actions run ${{ env.ARGO_APP }}-maven-repos restart --kind Deployment --resource-name wrapping-${{ env.ARGO_APP }} --server argocd.galasa.dev
+          docker run --env ARGOCD_AUTH_TOKEN=${{ env.ARGOCD_AUTH_TOKEN }} --rm -v ${{ github.workspace }}:/var/workspace ghcr.io/galasa-dev/argocdcli:main app actions run ${{ env.ARGO_APP_BRANCH }}-maven-repos restart --kind Deployment --resource-name wrapping-${{ env.ARGO_APP_BRANCH }} --server argocd.galasa.dev
 
       # Wait for the application to show as healthy in ArgoCD
       - name: Wait for app health in ArgoCD
         env: 
           ARGOCD_AUTH_TOKEN: ${{ secrets.ARGOCD_TOKEN }}
         run: |
-          docker run --env ARGOCD_AUTH_TOKEN=${{ env.ARGOCD_AUTH_TOKEN }} --rm -v ${{ github.workspace }}:/var/workspace ghcr.io/galasa-dev/argocdcli:main app wait ${{ env.ARGO_APP }}-maven-repos --resource apps:Deployment:wrapping-${{ env.ARGO_APP }} --health --server argocd.galasa.dev
+          docker run --env ARGOCD_AUTH_TOKEN=${{ env.ARGOCD_AUTH_TOKEN }} --rm -v ${{ github.workspace }}:/var/workspace ghcr.io/galasa-dev/argocdcli:main app wait ${{ env.ARGO_APP_BRANCH }}-maven-repos --resource apps:Deployment:wrapping-${{ env.ARGO_APP_BRANCH }} --health --server argocd.galasa.dev
 
   trigger-gradle-workflow:
     name: Trigger Gradle workflow
@@ -158,6 +171,14 @@ jobs:
 
     steps:
       - name: Trigger Gradle workflow dispatch event with GitHub CLI
+        if: github.event_name == 'push'
+        env:
+          GH_TOKEN: ${{ secrets.GALASA_TEAM_GITHUB_TOKEN }}
+        run: |
+          gh workflow run build.yaml --repo https://github.com/galasa-dev/gradle
+
+      - name: Trigger Gradle workflow dispatch event with GitHub CLI
+        if: github.event_name == 'workflow_dispatch'
         env:
           GH_TOKEN: ${{ secrets.GALASA_TEAM_GITHUB_TOKEN }}
         run: |

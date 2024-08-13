@@ -19,6 +19,7 @@ export ORIGINAL_DIR=$(pwd)
 
 cd "${BASEDIR}/.."
 WORKSPACE_DIR=$(pwd)
+cd $BASEDIR
 
 
 #-----------------------------------------------------------------------------------------                   
@@ -118,7 +119,7 @@ while [ "$1" != "" ]; do
     case $1 in
         -p | --passphrase )
                                 shift
-                                export pg_passphrase="$1"
+                                export gpg_passphrase="$1"
                                 ;;
         -h | --help )           usage
                                 exit
@@ -142,6 +143,8 @@ if [[ "${gpg_passphrase}" == "" ]]; then
     fi
 fi
 
+info "gpg passphrase is $gpg_passphrase"
+
 
 #-----------------------------------------------------------------------------------------                   
 # Main logic.
@@ -164,6 +167,10 @@ else
     info "Over-ridden by caller using the LOGS_DIR variable."
 fi
 
+export LOGS_DIR=$BASEDIR/temp
+rm -fr $BASEDIR/temp
+mkdir -p $BASEDIR/temp
+
 info "Using source code at ${source_dir}"
 cd ${BASEDIR}/${source_dir}
 
@@ -171,17 +178,12 @@ log_file=${LOGS_DIR}/${project}.txt
 info "Log will be placed at ${log_file}"
 
 h2 "Building..."
-cat << EOF
 
-Using this command:
+cmd="mvn clean install -Dgpg.passphrase=${gpg_passphrase}"
 
-mvn clean install -Dgpg.passphrase=\$GPG_PASSPHRASE
-2>&1 >> ${log_file}
 
-EOF
-
-mvn clean install -Dgpg.passphrase=${gpg_passphrase} \
-2>&1 >> ${log_file}
+info "Using command: $cmd"
+$cmd 2>&1 >> ${log_file}
 rc=$? ; if [[ "${rc}" != "0" ]]; then error "Failed to build ${project}" ; info "See log file at ${log_file}" ; exit 1 ; fi
 success "Built OK"
 

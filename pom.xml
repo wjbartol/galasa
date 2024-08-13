@@ -5,7 +5,7 @@
 
 	<groupId>dev.galasa</groupId>
 	<artifactId>galasa-wrapping-parent</artifactId>
-	<version>0.35.0</version>
+	<version>0.37.0</version>
 	<packaging>pom</packaging>
 
 	<name>Galasa OSGi Wrapping</name>
@@ -29,8 +29,8 @@
 	</developers>
 
 	<modules>
-		<module>com.jcraft.jsch</module>
 		<module>com.auth0.jwt</module>
+		<module>com.jcraft.jsch</module>
 		<module>com.google.gson</module>
 		<module>jakarta.transaction</module>
 		<module>io.grpc.java</module>

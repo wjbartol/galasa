@@ -69,7 +69,7 @@ jobs:
           ORG_GRADLE_PROJECT_signingPassword: ${{ secrets.GPG_PASSPHRASE }}
         run: |
           gradle check publish \
-          -PsourceMaven=https://repo.maven.apache.org/maven2/ \
+          -PsourceMaven=https://development.galasa.dev/${{ env.BRANCH }}/maven-repo/wrapping \
           -PcentralMaven=https://repo.maven.apache.org/maven2/ \
           -PtargetMaven=${{ github.workspace }}/repo \
           -PjacocoEnabled=true \

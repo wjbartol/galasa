@@ -108,7 +108,7 @@ jobs:
           --settings /home/runner/work/gpg/settings.xml
 
       - name: Build Maven source code
-        if: github.event_name == 'workflow_dispatch'
+        if: github.event_name == 'workflow_dispatch' # Use the input values provided by the workflow dispatch.
         run: |
           mvn -f galasa-maven-plugin/pom.xml deploy \
           -Dgalasa.source.repo=https://development.galasa.dev/${{ env.ARGO_APP_BRANCH }}/maven-repo/gradle \

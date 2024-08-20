@@ -20,7 +20,7 @@ public class BootstrapLoaderImpl<Ex extends Exception> implements BootstrapLoade
 
     public BootstrapLoaderImpl( WrappedLog log , ErrorRaiser<Ex> errorRaiser ) {
         this.log = log ;
-        this.errorRaiser = errorRaiser;
+        this.errorRaiser = errorRaise;
     }
 
     @Override

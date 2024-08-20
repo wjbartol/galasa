@@ -31,18 +31,18 @@ jobs:
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v3
         with:
-          gradle-version: 6.9.2
+          gradle-version: 8.9
 
       - name: Build Gradle source code 
         run: |
-          gradle check publish --info > build.log 2>&1 \
+          gradle check publish --info \
           -PsourceMaven=https://repo.maven.apache.org/maven2/ \
           -PcentralMaven=https://repo.maven.apache.org/maven2/ \
           -PtargetMaven=${{ github.workspace }}/repo 2>&1 | tee build.log
   
       - name: Upload Gradle Build Log
         if: always()
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: gradle-build-log
           path: build.log

@@ -47,7 +47,7 @@ jobs:
       - name: Setup JDK 
         uses: actions/setup-java@v4
         with:
-          java-version: '11'
+          java-version: '17'
           distribution: 'semeru'
 
       # The githash is added to the development Maven registry to show what commit level it contains

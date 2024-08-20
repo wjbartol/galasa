@@ -35,19 +35,14 @@ jobs:
 
       - name: Build Gradle source code
         run: |
-          gradle check publish \
-          -PsourceMaven=https://repo.maven.apache.org/maven2/ \
-          -PcentralMaven=https://repo.maven.apache.org/maven2/ \
-          -PtargetMaven=${{ github.workspace }}/repo
-
-      - name: check build directory
-        working-directory: ./build
-        run: |
-         ls 
-         cd reports
-         ls
-         cd test
-         ls 
+          gradle check publish --info \
+          -PsourceMaven=https://repo.maven.apache.org/maven2/ -PcentralMaven=https://repo.maven.apache.org/maven2/ -PtargetMaven=${{ github.workspace }}/repo -PjacocoEnabled=true -PisMainOrRelease=true
+  
+      - name: Upload JUnit Test Report
+        uses: actions/upload-artifact@v3
+        with:
+          name: junit-test-report
+          path: build/reports/tests/test/*.html
 
       - name: Upload Gradle Build Log
         uses: actions/upload-artifact@v3
@@ -55,13 +50,6 @@ jobs:
           name: gradle-build-log
           path: build/reports/tests/test/*.txt
   
-      - name: Upload JUnit Test Report
-        uses: actions/upload-artifact@v3
-        with:
-          name: junit-test-report
-          path: build/reports/tests/test/*.html
-  
-
       - name: Extract metadata for Gradle image
         id: metadata
         uses: docker/metadata-action@9ec57ed1fcdbf14dcef7dfbe97b2010124a938b7

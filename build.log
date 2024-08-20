@@ -1,0 +1,634 @@
+Initialized native services in: /home/dhruv/.gradle/native
+The client will now receive all logging from the daemon (pid: 120). The daemon log file: /home/dhruv/.gradle/daemon/6.9.2/daemon-120.out.log
+Starting 5th build in daemon [uptime: 14 mins 9.741 secs, performance: 100%, non-heap usage: 29% of 256 MiB]
+Using 4 worker leases.
+Watching the file system is disabled
+Starting Build
+Settings evaluated using settings file '/mnt/d/downloads/gradle/settings.gradle'.
+Projects loaded. Root project using build file '/mnt/d/downloads/gradle/build.gradle'.
+Included projects: [root project 'galasa-gradle-parent', project ':dev.galasa.gradle.impl', project ':dev.galasa.plugin.common', project ':dev.galasa.plugin.common.impl', project ':dev.galasa.plugin.common.test']
+
+> Configure project :
+Evaluating root project 'galasa-gradle-parent' using build file '/mnt/d/downloads/gradle/build.gradle'.
+
+> Configure project :dev.galasa.gradle.impl
+Evaluating project ':dev.galasa.gradle.impl' using build file '/mnt/d/downloads/gradle/dev.galasa.gradle.impl/build.gradle'.
+
+> Configure project :dev.galasa.plugin.common
+Evaluating project ':dev.galasa.plugin.common' using build file '/mnt/d/downloads/gradle/dev.galasa.plugin.common/build.gradle'.
+
+> Configure project :dev.galasa.plugin.common.impl
+Evaluating project ':dev.galasa.plugin.common.impl' using build file '/mnt/d/downloads/gradle/dev.galasa.plugin.common.impl/build.gradle'.
+
+> Configure project :dev.galasa.plugin.common.test
+Evaluating project ':dev.galasa.plugin.common.test' using build file '/mnt/d/downloads/gradle/dev.galasa.plugin.common.test/build.gradle'.
+All projects evaluated.
+Selected primary task 'clean' from project :
+Selected primary task 'build' from project :
+Tasks to be executed: [task ':clean', task ':dev.galasa.gradle.impl:clean', task ':dev.galasa.plugin.common:clean', task ':dev.galasa.plugin.common.impl:clean', task ':dev.galasa.plugin.common.test:clean', task ':compileJava', task ':processResources', task ':classes', task ':jar', task ':assemble', task ':compileTestJava', task ':processTestResources', task ':testClasses', task ':test', task ':jacocoTestReport', task ':check', task ':build', task ':dev.galasa.plugin.common:compileJava', task ':dev.galasa.plugin.common:processResources', task ':dev.galasa.plugin.common:classes', task ':dev.galasa.plugin.common:gitHash', task ':dev.galasa.plugin.common:jar', task ':dev.galasa.plugin.common.impl:compileJava', task ':dev.galasa.plugin.common.impl:processResources', task ':dev.galasa.plugin.common.impl:classes', task ':dev.galasa.plugin.common.impl:jar', task ':dev.galasa.gradle.impl:compileJava', task ':dev.galasa.gradle.impl:pluginDescriptors', task ':dev.galasa.gradle.impl:processResources', task ':dev.galasa.gradle.impl:classes', task ':dev.galasa.gradle.impl:gitHash', task ':dev.galasa.gradle.impl:jar', task ':dev.galasa.gradle.impl:javadoc', task ':dev.galasa.gradle.impl:javadocJar', task ':dev.galasa.gradle.impl:sourcesJar', task ':dev.galasa.gradle.impl:assemble', task ':dev.galasa.gradle.impl:pluginUnderTestMetadata', task ':dev.galasa.plugin.common.test:compileJava', task ':dev.galasa.plugin.common.test:processResources', task ':dev.galasa.plugin.common.test:classes', task ':dev.galasa.plugin.common.test:jar', task ':dev.galasa.gradle.impl:compileTestJava', task ':dev.galasa.gradle.impl:processTestResources', task ':dev.galasa.gradle.impl:testClasses', task ':dev.galasa.gradle.impl:test', task ':dev.galasa.gradle.impl:validatePlugins', task ':dev.galasa.gradle.impl:check', task ':dev.galasa.gradle.impl:build', task ':dev.galasa.plugin.common:javadoc', task ':dev.galasa.plugin.common:javadocJar', task ':dev.galasa.plugin.common:sourcesJar', task ':dev.galasa.plugin.common:assemble', task ':dev.galasa.plugin.common:compileTestJava', task ':dev.galasa.plugin.common:processTestResources', task ':dev.galasa.plugin.common:testClasses', task ':dev.galasa.plugin.common:test', task ':dev.galasa.plugin.common:check', task ':dev.galasa.plugin.common:build', task ':dev.galasa.plugin.common.impl:javadoc', task ':dev.galasa.plugin.common.impl:javadocJar', task ':dev.galasa.plugin.common.impl:sourcesJar', task ':dev.galasa.plugin.common.impl:assemble', task ':dev.galasa.plugin.common.impl:compileTestJava', task ':dev.galasa.plugin.common.impl:processTestResources', task ':dev.galasa.plugin.common.impl:testClasses', task ':dev.galasa.plugin.common.impl:test', task ':dev.galasa.plugin.common.impl:check', task ':dev.galasa.plugin.common.impl:build', task ':dev.galasa.plugin.common.test:javadoc', task ':dev.galasa.plugin.common.test:javadocJar', task ':dev.galasa.plugin.common.test:sourcesJar', task ':dev.galasa.plugin.common.test:assemble', task ':dev.galasa.plugin.common.test:compileTestJava', task ':dev.galasa.plugin.common.test:processTestResources', task ':dev.galasa.plugin.common.test:testClasses', task ':dev.galasa.plugin.common.test:test', task ':dev.galasa.plugin.common.test:check', task ':dev.galasa.plugin.common.test:build']
+Tasks that were excluded: []
+:clean (Thread[Execution worker for ':',5,main]) started.
+
+> Task :clean
+Caching disabled for task ':clean' because:
+  Build cache is disabled
+Task ':clean' is not up-to-date because:
+  Task has not declared any outputs despite executing actions.
+:clean (Thread[Execution worker for ':',5,main]) completed. Took 0.054 secs.
+:dev.galasa.gradle.impl:clean (Thread[Execution worker for ':',5,main]) started.
+
+> Task :dev.galasa.gradle.impl:clean
+Caching disabled for task ':dev.galasa.gradle.impl:clean' because:
+  Build cache is disabled
+Task ':dev.galasa.gradle.impl:clean' is not up-to-date because:
+  Task has not declared any outputs despite executing actions.
+:dev.galasa.gradle.impl:clean (Thread[Execution worker for ':',5,main]) completed. Took 1.351 secs.
+:dev.galasa.plugin.common:clean (Thread[Execution worker for ':',5,main]) started.
+
+> Task :dev.galasa.plugin.common:clean
+Caching disabled for task ':dev.galasa.plugin.common:clean' because:
+  Build cache is disabled
+Task ':dev.galasa.plugin.common:clean' is not up-to-date because:
+  Task has not declared any outputs despite executing actions.
+:dev.galasa.plugin.common:clean (Thread[Execution worker for ':',5,main]) completed. Took 0.902 secs.
+:dev.galasa.plugin.common.impl:clean (Thread[Execution worker for ':',5,main]) started.
+
+> Task :dev.galasa.plugin.common.impl:clean
+Caching disabled for task ':dev.galasa.plugin.common.impl:clean' because:
+  Build cache is disabled
+Task ':dev.galasa.plugin.common.impl:clean' is not up-to-date because:
+  Task has not declared any outputs despite executing actions.
+:dev.galasa.plugin.common.impl:clean (Thread[Execution worker for ':',5,main]) completed. Took 1.866 secs.
+:dev.galasa.plugin.common.test:clean (Thread[Execution worker for ':',5,main]) started.
+
+> Task :dev.galasa.plugin.common.test:clean
+Caching disabled for task ':dev.galasa.plugin.common.test:clean' because:
+  Build cache is disabled
+Task ':dev.galasa.plugin.common.test:clean' is not up-to-date because:
+  Task has not declared any outputs despite executing actions.
+:dev.galasa.plugin.common.test:clean (Thread[Execution worker for ':',5,main]) completed. Took 1.019 secs.
+:compileJava (Thread[Execution worker for ':',5,main]) started.
+
+> Task :compileJava NO-SOURCE
+file or directory '/mnt/d/downloads/gradle/src/main/java', not found
+Skipping task ':compileJava' as it has no source files and no previous output files.
+:compileJava (Thread[Execution worker for ':',5,main]) completed. Took 0.003 secs.
+:processResources (Thread[Execution worker for ':' Thread 2,5,main]) started.
+
+> Task :processResources NO-SOURCE
+file or directory '/mnt/d/downloads/gradle/src/main/resources', not found
+Skipping task ':processResources' as it has no source files and no previous output files.
+:processResources (Thread[Execution worker for ':' Thread 2,5,main]) completed. Took 0.018 secs.
+:classes (Thread[Execution worker for ':' Thread 2,5,main]) started.
+
+> Task :classes UP-TO-DATE
+Skipping task ':classes' as it has no actions.
+:classes (Thread[Execution worker for ':' Thread 2,5,main]) completed. Took 0.0 secs.
+:jar (Thread[Execution worker for ':' Thread 2,5,main]) started.
+
+> Task :jar
+file or directory '/mnt/d/downloads/gradle/build/classes/java/main', not found
+file or directory '/mnt/d/downloads/gradle/build/resources/main', not found
+Caching disabled for task ':jar' because:
+  Build cache is disabled
+Task ':jar' is not up-to-date because:
+  Output property 'archiveFile' file /mnt/d/downloads/gradle/build/libs/galasa-gradle-parent-0.36.0.jar has been removed.
+file or directory '/mnt/d/downloads/gradle/build/classes/java/main', not found
+file or directory '/mnt/d/downloads/gradle/build/resources/main', not found
+:jar (Thread[Execution worker for ':' Thread 2,5,main]) completed. Took 0.133 secs.
+:assemble (Thread[Execution worker for ':' Thread 2,5,main]) started.
+
+> Task :assemble
+Skipping task ':assemble' as it has no actions.
+:assemble (Thread[Execution worker for ':' Thread 2,5,main]) completed. Took 0.0 secs.
+:compileTestJava (Thread[Execution worker for ':' Thread 2,5,main]) started.
+
+> Task :compileTestJava NO-SOURCE
+file or directory '/mnt/d/downloads/gradle/src/test/java', not found
+Skipping task ':compileTestJava' as it has no source files and no previous output files.
+:compileTestJava (Thread[Execution worker for ':' Thread 2,5,main]) completed. Took 0.008 secs.
+:processTestResources (Thread[Execution worker for ':' Thread 2,5,main]) started.
+
+> Task :processTestResources NO-SOURCE
+file or directory '/mnt/d/downloads/gradle/src/test/resources', not found
+Skipping task ':processTestResources' as it has no source files and no previous output files.
+:processTestResources (Thread[Execution worker for ':' Thread 2,5,main]) completed. Took 0.002 secs.
+:testClasses (Thread[Execution worker for ':' Thread 2,5,main]) started.
+
+> Task :testClasses UP-TO-DATE
+Skipping task ':testClasses' as it has no actions.
+:testClasses (Thread[Execution worker for ':' Thread 2,5,main]) completed. Took 0.0 secs.
+:test (Thread[Execution worker for ':' Thread 2,5,main]) started.
+
+> Task :test NO-SOURCE
+file or directory '/mnt/d/downloads/gradle/build/classes/java/test', not found
+Skipping task ':test' as it has no source files and no previous output files.
+:test (Thread[Execution worker for ':' Thread 2,5,main]) completed. Took 0.008 secs.
+:jacocoTestReport (Thread[Execution worker for ':' Thread 2,5,main]) started.
+
+> Task :jacocoTestReport SKIPPED
+Skipping task ':jacocoTestReport' as task onlyIf is false.
+:jacocoTestReport (Thread[Execution worker for ':' Thread 2,5,main]) completed. Took 0.001 secs.
+:check (Thread[Execution worker for ':' Thread 2,5,main]) started.
+
+> Task :check UP-TO-DATE
+Skipping task ':check' as it has no actions.
+:check (Thread[Execution worker for ':' Thread 2,5,main]) completed. Took 0.0 secs.
+:build (Thread[Execution worker for ':' Thread 2,5,main]) started.
+
+> Task :build
+Skipping task ':build' as it has no actions.
+:build (Thread[Execution worker for ':' Thread 2,5,main]) completed. Took 0.0 secs.
+:dev.galasa.plugin.common:compileJava (Thread[Execution worker for ':' Thread 2,5,main]) started.
+
+> Task :dev.galasa.plugin.common:compileJava
+Caching disabled for task ':dev.galasa.plugin.common:compileJava' because:
+  Build cache is disabled
+Task ':dev.galasa.plugin.common:compileJava' is not up-to-date because:
+  Output property 'destinationDirectory' file /mnt/d/downloads/gradle/dev.galasa.plugin.common/build/classes/java/main has been removed.
+  Output property 'destinationDirectory' file /mnt/d/downloads/gradle/dev.galasa.plugin.common/build/classes/java/main/dev has been removed.
+  Output property 'destinationDirectory' file /mnt/d/downloads/gradle/dev.galasa.plugin.common/build/classes/java/main/dev/galasa has been removed.
+The input changes require a full rebuild for incremental task ':dev.galasa.plugin.common:compileJava'.
+Full recompilation is required because no incremental change information is available. This is usually caused by clean builds or changing compiler arguments.
+Compiling with JDK Java compiler API.
+Created classpath snapshot for incremental compilation in 0.0 secs.
+:dev.galasa.plugin.common:compileJava (Thread[Execution worker for ':' Thread 2,5,main]) completed. Took 1.164 secs.
+:dev.galasa.plugin.common:processResources (Thread[Execution worker for ':' Thread 2,5,main]) started.
+
+> Task :dev.galasa.plugin.common:processResources NO-SOURCE
+file or directory '/mnt/d/downloads/gradle/dev.galasa.plugin.common/src/main/resources', not found
+Skipping task ':dev.galasa.plugin.common:processResources' as it has no source files and no previous output files.
+:dev.galasa.plugin.common:processResources (Thread[Execution worker for ':' Thread 2,5,main]) completed. Took 0.007 secs.
+:dev.galasa.plugin.common:classes (Thread[Execution worker for ':' Thread 2,5,main]) started.
+
+> Task :dev.galasa.plugin.common:classes
+Skipping task ':dev.galasa.plugin.common:classes' as it has no actions.
+:dev.galasa.plugin.common:classes (Thread[Execution worker for ':' Thread 2,5,main]) completed. Took 0.0 secs.
+:dev.galasa.plugin.common:gitHash (Thread[Execution worker for ':' Thread 2,5,main]) started.
+
+> Task :dev.galasa.plugin.common:gitHash
+Caching disabled for task ':dev.galasa.plugin.common:gitHash' because:
+  Build cache is disabled
+Task ':dev.galasa.plugin.common:gitHash' is not up-to-date because:
+  Output property '$1' file /mnt/d/downloads/gradle/dev.galasa.plugin.common/build/githash/META-INF has been removed.
+  Output property '$1' file /mnt/d/downloads/gradle/dev.galasa.plugin.common/build/githash/META-INF/git.hash has been removed.
+Starting process 'command 'git''. Working directory: /mnt/d/downloads/gradle/dev.galasa.plugin.common Command: git log --pretty=format:%H -1 .
+Successfully started process 'command 'git''
+:dev.galasa.plugin.common:gitHash (Thread[Execution worker for ':' Thread 2,5,main]) completed. Took 0.145 secs.
+:dev.galasa.plugin.common:jar (Thread[Execution worker for ':' Thread 2,5,main]) started.
+
+> Task :dev.galasa.plugin.common:jar
+Caching disabled for task ':dev.galasa.plugin.common:jar' because:
+  Build cache is disabled
+Task ':dev.galasa.plugin.common:jar' is not up-to-date because:
+  Output property 'archiveFile' file /mnt/d/downloads/gradle/dev.galasa.plugin.common/build/libs/dev.galasa.plugin.common-0.36.0.jar has been removed.
+file or directory '/mnt/d/downloads/gradle/dev.galasa.plugin.common/build/resources/main', not found
+:dev.galasa.plugin.common:jar (Thread[Execution worker for ':' Thread 2,5,main]) completed. Took 0.309 secs.
+:dev.galasa.plugin.common.impl:compileJava (Thread[Execution worker for ':' Thread 2,5,main]) started.
+
+> Task :dev.galasa.plugin.common.impl:compileJava
+Caching disabled for task ':dev.galasa.plugin.common.impl:compileJava' because:
+  Build cache is disabled
+Task ':dev.galasa.plugin.common.impl:compileJava' is not up-to-date because:
+  Output property 'destinationDirectory' file /mnt/d/downloads/gradle/dev.galasa.plugin.common.impl/build/classes/java/main has been removed.
+  Output property 'destinationDirectory' file /mnt/d/downloads/gradle/dev.galasa.plugin.common.impl/build/classes/java/main/dev has been removed.
+  Output property 'destinationDirectory' file /mnt/d/downloads/gradle/dev.galasa.plugin.common.impl/build/classes/java/main/dev/galasa has been removed.
+The input changes require a full rebuild for incremental task ':dev.galasa.plugin.common.impl:compileJava'.
+Full recompilation is required because no incremental change information is available. This is usually caused by clean builds or changing compiler arguments.
+Compiling with JDK Java compiler API.
+Created classpath snapshot for incremental compilation in 0.047 secs. 1 duplicate classes found in classpath (see all with --debug).
+:dev.galasa.plugin.common.impl:compileJava (Thread[Execution worker for ':' Thread 2,5,main]) completed. Took 1.443 secs.
+:dev.galasa.plugin.common.impl:processResources (Thread[Execution worker for ':' Thread 2,5,main]) started.
+
+> Task :dev.galasa.plugin.common.impl:processResources NO-SOURCE
+file or directory '/mnt/d/downloads/gradle/dev.galasa.plugin.common.impl/src/main/resources', not found
+Skipping task ':dev.galasa.plugin.common.impl:processResources' as it has no source files and no previous output files.
+:dev.galasa.plugin.common.impl:processResources (Thread[Execution worker for ':' Thread 2,5,main]) completed. Took 0.005 secs.
+:dev.galasa.plugin.common.impl:classes (Thread[Execution worker for ':' Thread 2,5,main]) started.
+
+> Task :dev.galasa.plugin.common.impl:classes
+Skipping task ':dev.galasa.plugin.common.impl:classes' as it has no actions.
+:dev.galasa.plugin.common.impl:classes (Thread[Execution worker for ':' Thread 2,5,main]) completed. Took 0.0 secs.
+:dev.galasa.plugin.common.impl:jar (Thread[Execution worker for ':' Thread 2,5,main]) started.
+
+> Task :dev.galasa.plugin.common.impl:jar
+Caching disabled for task ':dev.galasa.plugin.common.impl:jar' because:
+  Build cache is disabled
+Task ':dev.galasa.plugin.common.impl:jar' is not up-to-date because:
+  Output property 'archiveFile' file /mnt/d/downloads/gradle/dev.galasa.plugin.common.impl/build/libs/dev.galasa.plugin.common.impl-0.36.0.jar has been removed.
+file or directory '/mnt/d/downloads/gradle/dev.galasa.plugin.common.impl/build/resources/main', not found
+:dev.galasa.plugin.common.impl:jar (Thread[Execution worker for ':' Thread 2,5,main]) completed. Took 0.341 secs.
+:dev.galasa.gradle.impl:compileJava (Thread[Execution worker for ':' Thread 2,5,main]) started.
+
+> Task :dev.galasa.gradle.impl:compileJava
+Caching disabled for task ':dev.galasa.gradle.impl:compileJava' because:
+  Build cache is disabled
+Task ':dev.galasa.gradle.impl:compileJava' is not up-to-date because:
+  Output property 'destinationDirectory' file /mnt/d/downloads/gradle/dev.galasa.gradle.impl/build/classes/java/main has been removed.
+  Output property 'destinationDirectory' file /mnt/d/downloads/gradle/dev.galasa.gradle.impl/build/classes/java/main/dev has been removed.
+  Output property 'destinationDirectory' file /mnt/d/downloads/gradle/dev.galasa.gradle.impl/build/classes/java/main/dev/galasa has been removed.
+The input changes require a full rebuild for incremental task ':dev.galasa.gradle.impl:compileJava'.
+Full recompilation is required because no incremental change information is available. This is usually caused by clean builds or changing compiler arguments.
+Compiling with JDK Java compiler API.
+/mnt/d/downloads/gradle/dev.galasa.gradle.impl/src/main/java/dev/galasa/gradle/testcatalog/TestCatalogPlugin.java:97: warning: [removal] TestCatalogDeployTask in dev.galasa.gradle.testcatalog has been deprecated and marked for removal
+        project.getTasks().register("deploytestcat", TestCatalogDeployTask.class, testcatTask -> {
+                                                     ^
+warning: [removal] TestCatalogDeployTask in dev.galasa.gradle.testcatalog has been deprecated and marked for removal
+2 warnings
+Created classpath snapshot for incremental compilation in 0.063 secs. 1 duplicate classes found in classpath (see all with --debug).
+:dev.galasa.gradle.impl:compileJava (Thread[Execution worker for ':' Thread 2,5,main]) completed. Took 2.6 secs.
+:dev.galasa.gradle.impl:pluginDescriptors (Thread[Execution worker for ':' Thread 2,5,main]) started.
+
+> Task :dev.galasa.gradle.impl:pluginDescriptors
+Caching disabled for task ':dev.galasa.gradle.impl:pluginDescriptors' because:
+  Build cache is disabled
+Task ':dev.galasa.gradle.impl:pluginDescriptors' is not up-to-date because:
+  Output property 'outputDirectory' file /mnt/d/downloads/gradle/dev.galasa.gradle.impl/build/pluginDescriptors has been removed.
+  Output property 'outputDirectory' file /mnt/d/downloads/gradle/dev.galasa.gradle.impl/build/pluginDescriptors/dev.galasa.githash.properties has been removed.
+  Output property 'outputDirectory' file /mnt/d/downloads/gradle/dev.galasa.gradle.impl/build/pluginDescriptors/dev.galasa.obr.properties has been removed.
+:dev.galasa.gradle.impl:pluginDescriptors (Thread[Execution worker for ':' Thread 2,5,main]) completed. Took 0.076 secs.
+:dev.galasa.gradle.impl:processResources (Thread[Execution worker for ':' Thread 2,5,main]) started.
+
+> Task :dev.galasa.gradle.impl:processResources
+file or directory '/mnt/d/downloads/gradle/dev.galasa.gradle.impl/src/main/resources', not found
+Caching disabled for task ':dev.galasa.gradle.impl:processResources' because:
+  Build cache is disabled
+Task ':dev.galasa.gradle.impl:processResources' is not up-to-date because:
+  Output property 'destinationDir' file /mnt/d/downloads/gradle/dev.galasa.gradle.impl/build/resources/main has been removed.
+  Output property 'destinationDir' file /mnt/d/downloads/gradle/dev.galasa.gradle.impl/build/resources/main/META-INF has been removed.
+  Output property 'destinationDir' file /mnt/d/downloads/gradle/dev.galasa.gradle.impl/build/resources/main/META-INF/gradle-plugins has been removed.
+file or directory '/mnt/d/downloads/gradle/dev.galasa.gradle.impl/src/main/resources', not found
+:dev.galasa.gradle.impl:processResources (Thread[Execution worker for ':' Thread 2,5,main]) completed. Took 0.226 secs.
+:dev.galasa.gradle.impl:classes (Thread[Execution worker for ':' Thread 2,5,main]) started.
+
+> Task :dev.galasa.gradle.impl:classes
+Skipping task ':dev.galasa.gradle.impl:classes' as it has no actions.
+:dev.galasa.gradle.impl:classes (Thread[Execution worker for ':' Thread 2,5,main]) completed. Took 0.0 secs.
+:dev.galasa.gradle.impl:gitHash (Thread[Execution worker for ':' Thread 2,5,main]) started.
+
+> Task :dev.galasa.gradle.impl:gitHash
+Caching disabled for task ':dev.galasa.gradle.impl:gitHash' because:
+  Build cache is disabled
+Task ':dev.galasa.gradle.impl:gitHash' is not up-to-date because:
+  Output property '$1' file /mnt/d/downloads/gradle/dev.galasa.gradle.impl/build/githash/META-INF has been removed.
+  Output property '$1' file /mnt/d/downloads/gradle/dev.galasa.gradle.impl/build/githash/META-INF/git.hash has been removed.
+Starting process 'command 'git''. Working directory: /mnt/d/downloads/gradle/dev.galasa.gradle.impl Command: git log --pretty=format:%H -1 .
+Successfully started process 'command 'git''
+:dev.galasa.gradle.impl:gitHash (Thread[Execution worker for ':' Thread 2,5,main]) completed. Took 0.129 secs.
+:dev.galasa.gradle.impl:jar (Thread[Execution worker for ':' Thread 2,5,main]) started.
+
+> Task :dev.galasa.gradle.impl:jar
+Caching disabled for task ':dev.galasa.gradle.impl:jar' because:
+  Build cache is disabled
+Task ':dev.galasa.gradle.impl:jar' is not up-to-date because:
+  Output property 'archiveFile' file /mnt/d/downloads/gradle/dev.galasa.gradle.impl/build/libs/dev.galasa.gradle.impl-0.36.0.jar has been removed.
+:dev.galasa.gradle.impl:jar (Thread[Execution worker for ':' Thread 2,5,main]) completed. Took 0.565 secs.
+:dev.galasa.gradle.impl:javadoc (Thread[Execution worker for ':' Thread 2,5,main]) started.
+
+> Task :dev.galasa.gradle.impl:javadoc
+Caching disabled for task ':dev.galasa.gradle.impl:javadoc' because:
+  Build cache is disabled
+Task ':dev.galasa.gradle.impl:javadoc' is not up-to-date because:
+  Output property 'outputDirectory' file /mnt/d/downloads/gradle/dev.galasa.gradle.impl/build/docs/javadoc has been removed.
+  Output property 'outputDirectory' file /mnt/d/downloads/gradle/dev.galasa.gradle.impl/build/docs/javadoc/allclasses-index.html has been removed.
+  Output property 'outputDirectory' file /mnt/d/downloads/gradle/dev.galasa.gradle.impl/build/docs/javadoc/allclasses.html has been removed.
+Starting process 'command '/usr/lib/jvm/java-11-openjdk-amd64/bin/javadoc''. Working directory: /mnt/d/downloads/gradle/dev.galasa.gradle.impl Command: /usr/lib/jvm/java-11-openjdk-amd64/bin/javadoc @/mnt/d/downloads/gradle/dev.galasa.gradle.impl/build/tmp/javadoc/javadoc.options
+Successfully started process 'command '/usr/lib/jvm/java-11-openjdk-amd64/bin/javadoc''
+:dev.galasa.gradle.impl:javadoc (Thread[Execution worker for ':' Thread 2,5,main]) completed. Took 7.69 secs.
+:dev.galasa.gradle.impl:javadocJar (Thread[Execution worker for ':' Thread 2,5,main]) started.
+
+> Task :dev.galasa.gradle.impl:javadocJar
+Caching disabled for task ':dev.galasa.gradle.impl:javadocJar' because:
+  Build cache is disabled
+Task ':dev.galasa.gradle.impl:javadocJar' is not up-to-date because:
+  Output property 'archiveFile' file /mnt/d/downloads/gradle/dev.galasa.gradle.impl/build/libs/dev.galasa.gradle.impl-0.36.0-javadoc.jar has been removed.
+:dev.galasa.gradle.impl:javadocJar (Thread[Execution worker for ':' Thread 2,5,main]) completed. Took 1.203 secs.
+:dev.galasa.gradle.impl:sourcesJar (Thread[Execution worker for ':' Thread 2,5,main]) started.
+
+> Task :dev.galasa.gradle.impl:sourcesJar
+file or directory '/mnt/d/downloads/gradle/dev.galasa.gradle.impl/src/main/resources', not found
+Caching disabled for task ':dev.galasa.gradle.impl:sourcesJar' because:
+  Build cache is disabled
+Task ':dev.galasa.gradle.impl:sourcesJar' is not up-to-date because:
+  Output property 'archiveFile' file /mnt/d/downloads/gradle/dev.galasa.gradle.impl/build/libs/dev.galasa.gradle.impl-0.36.0-sources.jar has been removed.
+file or directory '/mnt/d/downloads/gradle/dev.galasa.gradle.impl/src/main/resources', not found
+:dev.galasa.gradle.impl:sourcesJar (Thread[Execution worker for ':' Thread 2,5,main]) completed. Took 0.503 secs.
+:dev.galasa.gradle.impl:assemble (Thread[Execution worker for ':' Thread 2,5,main]) started.
+
+> Task :dev.galasa.gradle.impl:assemble
+Skipping task ':dev.galasa.gradle.impl:assemble' as it has no actions.
+:dev.galasa.gradle.impl:assemble (Thread[Execution worker for ':' Thread 2,5,main]) completed. Took 0.0 secs.
+:dev.galasa.gradle.impl:pluginUnderTestMetadata (Thread[Execution worker for ':' Thread 2,5,main]) started.
+
+> Task :dev.galasa.gradle.impl:pluginUnderTestMetadata
+Caching disabled for task ':dev.galasa.gradle.impl:pluginUnderTestMetadata' because:
+  Build cache is disabled
+Task ':dev.galasa.gradle.impl:pluginUnderTestMetadata' is not up-to-date because:
+  Output property 'outputDirectory' file /mnt/d/downloads/gradle/dev.galasa.gradle.impl/build/pluginUnderTestMetadata has been removed.
+  Output property 'outputDirectory' file /mnt/d/downloads/gradle/dev.galasa.gradle.impl/build/pluginUnderTestMetadata/plugin-under-test-metadata.properties has been removed.
+:dev.galasa.gradle.impl:pluginUnderTestMetadata (Thread[Execution worker for ':' Thread 2,5,main]) completed. Took 0.063 secs.
+:dev.galasa.plugin.common.test:compileJava (Thread[Execution worker for ':' Thread 2,5,main]) started.
+
+> Task :dev.galasa.plugin.common.test:compileJava
+Caching disabled for task ':dev.galasa.plugin.common.test:compileJava' because:
+  Build cache is disabled
+Task ':dev.galasa.plugin.common.test:compileJava' is not up-to-date because:
+  Output property 'destinationDirectory' file /mnt/d/downloads/gradle/dev.galasa.plugin.common.test/build/classes/java/main has been removed.
+  Output property 'destinationDirectory' file /mnt/d/downloads/gradle/dev.galasa.plugin.common.test/build/classes/java/main/dev has been removed.
+  Output property 'destinationDirectory' file /mnt/d/downloads/gradle/dev.galasa.plugin.common.test/build/classes/java/main/dev/galasa has been removed.
+The input changes require a full rebuild for incremental task ':dev.galasa.plugin.common.test:compileJava'.
+Full recompilation is required because no incremental change information is available. This is usually caused by clean builds or changing compiler arguments.
+Compiling with JDK Java compiler API.
+Created classpath snapshot for incremental compilation in 0.005 secs. 1 duplicate classes found in classpath (see all with --debug).
+:dev.galasa.plugin.common.test:compileJava (Thread[Execution worker for ':' Thread 2,5,main]) completed. Took 1.094 secs.
+:dev.galasa.plugin.common.test:processResources (Thread[Execution worker for ':' Thread 2,5,main]) started.
+
+> Task :dev.galasa.plugin.common.test:processResources NO-SOURCE
+file or directory '/mnt/d/downloads/gradle/dev.galasa.plugin.common.test/src/main/resources', not found
+Skipping task ':dev.galasa.plugin.common.test:processResources' as it has no source files and no previous output files.
+:dev.galasa.plugin.common.test:processResources (Thread[Execution worker for ':' Thread 2,5,main]) completed. Took 0.01 secs.
+:dev.galasa.plugin.common.test:classes (Thread[Execution worker for ':' Thread 2,5,main]) started.
+
+> Task :dev.galasa.plugin.common.test:classes
+Skipping task ':dev.galasa.plugin.common.test:classes' as it has no actions.
+:dev.galasa.plugin.common.test:classes (Thread[Execution worker for ':' Thread 2,5,main]) completed. Took 0.0 secs.
+:dev.galasa.plugin.common.test:jar (Thread[Execution worker for ':' Thread 2,5,main]) started.
+
+> Task :dev.galasa.plugin.common.test:jar
+Caching disabled for task ':dev.galasa.plugin.common.test:jar' because:
+  Build cache is disabled
+Task ':dev.galasa.plugin.common.test:jar' is not up-to-date because:
+  Output property 'archiveFile' file /mnt/d/downloads/gradle/dev.galasa.plugin.common.test/build/libs/dev.galasa.plugin.common.test-0.36.0.jar has been removed.
+file or directory '/mnt/d/downloads/gradle/dev.galasa.plugin.common.test/build/resources/main', not found
+:dev.galasa.plugin.common.test:jar (Thread[Execution worker for ':' Thread 2,5,main]) completed. Took 0.285 secs.
+:dev.galasa.gradle.impl:compileTestJava (Thread[Execution worker for ':' Thread 2,5,main]) started.
+
+> Task :dev.galasa.gradle.impl:compileTestJava NO-SOURCE
+file or directory '/mnt/d/downloads/gradle/dev.galasa.gradle.impl/src/test/java', not found
+Skipping task ':dev.galasa.gradle.impl:compileTestJava' as it has no source files and no previous output files.
+:dev.galasa.gradle.impl:compileTestJava (Thread[Execution worker for ':' Thread 2,5,main]) completed. Took 0.01 secs.
+:dev.galasa.gradle.impl:processTestResources (Thread[Execution worker for ':' Thread 2,5,main]) started.
+
+> Task :dev.galasa.gradle.impl:processTestResources NO-SOURCE
+file or directory '/mnt/d/downloads/gradle/dev.galasa.gradle.impl/src/test/resources', not found
+Skipping task ':dev.galasa.gradle.impl:processTestResources' as it has no source files and no previous output files.
+:dev.galasa.gradle.impl:processTestResources (Thread[Execution worker for ':' Thread 2,5,main]) completed. Took 0.004 secs.
+:dev.galasa.gradle.impl:testClasses (Thread[Execution worker for ':' Thread 2,5,main]) started.
+
+> Task :dev.galasa.gradle.impl:testClasses UP-TO-DATE
+Skipping task ':dev.galasa.gradle.impl:testClasses' as it has no actions.
+:dev.galasa.gradle.impl:testClasses (Thread[Execution worker for ':' Thread 2,5,main]) completed. Took 0.0 secs.
+:dev.galasa.gradle.impl:test (Thread[Execution worker for ':' Thread 2,5,main]) started.
+
+> Task :dev.galasa.gradle.impl:test NO-SOURCE
+file or directory '/mnt/d/downloads/gradle/dev.galasa.gradle.impl/build/classes/java/test', not found
+Skipping task ':dev.galasa.gradle.impl:test' as it has no source files and no previous output files.
+:dev.galasa.gradle.impl:test (Thread[Execution worker for ':' Thread 2,5,main]) completed. Took 0.006 secs.
+:dev.galasa.gradle.impl:validatePlugins (Thread[Execution worker for ':' Thread 2,5,main]) started.
+
+> Task :dev.galasa.gradle.impl:validatePlugins
+Caching disabled for task ':dev.galasa.gradle.impl:validatePlugins' because:
+  Build cache is disabled
+Task ':dev.galasa.gradle.impl:validatePlugins' is not up-to-date because:
+  Output property 'outputFile' file /mnt/d/downloads/gradle/dev.galasa.gradle.impl/build/reports/plugin-development/validation-report.txt has been removed.
+Plugin validation finished without warnings.
+:dev.galasa.gradle.impl:validatePlugins (Thread[Execution worker for ':' Thread 2,5,main]) completed. Took 0.219 secs.
+:dev.galasa.gradle.impl:check (Thread[Execution worker for ':' Thread 2,5,main]) started.
+
+> Task :dev.galasa.gradle.impl:check
+Skipping task ':dev.galasa.gradle.impl:check' as it has no actions.
+:dev.galasa.gradle.impl:check (Thread[Execution worker for ':' Thread 2,5,main]) completed. Took 0.0 secs.
+:dev.galasa.gradle.impl:build (Thread[Execution worker for ':' Thread 2,5,main]) started.
+
+> Task :dev.galasa.gradle.impl:build
+Skipping task ':dev.galasa.gradle.impl:build' as it has no actions.
+:dev.galasa.gradle.impl:build (Thread[Execution worker for ':' Thread 2,5,main]) completed. Took 0.0 secs.
+:dev.galasa.plugin.common:javadoc (Thread[Execution worker for ':' Thread 2,5,main]) started.
+
+> Task :dev.galasa.plugin.common:javadoc
+Caching disabled for task ':dev.galasa.plugin.common:javadoc' because:
+  Build cache is disabled
+Task ':dev.galasa.plugin.common:javadoc' is not up-to-date because:
+  Output property 'outputDirectory' file /mnt/d/downloads/gradle/dev.galasa.plugin.common/build/docs/javadoc has been removed.
+  Output property 'outputDirectory' file /mnt/d/downloads/gradle/dev.galasa.plugin.common/build/docs/javadoc/allclasses-index.html has been removed.
+  Output property 'outputDirectory' file /mnt/d/downloads/gradle/dev.galasa.plugin.common/build/docs/javadoc/allclasses.html has been removed.
+Starting process 'command '/usr/lib/jvm/java-11-openjdk-amd64/bin/javadoc''. Working directory: /mnt/d/downloads/gradle/dev.galasa.plugin.common Command: /usr/lib/jvm/java-11-openjdk-amd64/bin/javadoc @/mnt/d/downloads/gradle/dev.galasa.plugin.common/build/tmp/javadoc/javadoc.options
+Successfully started process 'command '/usr/lib/jvm/java-11-openjdk-amd64/bin/javadoc''
+:dev.galasa.plugin.common:javadoc (Thread[Execution worker for ':' Thread 2,5,main]) completed. Took 6.066 secs.
+:dev.galasa.plugin.common:javadocJar (Thread[Execution worker for ':' Thread 2,5,main]) started.
+
+> Task :dev.galasa.plugin.common:javadocJar
+Caching disabled for task ':dev.galasa.plugin.common:javadocJar' because:
+  Build cache is disabled
+Task ':dev.galasa.plugin.common:javadocJar' is not up-to-date because:
+  Output property 'archiveFile' file /mnt/d/downloads/gradle/dev.galasa.plugin.common/build/libs/dev.galasa.plugin.common-0.36.0-javadoc.jar has been removed.
+:dev.galasa.plugin.common:javadocJar (Thread[Execution worker for ':' Thread 2,5,main]) completed. Took 1.228 secs.
+:dev.galasa.plugin.common:sourcesJar (Thread[Execution worker for ':',5,main]) started.
+
+> Task :dev.galasa.plugin.common:sourcesJar
+file or directory '/mnt/d/downloads/gradle/dev.galasa.plugin.common/src/main/resources', not found
+Caching disabled for task ':dev.galasa.plugin.common:sourcesJar' because:
+  Build cache is disabled
+Task ':dev.galasa.plugin.common:sourcesJar' is not up-to-date because:
+  Output property 'archiveFile' file /mnt/d/downloads/gradle/dev.galasa.plugin.common/build/libs/dev.galasa.plugin.common-0.36.0-sources.jar has been removed.
+file or directory '/mnt/d/downloads/gradle/dev.galasa.plugin.common/src/main/resources', not found
+:dev.galasa.plugin.common:sourcesJar (Thread[Execution worker for ':',5,main]) completed. Took 0.39 secs.
+:dev.galasa.plugin.common:assemble (Thread[Execution worker for ':',5,main]) started.
+
+> Task :dev.galasa.plugin.common:assemble
+Skipping task ':dev.galasa.plugin.common:assemble' as it has no actions.
+:dev.galasa.plugin.common:assemble (Thread[Execution worker for ':',5,main]) completed. Took 0.0 secs.
+:dev.galasa.plugin.common:compileTestJava (Thread[Execution worker for ':',5,main]) started.
+
+> Task :dev.galasa.plugin.common:compileTestJava NO-SOURCE
+file or directory '/mnt/d/downloads/gradle/dev.galasa.plugin.common/src/test/java', not found
+Skipping task ':dev.galasa.plugin.common:compileTestJava' as it has no source files and no previous output files.
+:dev.galasa.plugin.common:compileTestJava (Thread[Execution worker for ':',5,main]) completed. Took 0.022 secs.
+:dev.galasa.plugin.common:processTestResources (Thread[Execution worker for ':',5,main]) started.
+
+> Task :dev.galasa.plugin.common:processTestResources NO-SOURCE
+file or directory '/mnt/d/downloads/gradle/dev.galasa.plugin.common/src/test/resources', not found
+Skipping task ':dev.galasa.plugin.common:processTestResources' as it has no source files and no previous output files.
+:dev.galasa.plugin.common:processTestResources (Thread[Execution worker for ':',5,main]) completed. Took 0.007 secs.
+:dev.galasa.plugin.common:testClasses (Thread[Execution worker for ':',5,main]) started.
+
+> Task :dev.galasa.plugin.common:testClasses UP-TO-DATE
+Skipping task ':dev.galasa.plugin.common:testClasses' as it has no actions.
+:dev.galasa.plugin.common:testClasses (Thread[Execution worker for ':',5,main]) completed. Took 0.0 secs.
+:dev.galasa.plugin.common:test (Thread[Execution worker for ':',5,main]) started.
+
+> Task :dev.galasa.plugin.common:test NO-SOURCE
+file or directory '/mnt/d/downloads/gradle/dev.galasa.plugin.common/build/classes/java/test', not found
+Skipping task ':dev.galasa.plugin.common:test' as it has no source files and no previous output files.
+:dev.galasa.plugin.common:test (Thread[Execution worker for ':',5,main]) completed. Took 0.03 secs.
+:dev.galasa.plugin.common:check (Thread[Execution worker for ':',5,main]) started.
+
+> Task :dev.galasa.plugin.common:check UP-TO-DATE
+Skipping task ':dev.galasa.plugin.common:check' as it has no actions.
+:dev.galasa.plugin.common:check (Thread[Execution worker for ':',5,main]) completed. Took 0.0 secs.
+:dev.galasa.plugin.common:build (Thread[Execution worker for ':',5,main]) started.
+
+> Task :dev.galasa.plugin.common:build
+Skipping task ':dev.galasa.plugin.common:build' as it has no actions.
+:dev.galasa.plugin.common:build (Thread[Execution worker for ':',5,main]) completed. Took 0.0 secs.
+:dev.galasa.plugin.common.impl:javadoc (Thread[Execution worker for ':',5,main]) started.
+
+> Task :dev.galasa.plugin.common.impl:javadoc
+Caching disabled for task ':dev.galasa.plugin.common.impl:javadoc' because:
+  Build cache is disabled
+Task ':dev.galasa.plugin.common.impl:javadoc' is not up-to-date because:
+  Output property 'outputDirectory' file /mnt/d/downloads/gradle/dev.galasa.plugin.common.impl/build/docs/javadoc has been removed.
+  Output property 'outputDirectory' file /mnt/d/downloads/gradle/dev.galasa.plugin.common.impl/build/docs/javadoc/allclasses-index.html has been removed.
+  Output property 'outputDirectory' file /mnt/d/downloads/gradle/dev.galasa.plugin.common.impl/build/docs/javadoc/allclasses.html has been removed.
+Starting process 'command '/usr/lib/jvm/java-11-openjdk-amd64/bin/javadoc''. Working directory: /mnt/d/downloads/gradle/dev.galasa.plugin.common.impl Command: /usr/lib/jvm/java-11-openjdk-amd64/bin/javadoc @/mnt/d/downloads/gradle/dev.galasa.plugin.common.impl/build/tmp/javadoc/javadoc.options
+Successfully started process 'command '/usr/lib/jvm/java-11-openjdk-amd64/bin/javadoc''
+:dev.galasa.plugin.common.impl:javadoc (Thread[Execution worker for ':',5,main]) completed. Took 7.182 secs.
+:dev.galasa.plugin.common.impl:javadocJar (Thread[Execution worker for ':',5,main]) started.
+
+> Task :dev.galasa.plugin.common.impl:javadocJar
+Caching disabled for task ':dev.galasa.plugin.common.impl:javadocJar' because:
+  Build cache is disabled
+Task ':dev.galasa.plugin.common.impl:javadocJar' is not up-to-date because:
+  Output property 'archiveFile' file /mnt/d/downloads/gradle/dev.galasa.plugin.common.impl/build/libs/dev.galasa.plugin.common.impl-0.36.0-javadoc.jar has been removed.
+:dev.galasa.plugin.common.impl:javadocJar (Thread[Execution worker for ':',5,main]) completed. Took 1.084 secs.
+:dev.galasa.plugin.common.impl:sourcesJar (Thread[Execution worker for ':',5,main]) started.
+
+> Task :dev.galasa.plugin.common.impl:sourcesJar
+file or directory '/mnt/d/downloads/gradle/dev.galasa.plugin.common.impl/src/main/resources', not found
+Caching disabled for task ':dev.galasa.plugin.common.impl:sourcesJar' because:
+  Build cache is disabled
+Task ':dev.galasa.plugin.common.impl:sourcesJar' is not up-to-date because:
+  Output property 'archiveFile' file /mnt/d/downloads/gradle/dev.galasa.plugin.common.impl/build/libs/dev.galasa.plugin.common.impl-0.36.0-sources.jar has been removed.
+file or directory '/mnt/d/downloads/gradle/dev.galasa.plugin.common.impl/src/main/resources', not found
+:dev.galasa.plugin.common.impl:sourcesJar (Thread[Execution worker for ':',5,main]) completed. Took 0.723 secs.
+:dev.galasa.plugin.common.impl:assemble (Thread[Execution worker for ':',5,main]) started.
+
+> Task :dev.galasa.plugin.common.impl:assemble
+Skipping task ':dev.galasa.plugin.common.impl:assemble' as it has no actions.
+:dev.galasa.plugin.common.impl:assemble (Thread[Execution worker for ':',5,main]) completed. Took 0.0 secs.
+:dev.galasa.plugin.common.impl:compileTestJava (Thread[Execution worker for ':',5,main]) started.
+
+> Task :dev.galasa.plugin.common.impl:compileTestJava
+Caching disabled for task ':dev.galasa.plugin.common.impl:compileTestJava' because:
+  Build cache is disabled
+Task ':dev.galasa.plugin.common.impl:compileTestJava' is not up-to-date because:
+  Output property 'destinationDirectory' file /mnt/d/downloads/gradle/dev.galasa.plugin.common.impl/build/classes/java/test has been removed.
+  Output property 'destinationDirectory' file /mnt/d/downloads/gradle/dev.galasa.plugin.common.impl/build/classes/java/test/dev has been removed.
+  Output property 'destinationDirectory' file /mnt/d/downloads/gradle/dev.galasa.plugin.common.impl/build/classes/java/test/dev/galasa has been removed.
+The input changes require a full rebuild for incremental task ':dev.galasa.plugin.common.impl:compileTestJava'.
+Full recompilation is required because no incremental change information is available. This is usually caused by clean builds or changing compiler arguments.
+Compiling with JDK Java compiler API.
+Created classpath snapshot for incremental compilation in 0.049 secs. 1 duplicate classes found in classpath (see all with --debug).
+:dev.galasa.plugin.common.impl:compileTestJava (Thread[Execution worker for ':',5,main]) completed. Took 4.042 secs.
+:dev.galasa.plugin.common.impl:processTestResources (Thread[Execution worker for ':',5,main]) started.
+
+> Task :dev.galasa.plugin.common.impl:processTestResources NO-SOURCE
+file or directory '/mnt/d/downloads/gradle/dev.galasa.plugin.common.impl/src/test/resources', not found
+Skipping task ':dev.galasa.plugin.common.impl:processTestResources' as it has no source files and no previous output files.
+:dev.galasa.plugin.common.impl:processTestResources (Thread[Execution worker for ':',5,main]) completed. Took 0.013 secs.
+:dev.galasa.plugin.common.impl:testClasses (Thread[Execution worker for ':',5,main]) started.
+
+> Task :dev.galasa.plugin.common.impl:testClasses
+Skipping task ':dev.galasa.plugin.common.impl:testClasses' as it has no actions.
+:dev.galasa.plugin.common.impl:testClasses (Thread[Execution worker for ':',5,main]) completed. Took 0.0 secs.
+:dev.galasa.plugin.common.impl:test (Thread[Execution worker for ':',5,main]) started.
+
+> Task :dev.galasa.plugin.common.impl:test
+Caching disabled for task ':dev.galasa.plugin.common.impl:test' because:
+  Build cache is disabled
+Task ':dev.galasa.plugin.common.impl:test' is not up-to-date because:
+  Output property 'binaryResultsDirectory' file /mnt/d/downloads/gradle/dev.galasa.plugin.common.impl/build/test-results/test/binary has been removed.
+  Output property 'binaryResultsDirectory' file /mnt/d/downloads/gradle/dev.galasa.plugin.common.impl/build/test-results/test/binary/output.bin has been removed.
+  Output property 'binaryResultsDirectory' file /mnt/d/downloads/gradle/dev.galasa.plugin.common.impl/build/test-results/test/binary/output.bin.idx has been removed.
+Starting process 'Gradle Test Executor 4'. Working directory: /mnt/d/downloads/gradle/dev.galasa.plugin.common.impl Command: /usr/lib/jvm/java-11-openjdk-amd64/bin/java -Dorg.gradle.native=false -javaagent:build/tmp/expandedArchives/org.jacoco.agent-0.8.6.jar_a26f6511a7813217be4cd6439d66563b/jacocoagent.jar=destfile=build/jacoco/test.exec,append=true,inclnolocationclasses=false,dumponexit=true,output=file,jmx=false @/tmp/gradle-worker-classpath10067033511208530445txt -Xmx512m -Dfile.encoding=UTF-8 -Duser.country -Duser.language=en -Duser.variant -ea worker.org.gradle.process.internal.worker.GradleWorkerMain 'Gradle Test Executor 4'
+Successfully started process 'Gradle Test Executor 4'
+
+Gradle Test Executor 4 started executing tests.
+Gradle Test Executor 4 finished executing tests.
+
+> Task :dev.galasa.plugin.common.impl:test
+Finished generating test XML results (0.029 secs) into: /mnt/d/downloads/gradle/dev.galasa.plugin.common.impl/build/test-results/test
+Generating HTML test report...
+Finished generating test html results (0.236 secs) into: /mnt/d/downloads/gradle/dev.galasa.plugin.common.impl/build/reports/tests/test
+:dev.galasa.plugin.common.impl:test (Thread[Execution worker for ':',5,main]) completed. Took 13.816 secs.
+:dev.galasa.plugin.common.impl:check (Thread[Execution worker for ':',5,main]) started.
+
+> Task :dev.galasa.plugin.common.impl:check
+Skipping task ':dev.galasa.plugin.common.impl:check' as it has no actions.
+:dev.galasa.plugin.common.impl:check (Thread[Execution worker for ':',5,main]) completed. Took 0.0 secs.
+:dev.galasa.plugin.common.impl:build (Thread[Execution worker for ':',5,main]) started.
+
+> Task :dev.galasa.plugin.common.impl:build
+Skipping task ':dev.galasa.plugin.common.impl:build' as it has no actions.
+:dev.galasa.plugin.common.impl:build (Thread[Execution worker for ':',5,main]) completed. Took 0.0 secs.
+:dev.galasa.plugin.common.test:javadoc (Thread[Execution worker for ':',5,main]) started.
+
+> Task :dev.galasa.plugin.common.test:javadoc
+Caching disabled for task ':dev.galasa.plugin.common.test:javadoc' because:
+  Build cache is disabled
+Task ':dev.galasa.plugin.common.test:javadoc' is not up-to-date because:
+  Output property 'outputDirectory' file /mnt/d/downloads/gradle/dev.galasa.plugin.common.test/build/docs/javadoc has been removed.
+  Output property 'outputDirectory' file /mnt/d/downloads/gradle/dev.galasa.plugin.common.test/build/docs/javadoc/allclasses-index.html has been removed.
+  Output property 'outputDirectory' file /mnt/d/downloads/gradle/dev.galasa.plugin.common.test/build/docs/javadoc/allclasses.html has been removed.
+Starting process 'command '/usr/lib/jvm/java-11-openjdk-amd64/bin/javadoc''. Working directory: /mnt/d/downloads/gradle/dev.galasa.plugin.common.test Command: /usr/lib/jvm/java-11-openjdk-amd64/bin/javadoc @/mnt/d/downloads/gradle/dev.galasa.plugin.common.test/build/tmp/javadoc/javadoc.options
+Successfully started process 'command '/usr/lib/jvm/java-11-openjdk-amd64/bin/javadoc''
+:dev.galasa.plugin.common.test:javadoc (Thread[Execution worker for ':',5,main]) completed. Took 8.796 secs.
+:dev.galasa.plugin.common.test:javadocJar (Thread[Execution worker for ':',5,main]) started.
+
+> Task :dev.galasa.plugin.common.test:javadocJar
+Caching disabled for task ':dev.galasa.plugin.common.test:javadocJar' because:
+  Build cache is disabled
+Task ':dev.galasa.plugin.common.test:javadocJar' is not up-to-date because:
+  Output property 'archiveFile' file /mnt/d/downloads/gradle/dev.galasa.plugin.common.test/build/libs/dev.galasa.plugin.common.test-0.36.0-javadoc.jar has been removed.
+:dev.galasa.plugin.common.test:javadocJar (Thread[Execution worker for ':',5,main]) completed. Took 1.395 secs.
+:dev.galasa.plugin.common.test:sourcesJar (Thread[Execution worker for ':',5,main]) started.
+
+> Task :dev.galasa.plugin.common.test:sourcesJar
+file or directory '/mnt/d/downloads/gradle/dev.galasa.plugin.common.test/src/main/resources', not found
+Caching disabled for task ':dev.galasa.plugin.common.test:sourcesJar' because:
+  Build cache is disabled
+Task ':dev.galasa.plugin.common.test:sourcesJar' is not up-to-date because:
+  Output property 'archiveFile' file /mnt/d/downloads/gradle/dev.galasa.plugin.common.test/build/libs/dev.galasa.plugin.common.test-0.36.0-sources.jar has been removed.
+file or directory '/mnt/d/downloads/gradle/dev.galasa.plugin.common.test/src/main/resources', not found
+:dev.galasa.plugin.common.test:sourcesJar (Thread[Execution worker for ':',5,main]) completed. Took 0.452 secs.
+:dev.galasa.plugin.common.test:assemble (Thread[Execution worker for ':',5,main]) started.
+
+> Task :dev.galasa.plugin.common.test:assemble
+Skipping task ':dev.galasa.plugin.common.test:assemble' as it has no actions.
+:dev.galasa.plugin.common.test:assemble (Thread[Execution worker for ':',5,main]) completed. Took 0.0 secs.
+:dev.galasa.plugin.common.test:compileTestJava (Thread[Execution worker for ':',5,main]) started.
+
+> Task :dev.galasa.plugin.common.test:compileTestJava NO-SOURCE
+file or directory '/mnt/d/downloads/gradle/dev.galasa.plugin.common.test/src/test/java', not found
+Skipping task ':dev.galasa.plugin.common.test:compileTestJava' as it has no source files and no previous output files.
+:dev.galasa.plugin.common.test:compileTestJava (Thread[Execution worker for ':',5,main]) completed. Took 0.018 secs.
+:dev.galasa.plugin.common.test:processTestResources (Thread[Execution worker for ':',5,main]) started.
+
+> Task :dev.galasa.plugin.common.test:processTestResources NO-SOURCE
+file or directory '/mnt/d/downloads/gradle/dev.galasa.plugin.common.test/src/test/resources', not found
+Skipping task ':dev.galasa.plugin.common.test:processTestResources' as it has no source files and no previous output files.
+:dev.galasa.plugin.common.test:processTestResources (Thread[Execution worker for ':',5,main]) completed. Took 0.008 secs.
+:dev.galasa.plugin.common.test:testClasses (Thread[Execution worker for ':',5,main]) started.
+
+> Task :dev.galasa.plugin.common.test:testClasses UP-TO-DATE
+Skipping task ':dev.galasa.plugin.common.test:testClasses' as it has no actions.
+:dev.galasa.plugin.common.test:testClasses (Thread[Execution worker for ':',5,main]) completed. Took 0.0 secs.
+:dev.galasa.plugin.common.test:test (Thread[Execution worker for ':',5,main]) started.
+
+> Task :dev.galasa.plugin.common.test:test NO-SOURCE
+file or directory '/mnt/d/downloads/gradle/dev.galasa.plugin.common.test/build/classes/java/test', not found
+Skipping task ':dev.galasa.plugin.common.test:test' as it has no source files and no previous output files.
+:dev.galasa.plugin.common.test:test (Thread[Execution worker for ':',5,main]) completed. Took 0.013 secs.
+:dev.galasa.plugin.common.test:check (Thread[Execution worker for ':',5,main]) started.
+
+> Task :dev.galasa.plugin.common.test:check UP-TO-DATE
+Skipping task ':dev.galasa.plugin.common.test:check' as it has no actions.
+:dev.galasa.plugin.common.test:check (Thread[Execution worker for ':',5,main]) completed. Took 0.0 secs.
+:dev.galasa.plugin.common.test:build (Thread[Execution worker for ':',5,main]) started.
+
+> Task :dev.galasa.plugin.common.test:build
+Skipping task ':dev.galasa.plugin.common.test:build' as it has no actions.
+:dev.galasa.plugin.common.test:build (Thread[Execution worker for ':',5,main]) completed. Took 0.0 secs.
+
+BUILD SUCCESSFUL in 1m 10s
+34 actionable tasks: 34 executed

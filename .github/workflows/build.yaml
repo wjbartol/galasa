@@ -101,26 +101,33 @@ jobs:
       - name: Build Wrapping source code
         if: github.event_name == 'push'
         run : |
-          mvn deploy \
+          mvn -X deploy \
           -Dgalasa.source.repo=https://repo.maven.apache.org/maven2/ \
           -Dgalasa.central.repo=https://repo.maven.apache.org/maven2/ \
           -Dgalasa.release.repo=file:${{ github.workspace }}/repo \
           -Dgalasa.jacocoEnabled=true \
           -Dgalasa.isRelease=true \
           --batch-mode --errors --fail-at-end \
-          --settings /home/runner/work/gpg/settings.xml
+          --settings /home/runner/work/gpg/settings.xml 2>&1 | tee build.log
 
       - name: Building Wrapping source code
         if: github.event_name == 'workflow_dispatch' # Use the input values provided by the workflow dispatch.
         run: |
-          mvn deploy \
+          mvn -X deploy \
           -Dgalasa.source.repo=https://repo.maven.apache.org/maven2/ \
           -Dgalasa.central.repo=https://repo.maven.apache.org/maven2/ \
           -Dgalasa.release.repo=file:${{ github.workspace }}/repo \
           -Dgalasa.jacocoEnabled=${{ inputs.jacocoEnabled }} \
           -Dgalasa.isRelease=${{ inputs.isMainOrRelease }} \
           --batch-mode --errors --fail-at-end \
-          --settings /home/runner/work/gpg/settings.xml
+          --settings /home/runner/work/gpg/settings.xml 2>&1 | tee build.log
+
+      - name: Upload Maven Build Log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: maven-build-log
+          path: build.log
 
       - name: Login to Github Container Registry
         uses: docker/login-action@v3

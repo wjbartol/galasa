@@ -74,13 +74,20 @@ jobs:
       
       - name: Building Wrapping source code
         run: |
-          mvn deploy \
+          mvn -X deploy \
           -Dgpg.skip=true \
           -Dgalasa.source.repo=https://repo.maven.apache.org/maven2/ \
           -Dgalasa.central.repo=https://repo.maven.apache.org/maven2/ \
           -Dgalasa.release.repo=file:${{ github.workspace }}/repo \
           --batch-mode --errors --fail-at-end \
-          --settings  /home/runner/work/gpg/settings.xml
+          --settings  /home/runner/work/gpg/settings.xml 2>&1 | tee build.log
+
+      - name: Upload Maven Build Log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: maven-build-log
+          path: build.log
       
       - name: Extract metadata for Wrapping image
         id: metadata

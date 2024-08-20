@@ -101,6 +101,7 @@ jobs:
       - name: Build Wrapping source code
         if: github.event_name == 'push'
         run : |
+          set -o pipefail
           mvn -X deploy \
           -Dgalasa.source.repo=https://repo.maven.apache.org/maven2/ \
           -Dgalasa.central.repo=https://repo.maven.apache.org/maven2/ \
@@ -113,6 +114,7 @@ jobs:
       - name: Building Wrapping source code
         if: github.event_name == 'workflow_dispatch' # Use the input values provided by the workflow dispatch.
         run: |
+          set -o pipefail
           mvn -X deploy \
           -Dgalasa.source.repo=https://repo.maven.apache.org/maven2/ \
           -Dgalasa.central.repo=https://repo.maven.apache.org/maven2/ \

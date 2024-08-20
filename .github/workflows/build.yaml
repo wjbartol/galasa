@@ -58,7 +58,7 @@ jobs:
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v3
         with:
-          gradle-version: 6.9.2
+          gradle-version: 8.9
 
       - name: Build Gradle source code
         if: github.event_name == 'push'

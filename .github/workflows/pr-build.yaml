@@ -36,8 +36,8 @@ jobs:
       - name: Build Gradle source code 
         run: |
           gradle check publish --info > build.log 2>&1 \
-          -PsourceMaven=https://repo.maven.apache.org/maven2/ 
-          -PcentralMaven=https://repo.maven.apache.org/maven2/ 
+          -PsourceMaven=https://repo.maven.apache.org/maven2/ \
+          -PcentralMaven=https://repo.maven.apache.org/maven2/ \
           -PtargetMaven=${{ github.workspace }}/repo
   
       - name: Upload Gradle Build Log

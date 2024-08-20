@@ -44,7 +44,7 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: gradle-build-log
-          path: logs/build.log
+          path: build.log
 
       - name: Extract metadata for Gradle image
         id: metadata

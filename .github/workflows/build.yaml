@@ -83,13 +83,25 @@ jobs:
           ORG_GRADLE_PROJECT_signingKey: ${{ secrets.GPG_KEY }}
           ORG_GRADLE_PROJECT_signingPassword: ${{ secrets.GPG_PASSPHRASE }}
         run: |
-          gradle check publish \
+          gradle check publish --info > logs/build.log  2>&1 \
           -PsourceMaven=https://development.galasa.dev/${{ env.ARGO_APP_BRANCH }}/maven-repo/wrapping \
           -PcentralMaven=https://repo.maven.apache.org/maven2/ \
           -PtargetMaven=${{ github.workspace }}/repo \
           -PjacocoEnabled=${{ inputs.jacocoEnabled }} \
           -PisMainOrRelease=${{ inputs.isMainOrRelease }}
-          
+
+      - name: Upload Gradle Build Log
+        uses: actions/upload-artifact@v3
+        with:
+          name: gradle-build-log
+          path: logs/build.log
+
+      - name: Upload JUnit Test Report
+        uses: actions/upload-artifact@v3
+        with:
+          name: junit-test-report
+          path: build/reports/tests/*.html
+
       - name: Login to Github Container Registry
         uses: docker/login-action@v3
         with:

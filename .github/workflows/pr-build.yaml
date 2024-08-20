@@ -33,8 +33,9 @@ jobs:
         with:
           gradle-version: 6.9.2
 
-      - name: Build Gradle source code
+      - name: Build Gradle source code and Publish logs
         run: |
+          mkdir logs
           gradle check publish --info > logs/build.log  2>&1 \
           -PsourceMaven=https://repo.maven.apache.org/maven2/ 
           -PcentralMaven=https://repo.maven.apache.org/maven2/ 

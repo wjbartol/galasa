@@ -119,7 +119,7 @@ jobs:
           --settings /home/runner/work/gpg/settings.xml 2>&1 | tee galasa-bom-build.log
         
       - name: Upload Galasa BOM Build Log
-        if: always()
+        if: failure()
         uses: actions/upload-artifact@v4
         with:
           name: galasa-bom-build-log
@@ -144,7 +144,7 @@ jobs:
           --settings /home/runner/work/gpg/settings.xml 2>&1 | tee galasa-obr-build.log
     
       - name: Upload Galasa OBR Build Log
-        if: always()
+        if: failure()
         uses: actions/upload-artifact@v4
         with:
           name: galasa-obr-build-log
@@ -277,7 +277,7 @@ jobs:
           --settings  /home/runner/work/gpg/settings.xml 2>&1 | tee build.log
       
       - name: Upload javadoc site Build Log
-        if: always()
+        if: failure()
         uses: actions/upload-artifact@v4
         with:
           name: javadoc-site-build-log
@@ -436,7 +436,7 @@ jobs:
           --settings /home/runner/work/gpg/settings.xml 2>&1 | tee build.log
         
       - name: Upload galasa obr generic Build Log
-        if: always()
+        if: failure()
         uses: actions/upload-artifact@v4
         with:
           name: galasa-obr-generic-build-log
@@ -518,16 +518,16 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Triggering helm build (github.ref is main)
-        if: env.BRANCH == 'main'
-        env:
-          GH_TOKEN: ${{ secrets.GALASA_TEAM_GITHUB_TOKEN }}
-        run: |
-         gh workflow run build-helm.yaml --repo https://github.com/galasa-dev/automation --ref ${{ env.BRANCH }}
+      # - name: Triggering helm build (github.ref is main)
+      #   if: ${{env.BRANCH}} == 'main'
+      #   env:
+      #     GH_TOKEN: ${{ secrets.GALASA_TEAM_GITHUB_TOKEN }}
+      #   run: |
+      #    gh workflow run build-helm.yaml --repo https://github.com/galasa-dev/automation --ref ${{ env.BRANCH }}
         
       - name: Triggering cli build (github.ref is not main) 
-        if: env.BRANCH != 'main'
+        if: ${{env.BRANCH}} != 'main'
         env:
            GH_TOKEN: ${{ secrets.GALASA_TEAM_GITHUB_TOKEN }}
         run: |
-          gh workflow run build.yaml --repo https://github.com/galasa-dev/cli --ref ${{ env.BRANCH }}
+          gh workflow run build.yml --repo https://github.com/galasa-dev/cli --ref ${{ env.BRANCH }}

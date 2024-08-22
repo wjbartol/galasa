@@ -96,13 +96,21 @@ jobs:
         
       - name: Build Galasa BOM with maven
         run: |
+          set -o pipefail
           mvn -f ${{ github.workspace }}/obr/galasa-bom/pom.xml -X deploy \
           -Dgpg.skip=true \
           -Dgalasa.source.repo=https://development.galasa.dev/gh/maven-repo/managers \
           -Dgalasa.central.repo=https://repo.maven.apache.org/maven2/ \
           -Dgalasa.release.repo=file:${{ github.workspace }}/obr/repo \
           --batch-mode --errors --fail-at-end \
-          --settings /home/runner/work/gpg/settings.xml 
+          --settings /home/runner/work/gpg/settings.xml 2>&1 | tee galasa-bom-build.log
+
+      - name: Upload Galasa BOM Build Log
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: galasa-bom-build-log
+          path: galasa-bom-build.log
       
       - name:  Generate Galasa OBR
         run: |
@@ -114,13 +122,21 @@ jobs:
         
       - name: Build Galasa OBR with maven
         run: |
+          set -o pipefail
           mvn -f ${{ github.workspace }}/obr/dev.galasa.uber.obr/pom.xml -X deploy \
           -Dgpg.skip=true \
           -Dgalasa.source.repo=https://development.galasa.dev/gh/maven-repo/managers \
           -Dgalasa.central.repo=https://repo.maven.apache.org/maven2/ \
           -Dgalasa.release.repo=file:${{ github.workspace }}/obr/repo \
           --batch-mode --errors --fail-at-end \
-          --settings /home/runner/work/gpg/settings.xml 
+          --settings /home/runner/work/gpg/settings.xml 2>&1 | tee galasa-obr-build.log
+
+      - name: Upload Galasa OBR Build Log
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: galasa-obr-build-log
+          path: galasa-obr-build.log
       
       - name: Build OBR image for testing
         uses: docker/build-push-action@v5
@@ -213,13 +229,21 @@ jobs:
         
       - name: Build javadoc site using maven
         run: |
+          set -o pipefail
           mvn -f ${{ github.workspace }}/obr/javadocs/pom.xml -X deploy \
           -Dgpg.skip=true \
           -Dgalasa.source.repo=https://development.galasa.dev/gh/maven-repo/managers \
           -Dgalasa.central.repo=https://repo.maven.apache.org/maven2/ \
           -Dgalasa.release.repo=file:${{ github.workspace }}/obr/javadocs/docker/repo \
           -Dmaven.javadoc.failOnError=false --batch-mode --errors --fail-at-end \
-          --settings  /home/runner/work/gpg/settings.xml 
+          --settings  /home/runner/work/gpg/settings.xml 2>&1 | tee build.log
+        
+      - name: Upload javadoc site Build Log
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: javadoc-site-build-log
+          path: build.log
       
       - name: Build Javadoc site image for testing
         uses: docker/build-push-action@v5
@@ -287,13 +311,21 @@ jobs:
       - name: Build Galasa OBR generic pom.xml with maven
         working-directory: ${{ github.workspace }}/obr/obr-generic
         run: |
+         set -o pipefail
          mvn -f pom.xml -X process-sources \
          -Dgpg.skip=true \
          -Dgalasa.source.repo=https://development.galasa.dev/gh/maven-repo/obr \
          -Dgalasa.central.repo=https://repo.maven.apache.org/maven2/ \
          dev.galasa:galasa-maven-plugin:0.15.0:obrembedded \
          --batch-mode --errors --fail-at-end \
-         --settings settings.xml 
+         --settings settings.xml 2>&1 | build.log
+        
+      - name: Upload galasa obr generic Build Log
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: galasa-obr-generic-build-log
+          path: build.log
         
       - name: Build OBR generic image for testing
         uses: docker/build-push-action@v5

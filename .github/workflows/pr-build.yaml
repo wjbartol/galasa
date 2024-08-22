@@ -42,7 +42,7 @@ jobs:
       - name: Set up JDK
         uses: actions/setup-java@v4
         with:
-          java-version: '11'
+          java-version: '17'
           distribution: 'semeru'
           cache: maven
   
@@ -96,13 +96,13 @@ jobs:
         
       - name: Build Galasa BOM with maven
         run: |
-          mvn -f ${{ github.workspace }}/obr/galasa-bom/pom.xml deploy \
+          mvn -f ${{ github.workspace }}/obr/galasa-bom/pom.xml -X deploy \
           -Dgpg.skip=true \
           -Dgalasa.source.repo=https://development.galasa.dev/gh/maven-repo/managers \
           -Dgalasa.central.repo=https://repo.maven.apache.org/maven2/ \
           -Dgalasa.release.repo=file:${{ github.workspace }}/obr/repo \
           --batch-mode --errors --fail-at-end \
-          --settings /home/runner/work/gpg/settings.xml
+          --settings /home/runner/work/gpg/settings.xml 
       
       - name:  Generate Galasa OBR
         run: |
@@ -114,13 +114,13 @@ jobs:
         
       - name: Build Galasa OBR with maven
         run: |
-          mvn -f ${{ github.workspace }}/obr/dev.galasa.uber.obr/pom.xml deploy \
+          mvn -f ${{ github.workspace }}/obr/dev.galasa.uber.obr/pom.xml -X deploy \
           -Dgpg.skip=true \
           -Dgalasa.source.repo=https://development.galasa.dev/gh/maven-repo/managers \
           -Dgalasa.central.repo=https://repo.maven.apache.org/maven2/ \
           -Dgalasa.release.repo=file:${{ github.workspace }}/obr/repo \
           --batch-mode --errors --fail-at-end \
-          --settings /home/runner/work/gpg/settings.xml
+          --settings /home/runner/work/gpg/settings.xml 
       
       - name: Build OBR image for testing
         uses: docker/build-push-action@v5
@@ -164,7 +164,7 @@ jobs:
       - name: Set up JDK
         uses: actions/setup-java@v4
         with:
-          java-version: '18'
+          java-version: '17'
           distribution: 'semeru'
           cache: maven
       
@@ -213,13 +213,13 @@ jobs:
         
       - name: Build javadoc site using maven
         run: |
-          mvn -f ${{ github.workspace }}/obr/javadocs/pom.xml deploy \
+          mvn -f ${{ github.workspace }}/obr/javadocs/pom.xml -X deploy \
           -Dgpg.skip=true \
           -Dgalasa.source.repo=https://development.galasa.dev/gh/maven-repo/managers \
           -Dgalasa.central.repo=https://repo.maven.apache.org/maven2/ \
           -Dgalasa.release.repo=file:${{ github.workspace }}/obr/javadocs/docker/repo \
           -Dmaven.javadoc.failOnError=false --batch-mode --errors --fail-at-end \
-          --settings  /home/runner/work/gpg/settings.xml
+          --settings  /home/runner/work/gpg/settings.xml 
       
       - name: Build Javadoc site image for testing
         uses: docker/build-push-action@v5
@@ -276,17 +276,24 @@ jobs:
       - name: Display Galasa OBR generic pom.xml
         run: |
           cat ${{ github.workspace }}/obr/obr-generic/pom.xml
+      
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'semeru'
+          cache: maven
         
       - name: Build Galasa OBR generic pom.xml with maven
         working-directory: ${{ github.workspace }}/obr/obr-generic
         run: |
-         mvn -f pom.xml process-sources \
+         mvn -f pom.xml -X process-sources \
          -Dgpg.skip=true \
          -Dgalasa.source.repo=https://development.galasa.dev/gh/maven-repo/obr \
          -Dgalasa.central.repo=https://repo.maven.apache.org/maven2/ \
          dev.galasa:galasa-maven-plugin:0.15.0:obrembedded \
          --batch-mode --errors --fail-at-end \
-         --settings settings.xml
+         --settings settings.xml 
         
       - name: Build OBR generic image for testing
         uses: docker/build-push-action@v5

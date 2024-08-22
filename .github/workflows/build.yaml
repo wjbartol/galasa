@@ -124,6 +124,7 @@ jobs:
         with:
           name: galasa-bom-build-log
           path: galasa-bom-build.log
+          retention-days: 7
       
       - name:  Generate Galasa OBR
         run: |
@@ -149,6 +150,7 @@ jobs:
         with:
           name: galasa-obr-build-log
           path: galasa-obr-build.log
+          retention-days: 7
       
       - name: Login to Github Container Registry
         uses: docker/login-action@v3
@@ -282,6 +284,7 @@ jobs:
         with:
           name: javadoc-site-build-log
           path: build.log
+          retention-days: 7
       
       - name: Login to Github Container Registry
         uses: docker/login-action@v3
@@ -441,6 +444,7 @@ jobs:
         with:
           name: galasa-obr-generic-build-log
           path: build.log
+          retention-days: 7
 
       - name: Login to Github Container Registry
         uses: docker/login-action@v3

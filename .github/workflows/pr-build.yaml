@@ -51,40 +51,40 @@ jobs:
         run: |
           echo $GITHUB_SHA > ./obr.githash
 
-      # - name: Make secrets directory
-      #   run : |
-      #       mkdir /home/runner/work/secrets
+      - name: Make secrets directory
+        run : |
+            mkdir /home/runner/work/secrets
 
-      # - name: Copy settings.xml
-      #   env:
-      #       MAVEN_SETTINGS_XML: ${{ secrets.MAVEN_SETTINGS_XML }}
-      #   run : |
-      #       echo $MAVEN_SETTINGS_XML > /home/runner/work/secrets/settings.xml
+      - name: Copy settings.xml
+        env:
+            MAVEN_SETTINGS_XML: ${{ secrets.MAVEN_SETTINGS_XML }}
+        run : |
+            echo $MAVEN_SETTINGS_XML > /home/runner/work/secrets/settings.xml
       
-      # - name: Copy GPG passphrase
-      #   env:
-      #       GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
-      #   run : |
-      #       echo $GPG_PASSPHRASE > /home/runner/work/secrets/passphrase.file
+      - name: Copy GPG passphrase
+        env:
+            GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
+        run : |
+            echo $GPG_PASSPHRASE > /home/runner/work/secrets/passphrase.file
       
-      # - name: Copy GPG key
-      #   env:
-      #       GPG_KEY_BASE64: ${{ secrets.GPG_KEY }}
-      #   run : |
-      #       echo $GPG_KEY_BASE64 |  base64 --decode > /home/runner/work/secrets/galasa.gpg
+      - name: Copy GPG key
+        env:
+            GPG_KEY_BASE64: ${{ secrets.GPG_KEY }}
+        run : |
+            echo $GPG_KEY_BASE64 |  base64 --decode > /home/runner/work/secrets/galasa.gpg
             
-      # - name: Make GPG home directory and change permissions
-      #   run: |
-      #       mkdir /home/runner/work/gpg
-      #       chmod '700' /home/runner/work/gpg
+      - name: Make GPG home directory and change permissions
+        run: |
+            mkdir /home/runner/work/gpg
+            chmod '700' /home/runner/work/gpg
         
-      # - name: Import GPG
-      #   run: |
-      #       gpg --homedir /home/runner/work/gpg --pinentry-mode loopback --passphrase-file /home/runner/work/secrets/passphrase.file --import /home/runner/work/secrets/galasa.gpg
+      - name: Import GPG
+        run: |
+            gpg --homedir /home/runner/work/gpg --pinentry-mode loopback --passphrase-file /home/runner/work/secrets/passphrase.file --import /home/runner/work/secrets/galasa.gpg
         
-      # - name: Copy custom settings.xml
-      #   run: |
-      #       cp /home/runner/work/secrets/settings.xml /home/runner/work/gpg/settings.xml
+      - name: Copy custom settings.xml
+        run: |
+            cp /home/runner/work/secrets/settings.xml /home/runner/work/gpg/settings.xml
       
       - name:  Generate Galasa BOM
         run: |
@@ -96,14 +96,13 @@ jobs:
         
       - name: Build Galasa BOM with maven
         run: |
-          set -o pipefail
-          mvn -f ${{ github.workspace }}/obr/galasa-bom/pom.xml deploy --info \
+          mvn -f ${{ github.workspace }}/obr/galasa-bom/pom.xml -X deploy \
           -Dgpg.skip=true \
           -Dgalasa.source.repo=https://development.galasa.dev/gh/maven-repo/managers \
           -Dgalasa.central.repo=https://repo.maven.apache.org/maven2/ \
           -Dgalasa.release.repo=file:${{ github.workspace }}/obr/repo \
-          --batch-mode --errors --fail-at-end 2>&1 | tee bom-build.log
-        #  --settings /home/runner/work/gpg/settings.xml 
+          --batch-mode --errors --fail-at-end \
+          --settings /home/runner/work/gpg/settings.xml 
       
       - name:  Generate Galasa OBR
         run: |
@@ -115,14 +114,13 @@ jobs:
         
       - name: Build Galasa OBR with maven
         run: |
-          set -o pipefail
-          mvn -f ${{ github.workspace }}/obr/dev.galasa.uber.obr/pom.xml deploy --info \
+          mvn -f ${{ github.workspace }}/obr/dev.galasa.uber.obr/pom.xml -X deploy \
           -Dgpg.skip=true \
           -Dgalasa.source.repo=https://development.galasa.dev/gh/maven-repo/managers \
           -Dgalasa.central.repo=https://repo.maven.apache.org/maven2/ \
           -Dgalasa.release.repo=file:${{ github.workspace }}/obr/repo \
-          --batch-mode --errors --fail-at-end 2>&1 | tee obr-build.log
-        #  --settings /home/runner/work/gpg/settings.xml 
+          --batch-mode --errors --fail-at-end \
+          --settings /home/runner/work/gpg/settings.xml 
       
       - name: Build OBR image for testing
         uses: docker/build-push-action@v5
@@ -170,40 +168,40 @@ jobs:
           distribution: 'semeru'
           cache: maven
       
-      # - name: Make secrets directory
-      #   run : |
-      #       mkdir /home/runner/work/secrets
+      - name: Make secrets directory
+        run : |
+            mkdir /home/runner/work/secrets
 
-      # - name: Copy settings.xml 
-      #   env:
-      #     MAVEN_SETTINGS_XML: ${{ secrets.MAVEN_SETTINGS_XML }}
-      #   run : |
-      #     echo $MAVEN_SETTINGS_XML > /home/runner/work/secrets/settings.xml
+      - name: Copy settings.xml 
+        env:
+          MAVEN_SETTINGS_XML: ${{ secrets.MAVEN_SETTINGS_XML }}
+        run : |
+          echo $MAVEN_SETTINGS_XML > /home/runner/work/secrets/settings.xml
 
-      # - name: Copy GPG passphrase
-      #   env:
-      #     GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
-      #   run : |
-      #     echo $GPG_PASSPHRASE > /home/runner/work/secrets/passphrase.file
+      - name: Copy GPG passphrase
+        env:
+          GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
+        run : |
+          echo $GPG_PASSPHRASE > /home/runner/work/secrets/passphrase.file
 
-      # - name: Copy GPG key
-      #   env:
-      #     GPG_KEY_BASE64: ${{ secrets.GPG_KEY }}
-      #   run : |
-      #     echo $GPG_KEY_BASE64 |  base64 --decode > /home/runner/work/secrets/galasa.gpg
+      - name: Copy GPG key
+        env:
+          GPG_KEY_BASE64: ${{ secrets.GPG_KEY }}
+        run : |
+          echo $GPG_KEY_BASE64 |  base64 --decode > /home/runner/work/secrets/galasa.gpg
           
-      # - name: Make GPG home directory and change permissions
-      #   run: |
-      #     mkdir /home/runner/work/gpg
-      #     chmod '700' /home/runner/work/gpg
+      - name: Make GPG home directory and change permissions
+        run: |
+          mkdir /home/runner/work/gpg
+          chmod '700' /home/runner/work/gpg
 
-      # - name: Import GPG
-      #   run: |
-      #     gpg --homedir /home/runner/work/gpg --pinentry-mode loopback --passphrase-file /home/runner/work/secrets/passphrase.file --import /home/runner/work/secrets/galasa.gpg
+      - name: Import GPG
+        run: |
+          gpg --homedir /home/runner/work/gpg --pinentry-mode loopback --passphrase-file /home/runner/work/secrets/passphrase.file --import /home/runner/work/secrets/galasa.gpg
       
-      # - name: Copy custom settings.xml
-      #   run: |
-      #     cp /home/runner/work/secrets/settings.xml /home/runner/work/gpg/settings.xml
+      - name: Copy custom settings.xml
+        run: |
+          cp /home/runner/work/secrets/settings.xml /home/runner/work/gpg/settings.xml
           
       - name: Build Galasa Javadoc
         run: |
@@ -215,14 +213,13 @@ jobs:
         
       - name: Build javadoc site using maven
         run: |
-          set -o pipefail
-          mvn -f ${{ github.workspace }}/obr/javadocs/pom.xml deploy --info \
+          mvn -f ${{ github.workspace }}/obr/javadocs/pom.xml -X deploy \
           -Dgpg.skip=true \
           -Dgalasa.source.repo=https://development.galasa.dev/gh/maven-repo/managers \
           -Dgalasa.central.repo=https://repo.maven.apache.org/maven2/ \
           -Dgalasa.release.repo=file:${{ github.workspace }}/obr/javadocs/docker/repo \
-          -Dmaven.javadoc.failOnError=false --batch-mode --errors --fail-at-end 2>&1 | tee build.log
-       #   --settings  /home/runner/work/gpg/settings.xml 
+          -Dmaven.javadoc.failOnError=false --batch-mode --errors --fail-at-end \
+          --settings  /home/runner/work/gpg/settings.xml 
       
       - name: Build Javadoc site image for testing
         uses: docker/build-push-action@v5
@@ -246,7 +243,7 @@ jobs:
   build-obr-generic:
     name: Build OBR embedded and boot images using galasabld and maven
     runs-on: ubuntu-latest
-    # needs: [build-obr, build-obr-javadocs]
+    needs: [build-obr, build-obr-javadocs]
 
     steps:
       - name: Checkout Code
@@ -290,14 +287,13 @@ jobs:
       - name: Build Galasa OBR generic pom.xml with maven
         working-directory: ${{ github.workspace }}/obr/obr-generic
         run: |
-         set -o pipefail 
-         mvn -f pom.xml process-sources --info \
+         mvn -f pom.xml -X process-sources \
          -Dgpg.skip=true \
          -Dgalasa.source.repo=https://development.galasa.dev/gh/maven-repo/obr \
          -Dgalasa.central.repo=https://repo.maven.apache.org/maven2/ \
          dev.galasa:galasa-maven-plugin:0.15.0:obrembedded \
-         --batch-mode --errors --fail-at-end 2>&1 | tee build.log
-       #  --settings settings.xml 
+         --batch-mode --errors --fail-at-end \
+         --settings settings.xml 
         
       - name: Build OBR generic image for testing
         uses: docker/build-push-action@v5

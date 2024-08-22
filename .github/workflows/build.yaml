@@ -110,12 +110,20 @@ jobs:
         
       - name: Build Galasa BOM with maven
         run: |
-          mvn -f ${{ github.workspace }}/obr/galasa-bom/pom.xml deploy \
+          set -o pipefail
+          mvn -f ${{ github.workspace }}/obr/galasa-bom/pom.xml -X deploy \
           -Dgalasa.source.repo=https://development.galasa.dev/${{ env.ARGO_APP_BRANCH }}/maven-repo/managers \
           -Dgalasa.central.repo=https://repo.maven.apache.org/maven2/ \
           -Dgalasa.release.repo=file:${{ github.workspace }}/obr/repo \
           --batch-mode --errors --fail-at-end \
-          --settings /home/runner/work/gpg/settings.xml
+          --settings /home/runner/work/gpg/settings.xml 2>&1 | tee galasa-bom-build.log
+        
+      - name: Upload Galasa BOM Build Log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: galasa-bom-build-log
+          path: galasa-bom-build.log
       
       - name:  Generate Galasa OBR
         run: |
@@ -127,12 +135,20 @@ jobs:
         
       - name: Build Galasa OBR with maven
         run: |
-          mvn -f ${{ github.workspace }}/obr/dev.galasa.uber.obr/pom.xml deploy \
+          set -o pipefail
+          mvn -f ${{ github.workspace }}/obr/dev.galasa.uber.obr/pom.xml -X deploy \
           -Dgalasa.source.repo=https://development.galasa.dev/${{ env.ARGO_APP_BRANCH }}/maven-repo/managers \
           -Dgalasa.central.repo=https://repo.maven.apache.org/maven2/ \
           -Dgalasa.release.repo=file:${{ github.workspace }}/obr/repo \
           --batch-mode --errors --fail-at-end \
-          --settings /home/runner/work/gpg/settings.xml
+          --settings /home/runner/work/gpg/settings.xml 2>&1 | tee galasa-obr-build.log
+    
+      - name: Upload Galasa OBR Build Log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: galasa-obr-build-log
+          path: galasa-obr-build.log
       
       - name: Login to Github Container Registry
         uses: docker/login-action@v3
@@ -252,12 +268,20 @@ jobs:
         
       - name: Build javadoc site using maven
         run: |
-          mvn -f ${{ github.workspace }}/obr/javadocs/pom.xml deploy \
+          set -o pipefail
+          mvn -f ${{ github.workspace }}/obr/javadocs/pom.xml -X deploy \
           -Dgalasa.source.repo=https://development.galasa.dev/${{ env.ARGO_APP_BRANCH }}/maven-repo/managers \
           -Dgalasa.central.repo=https://repo.maven.apache.org/maven2/ \
           -Dgalasa.release.repo=file:${{ github.workspace }}/obr/javadocs/docker/repo \
           -Dmaven.javadoc.failOnError=false --batch-mode --errors --fail-at-end \
-          --settings  /home/runner/work/gpg/settings.xml
+          --settings  /home/runner/work/gpg/settings.xml 2>&1 | tee build.log
+      
+      - name: Upload javadoc site Build Log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: javadoc-site-build-log
+          path: build.log
       
       - name: Login to Github Container Registry
         uses: docker/login-action@v3
@@ -403,12 +427,20 @@ jobs:
       - name: Build Galasa OBR generic pom.xml with maven
         working-directory: ${{ github.workspace }}/obr/obr-generic
         run: |
-          mvn -f pom.xml process-sources \
+          set -o pipefail
+          mvn -f pom.xml -X process-sources \
           -Dgalasa.source.repo=https://development.galasa.dev/${{ env.ARGO_APP_BRANCH }}/maven-repo/obr \
           -Dgalasa.central.repo=https://repo.maven.apache.org/maven2/ \
           dev.galasa:galasa-maven-plugin:0.15.0:obrembedded \
           --batch-mode --errors --fail-at-end \
-          --settings /home/runner/work/gpg/settings.xml
+          --settings /home/runner/work/gpg/settings.xml 2>&1 | tee build.log
+        
+      - name: Upload galasa obr generic Build Log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: galasa-obr-generic-build-log
+          path: build.log
 
       - name: Login to Github Container Registry
         uses: docker/login-action@v3
@@ -479,3 +511,23 @@ jobs:
             tag=${{ env.BRANCH }}
             dockerRepository=${{ env.REGISTRY }}
             platform=x86_64
+
+  trigger-workflow:
+    name: Trigger workflow depending upon the branch
+    needs: [build-obr, build-obr-generic, build-obr-javadocs]
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Triggering helm build (github.ref is main)
+        if: env.BRANCH == 'main'
+        env:
+          GH_TOKEN: ${{ secrets.GALASA_TEAM_GITHUB_TOKEN }}
+        run: |
+         gh workflow run build-helm.yaml --repo https://github.com/galasa-dev/automation --ref ${{ env.BRANCH }}
+        
+      - name: Triggering cli build (github.ref is not main) 
+        if: env.BRANCH != 'main'
+        env:
+           GH_TOKEN: ${{ secrets.GALASA_TEAM_GITHUB_TOKEN }}
+        run: |
+          gh workflow run build.yaml --repo https://github.com/galasa-dev/cli --ref ${{ env.BRANCH }}

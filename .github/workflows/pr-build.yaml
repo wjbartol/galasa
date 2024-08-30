@@ -1,3 +1,8 @@
+#
+# Copyright contributors to the Galasa project
+#
+# SPDX-License-Identifier: EPL-2.0
+#
 name: PR build
 
 on:
@@ -28,6 +33,7 @@ jobs:
         run: |
           echo $GITHUB_SHA > ./maven.githash
       
+      # Copy secrets into files to use in workflow
       - name: Make secrets directory
         run : |
           mkdir /home/runner/work/secrets
@@ -69,8 +75,9 @@ jobs:
       
       - name: Building Maven source code
         run: |
-          mvn -f galasa-maven-plugin/pom.xml -X deploy -Dgpg.skip=true \
-          -Dgalasa.source.repo=https://development.galasa.dev/gh/maven-repo/gradle \
+          mvn -f galasa-maven-plugin/pom.xml deploy -X \
+          -Dgpg.skip=true \
+          -Dgalasa.source.repo=https://development.galasa.dev/main/maven-repo/gradle \
           -Dgalasa.central.repo=https://repo.maven.apache.org/maven2/ \
           -Dgalasa.release.repo=file:${{ github.workspace }}/repo \
           --batch-mode --errors --fail-at-end \

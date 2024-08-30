@@ -1,3 +1,8 @@
+#
+# Copyright contributors to the Galasa project
+#
+# SPDX-License-Identifier: EPL-2.0
+#
 name: Main build
 
 on:
@@ -9,7 +14,6 @@ env:
   REGISTRY: ghcr.io
   NAMESPACE: galasa-dev
   BRANCH: ${{ github.ref_name }}
-  ARGO_APP_BRANCH: gh # TODO: remove this parameter and just use env.BRANCH once we update development.galasa.dev/main with these workflows.
   ARGOCD_AUTH_TOKEN: ${{ secrets.ARGOCD_TOKEN }}
 
 jobs:
@@ -111,8 +115,8 @@ jobs:
       - name: Build Galasa BOM with maven
         run: |
           set -o pipefail
-          mvn -f ${{ github.workspace }}/obr/galasa-bom/pom.xml -X deploy \
-          -Dgalasa.source.repo=https://development.galasa.dev/${{ env.ARGO_APP_BRANCH }}/maven-repo/managers \
+          mvn -f obr/galasa-bom/pom.xml deploy -X \
+          -Dgalasa.source.repo=https://development.galasa.dev/${{ env.BRANCH }}/maven-repo/managers \
           -Dgalasa.central.repo=https://repo.maven.apache.org/maven2/ \
           -Dgalasa.release.repo=file:${{ github.workspace }}/obr/repo \
           --batch-mode --errors --fail-at-end \
@@ -137,8 +141,8 @@ jobs:
       - name: Build Galasa OBR with maven
         run: |
           set -o pipefail
-          mvn -f ${{ github.workspace }}/obr/dev.galasa.uber.obr/pom.xml -X deploy \
-          -Dgalasa.source.repo=https://development.galasa.dev/${{ env.ARGO_APP_BRANCH }}/maven-repo/managers \
+          mvn -f obr/dev.galasa.uber.obr/pom.xml deploy -X \
+          -Dgalasa.source.repo=https://development.galasa.dev/${{ env.BRANCH }}/maven-repo/managers \
           -Dgalasa.central.repo=https://repo.maven.apache.org/maven2/ \
           -Dgalasa.release.repo=file:${{ github.workspace }}/obr/repo \
           --batch-mode --errors --fail-at-end \
@@ -180,11 +184,11 @@ jobs:
       
       - name: Recycle OBR application in ArgoCD
         run: |
-          docker run --env ARGOCD_AUTH_TOKEN=${{ env.ARGOCD_AUTH_TOKEN }} --rm -v ${{ github.workspace }}:/var/workspace ghcr.io/galasa-dev/argocdcli:main app actions run ${{ env.ARGO_APP_BRANCH }}-maven-repos restart --kind Deployment --resource-name obr-${{ env.ARGO_APP_BRANCH }} --server argocd.galasa.dev
+          docker run --env ARGOCD_AUTH_TOKEN=${{ env.ARGOCD_AUTH_TOKEN }} --rm -v ${{ github.workspace }}:/var/workspace ghcr.io/galasa-dev/argocdcli:main app actions run ${{ env.BRANCH }}-maven-repos restart --kind Deployment --resource-name obr-${{ env.BRANCH }} --server argocd.galasa.dev
 
       - name: Wait for OBR application health in ArgoCD
         run: |
-          docker run --env ARGOCD_AUTH_TOKEN=${{ env.ARGOCD_AUTH_TOKEN }} --rm -v ${{ github.workspace }}:/var/workspace ghcr.io/galasa-dev/argocdcli:main app wait ${{ env.ARGO_APP_BRANCH }}-maven-repos --resource apps:Deployment:obr-${{ env.ARGO_APP_BRANCH }} --health --server argocd.galasa.dev
+          docker run --env ARGOCD_AUTH_TOKEN=${{ env.ARGOCD_AUTH_TOKEN }} --rm -v ${{ github.workspace }}:/var/workspace ghcr.io/galasa-dev/argocdcli:main app wait ${{ env.BRANCH }}-maven-repos --resource apps:Deployment:obr-${{ env.BRANCH }} --health --server argocd.galasa.dev
 
   build-obr-javadocs:
     name: Build OBR javadocs using galasabld image and maven
@@ -271,12 +275,13 @@ jobs:
       - name: Build javadoc site using maven
         run: |
           set -o pipefail
-          mvn -f ${{ github.workspace }}/obr/javadocs/pom.xml -X deploy \
-          -Dgalasa.source.repo=https://development.galasa.dev/${{ env.ARGO_APP_BRANCH }}/maven-repo/managers \
+          mvn -f obr/javadocs/pom.xml deploy -X \
+          -Dgalasa.source.repo=https://development.galasa.dev/${{ env.BRANCH }}/maven-repo/managers \
           -Dgalasa.central.repo=https://repo.maven.apache.org/maven2/ \
           -Dgalasa.release.repo=file:${{ github.workspace }}/obr/javadocs/docker/repo \
-          -Dmaven.javadoc.failOnError=false --batch-mode --errors --fail-at-end \
-          --settings  /home/runner/work/gpg/settings.xml 2>&1 | tee build.log
+          -Dmaven.javadoc.failOnError=false \
+          --batch-mode --errors --fail-at-end \
+          --settings /home/runner/work/gpg/settings.xml 2>&1 | tee build.log
       
       - name: Upload javadoc site Build Log
         if: failure()
@@ -311,11 +316,11 @@ jobs:
       
       - name: Recycle javadocsite application in ArgoCD
         run: |
-          docker run --env ARGOCD_AUTH_TOKEN=${{ env.ARGOCD_AUTH_TOKEN }} --rm -v ${{ github.workspace }}:/var/workspace ghcr.io/galasa-dev/argocdcli:main app actions run ${{ env.ARGO_APP_BRANCH }}-maven-repos restart --kind Deployment --resource-name javadocsite-${{ env.ARGO_APP_BRANCH }} --server argocd.galasa.dev
+          docker run --env ARGOCD_AUTH_TOKEN=${{ env.ARGOCD_AUTH_TOKEN }} --rm -v ${{ github.workspace }}:/var/workspace ghcr.io/galasa-dev/argocdcli:main app actions run ${{ env.BRANCH }}-maven-repos restart --kind Deployment --resource-name javadocsite-${{ env.BRANCH }} --server argocd.galasa.dev
       
       - name: Wait for javadocsite application health in ArgoCD
         run: |
-          docker run --env ARGOCD_AUTH_TOKEN=${{ env.ARGOCD_AUTH_TOKEN }} --rm -v ${{ github.workspace }}:/var/workspace ghcr.io/galasa-dev/argocdcli:main app wait ${{ env.ARGO_APP_BRANCH }}-maven-repos --resource apps:Deployment:javadocsite-${{ env.ARGO_APP_BRANCH }} --health --server argocd.galasa.dev
+          docker run --env ARGOCD_AUTH_TOKEN=${{ env.ARGOCD_AUTH_TOKEN }} --rm -v ${{ github.workspace }}:/var/workspace ghcr.io/galasa-dev/argocdcli:main app wait ${{ env.BRANCH }}-maven-repos --resource apps:Deployment:javadocsite-${{ env.BRANCH }} --health --server argocd.galasa.dev
       
       - name: Extract metadata for Javadoc Maven repo image
         id: metadata
@@ -338,11 +343,11 @@ jobs:
           
       - name: Recycle javadoc application in ArgoCD
         run: |
-          docker run --env ARGOCD_AUTH_TOKEN=${{ env.ARGOCD_AUTH_TOKEN }} --rm -v ${{ github.workspace }}:/var/workspace ghcr.io/galasa-dev/argocdcli:main app actions run ${{ env.ARGO_APP_BRANCH }}-maven-repos restart --kind Deployment --resource-name javadoc-${{ env.ARGO_APP_BRANCH }} --server argocd.galasa.dev
+          docker run --env ARGOCD_AUTH_TOKEN=${{ env.ARGOCD_AUTH_TOKEN }} --rm -v ${{ github.workspace }}:/var/workspace ghcr.io/galasa-dev/argocdcli:main app actions run ${{ env.BRANCH }}-maven-repos restart --kind Deployment --resource-name javadoc-${{ env.BRANCH }} --server argocd.galasa.dev
 
       - name: Wait for javadoc application health in ArgoCD
         run: |
-          docker run --env ARGOCD_AUTH_TOKEN=${{ env.ARGOCD_AUTH_TOKEN }} --rm -v ${{ github.workspace }}:/var/workspace ghcr.io/galasa-dev/argocdcli:main app wait ${{ env.ARGO_APP_BRANCH }}-maven-repos --resource apps:Deployment:javadoc-${{ env.ARGO_APP_BRANCH }} --health --server argocd.galasa.dev
+          docker run --env ARGOCD_AUTH_TOKEN=${{ env.ARGOCD_AUTH_TOKEN }} --rm -v ${{ github.workspace }}:/var/workspace ghcr.io/galasa-dev/argocdcli:main app wait ${{ env.BRANCH }}-maven-repos --resource apps:Deployment:javadoc-${{ env.BRANCH }} --health --server argocd.galasa.dev
 
   build-obr-generic:
     name: Build OBR embedded and boot images using galasabld and maven
@@ -431,8 +436,8 @@ jobs:
         working-directory: ${{ github.workspace }}/obr/obr-generic
         run: |
           set -o pipefail
-          mvn -f pom.xml -X process-sources \
-          -Dgalasa.source.repo=https://development.galasa.dev/${{ env.ARGO_APP_BRANCH }}/maven-repo/obr \
+          mvn -f pom.xml process-sources -X \
+          -Dgalasa.source.repo=https://development.galasa.dev/${{ env.BRANCH }}/maven-repo/obr \
           -Dgalasa.central.repo=https://repo.maven.apache.org/maven2/ \
           dev.galasa:galasa-maven-plugin:0.15.0:obrembedded \
           --batch-mode --errors --fail-at-end \
@@ -474,7 +479,7 @@ jobs:
           mkdir -p /opt/k8s/bin
           curl -L https://dl.k8s.io/release/v1.22.0/bin/linux/amd64/kubectl -o /opt/k8s/bin/kubectl
           chmod +x /opt/k8s/bin/kubectl
-          cp -vr /opt/k8s/bin/kubectl ${{github.workspace}}/obr/dockerfiles/trace-log4j.properties ${{github.workspace}}/obr/obr-generic/
+          cp -vr /opt/k8s/bin/kubectl ${{ github.workspace }}/obr/dockerfiles/trace-log4j.properties ${{ github.workspace }}/obr/obr-generic/
 
       - name: Extract metadata for Galasa boot embedded image
         id: metadata-boot-embedded
@@ -494,7 +499,7 @@ jobs:
           build-args: |
             tag=${{ env.BRANCH }}
             dockerRepository=${{ env.REGISTRY }}
-            jdkImage=harbor.galasa.dev/docker_proxy_cache/library/openjdk:11
+            jdkImage=harbor.galasa.dev/docker_proxy_cache/library/openjdk:17
 
       - name: Extract metadata for Galasa IBM boot embedded image
         id: metadata-ibm-boot-embedded
@@ -522,6 +527,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      # Todo: Uncomment to finish issue 1963.
       # - name: Triggering helm build (github.ref is main)
       #   if: ${{env.BRANCH}} == 'main'
       #   env:

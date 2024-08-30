@@ -42,7 +42,7 @@ jobs:
         with:
           repository: ${{ env.NAMESPACE }}/managers
           path: managers
-      
+
       - name: Set up JDK
         uses: actions/setup-java@v4
         with:

@@ -44,12 +44,12 @@ jobs:
           path: managers
 
       - name: Test
-        if: ${{ github.ref_name }} != 'main'
+        if: ${{ env.BRANCH != 'main' }}
         run : | 
           echo "not equal"
 
       - name: Test
-        if: ${{ github.ref_name }} == 'main'
+        if: ${{ env.BRANCH == 'main' }}
         run : | 
           echo "equal"
       

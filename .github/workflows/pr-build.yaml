@@ -326,7 +326,7 @@ jobs:
          -Dgalasa.central.repo=https://repo.maven.apache.org/maven2/ \
          dev.galasa:galasa-maven-plugin:0.15.0:obrembedded \
          --batch-mode --errors --fail-at-end \
-         --settings settings.xml 2>&1 | build.log
+         --settings settings.xml 2>&1 | tee build.log
         
       - name: Upload galasa obr generic Build Log
         if: failure()

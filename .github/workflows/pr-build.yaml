@@ -1,3 +1,8 @@
+#
+# Copyright contributors to the Galasa project
+#
+# SPDX-License-Identifier: EPL-2.0
+#
 name: PR build
 
 on:
@@ -10,7 +15,6 @@ env:
   IMAGE_TAG: main
   
 jobs:
-
   build-obr:
     name: Build OBR using galasabld image and maven
     runs-on: ubuntu-latest
@@ -88,7 +92,7 @@ jobs:
       
       - name:  Generate Galasa BOM
         run: |
-          docker run --rm -v ${{ github.workspace }}:/var/root/ ghcr.io/${{ env.NAMESPACE }}/galasabld-amd64:${{ env.IMAGE_TAG }} template --releaseMetadata var/root/framework/release.yaml --releaseMetadata /var/root/extensions/release.yaml --releaseMetadata /var/root/managers/release.yaml --releaseMetadata /var/root/obr/release.yaml --template /var/root/obr/galasa-bom/pom.template --output /var/root/obr/galasa-bom/pom.xml --bom
+          docker run --rm -v ${{ github.workspace }}:/var/root/ ghcr.io/galasa-dev/galasabld-amd64:main template --releaseMetadata var/root/framework/release.yaml --releaseMetadata /var/root/extensions/release.yaml --releaseMetadata /var/root/managers/release.yaml --releaseMetadata /var/root/obr/release.yaml --template /var/root/obr/galasa-bom/pom.template --output /var/root/obr/galasa-bom/pom.xml --bom
           
       - name: Display Galasa BOM pom.xml
         run: |
@@ -99,7 +103,7 @@ jobs:
           set -o pipefail
           mvn -f ${{ github.workspace }}/obr/galasa-bom/pom.xml -X deploy \
           -Dgpg.skip=true \
-          -Dgalasa.source.repo=https://development.galasa.dev/gh/maven-repo/managers \
+          -Dgalasa.source.repo=https://development.galasa.dev/main/maven-repo/managers \
           -Dgalasa.central.repo=https://repo.maven.apache.org/maven2/ \
           -Dgalasa.release.repo=file:${{ github.workspace }}/obr/repo \
           --batch-mode --errors --fail-at-end \
@@ -115,7 +119,7 @@ jobs:
       
       - name:  Generate Galasa OBR
         run: |
-          docker run --rm -v ${{ github.workspace }}:/var/root/ ghcr.io/${{ env.NAMESPACE }}/galasabld-amd64:${{ env.IMAGE_TAG }} template --releaseMetadata var/root/framework/release.yaml --releaseMetadata /var/root/extensions/release.yaml --releaseMetadata /var/root/managers/release.yaml --releaseMetadata /var/root/obr/release.yaml --template /var/root/obr/dev.galasa.uber.obr/pom.template --output /var/root/obr/dev.galasa.uber.obr/pom.xml --obr
+          docker run --rm -v ${{ github.workspace }}:/var/root/ ghcr.io/galasa-dev/galasabld-amd64:main template --releaseMetadata var/root/framework/release.yaml --releaseMetadata /var/root/extensions/release.yaml --releaseMetadata /var/root/managers/release.yaml --releaseMetadata /var/root/obr/release.yaml --template /var/root/obr/dev.galasa.uber.obr/pom.template --output /var/root/obr/dev.galasa.uber.obr/pom.xml --obr
           
       - name: Display Galasa OBR pom.xml
         run: |
@@ -124,9 +128,9 @@ jobs:
       - name: Build Galasa OBR with maven
         run: |
           set -o pipefail
-          mvn -f ${{ github.workspace }}/obr/dev.galasa.uber.obr/pom.xml -X deploy \
+          mvn -f obr/dev.galasa.uber.obr/pom.xml deploy -X \
           -Dgpg.skip=true \
-          -Dgalasa.source.repo=https://development.galasa.dev/gh/maven-repo/managers \
+          -Dgalasa.source.repo=https://development.galasa.dev/main/maven-repo/managers \
           -Dgalasa.central.repo=https://repo.maven.apache.org/maven2/ \
           -Dgalasa.release.repo=file:${{ github.workspace }}/obr/repo \
           --batch-mode --errors --fail-at-end \
@@ -223,7 +227,7 @@ jobs:
           
       - name: Build Galasa Javadoc
         run: |
-            docker run --rm -v ${{ github.workspace }}:/var/root/ ghcr.io/${{ env.NAMESPACE }}/galasabld-amd64:${{ env.IMAGE_TAG }} template --releaseMetadata var/root/framework/release.yaml --releaseMetadata /var/root/extensions/release.yaml --releaseMetadata /var/root/managers/release.yaml --releaseMetadata /var/root/obr/release.yaml --template /var/root/obr/javadocs/pom.template --output /var/root/obr/javadocs/pom.xml --javadoc
+            docker run --rm -v ${{ github.workspace }}:/var/root/ ghcr.io/galasa-dev/galasabld-amd64:main template --releaseMetadata var/root/framework/release.yaml --releaseMetadata /var/root/extensions/release.yaml --releaseMetadata /var/root/managers/release.yaml --releaseMetadata /var/root/obr/release.yaml --template /var/root/obr/javadocs/pom.template --output /var/root/obr/javadocs/pom.xml --javadoc
             
       - name: Display Galasa Javadoc pom.xml 
         run: |
@@ -232,13 +236,14 @@ jobs:
       - name: Build javadoc site using maven
         run: |
           set -o pipefail
-          mvn -f ${{ github.workspace }}/obr/javadocs/pom.xml -X deploy \
+          mvn -f obr/javadocs/pom.xml deploy -X \
           -Dgpg.skip=true \
-          -Dgalasa.source.repo=https://development.galasa.dev/gh/maven-repo/managers \
+          -Dgalasa.source.repo=https://development.galasa.dev/main/maven-repo/managers \
           -Dgalasa.central.repo=https://repo.maven.apache.org/maven2/ \
           -Dgalasa.release.repo=file:${{ github.workspace }}/obr/javadocs/docker/repo \
-          -Dmaven.javadoc.failOnError=false --batch-mode --errors --fail-at-end \
-          --settings  /home/runner/work/gpg/settings.xml 2>&1 | tee build.log
+          -Dmaven.javadoc.failOnError=false \
+          --batch-mode --errors --fail-at-end \
+          --settings /home/runner/work/gpg/settings.xml 2>&1 | tee build.log
         
       - name: Upload javadoc site Build Log
         if: failure()
@@ -298,7 +303,7 @@ jobs:
       
       - name:  Generate Galasa OBR generic pom.xml
         run: |
-          docker run --rm -v ${{ github.workspace }}:/var/root/ ghcr.io/${{ env.NAMESPACE }}/galasabld-amd64:${{ env.IMAGE_TAG }} template --releaseMetadata var/root/framework/release.yaml --releaseMetadata /var/root/extensions/release.yaml --releaseMetadata /var/root/managers/release.yaml --releaseMetadata /var/root/obr/release.yaml --template /var/root/obr/obr-generic/pom.template --output /var/root/obr/obr-generic/pom.xml --obr
+          docker run --rm -v ${{ github.workspace }}:/var/root/ ghcr.io/galasa-dev/galasabld-amd64:main template --releaseMetadata var/root/framework/release.yaml --releaseMetadata /var/root/extensions/release.yaml --releaseMetadata /var/root/managers/release.yaml --releaseMetadata /var/root/obr/release.yaml --template /var/root/obr/obr-generic/pom.template --output /var/root/obr/obr-generic/pom.xml --obr
            
       - name: Display Galasa OBR generic pom.xml
         run: |
@@ -315,9 +320,9 @@ jobs:
         working-directory: ${{ github.workspace }}/obr/obr-generic
         run: |
          set -o pipefail
-         mvn -f pom.xml -X process-sources \
+         mvn -f pom.xml process-sources -X \
          -Dgpg.skip=true \
-         -Dgalasa.source.repo=https://development.galasa.dev/gh/maven-repo/obr \
+         -Dgalasa.source.repo=https://development.galasa.dev/main/maven-repo/obr \
          -Dgalasa.central.repo=https://repo.maven.apache.org/maven2/ \
          dev.galasa:galasa-maven-plugin:0.15.0:obrembedded \
          --batch-mode --errors --fail-at-end \
@@ -344,7 +349,7 @@ jobs:
           mkdir -p /opt/k8s/bin
           curl -L https://dl.k8s.io/release/v1.22.0/bin/linux/amd64/kubectl -o /opt/k8s/bin/kubectl
           chmod +x /opt/k8s/bin/kubectl
-          cp -vr /opt/k8s/bin/kubectl ${{github.workspace}}/obr/dockerfiles/trace-log4j.properties ${{github.workspace}}/obr/obr-generic/
+          cp -vr /opt/k8s/bin/kubectl ${{ github.workspace }}/obr/dockerfiles/trace-log4j.properties ${{ github.workspace }}/obr/obr-generic/
 
       - name: Build Galasa boot embedded image for testing
         uses: docker/build-push-action@v5
@@ -353,11 +358,10 @@ jobs:
           file: obr/dockerfiles/dockerfile.bootembedded
           load: true
           tags: galasa-boot-embedded-x86_64:test
-          # These need updating...
           build-args: |
-            tag=${{env.IMAGE_TAG}}
-            dockerRepository=${{env.REGISTRY}}
-            jdkImage=harbor.galasa.dev/docker_proxy_cache/library/openjdk:11
+            tag=${{ env.IMAGE_TAG }}
+            dockerRepository=${{ env.REGISTRY }}
+            jdkImage=harbor.galasa.dev/docker_proxy_cache/library/openjdk:17
 
       - name: Build Galasa IBM boot embedded image for testing
         uses: docker/build-push-action@v5
@@ -366,8 +370,7 @@ jobs:
            file: obr/dockerfiles/dockerfile.ibmbootembedded
            load: true
            tags: galasa-ibm-boot-embedded-x86_64:test
-           # These need updating...
            build-args: |
-             tag=${{env.IMAGE_TAG}}
-             dockerRepository=${{env.REGISTRY}}
+             tag=${{ env.IMAGE_TAG }}
+             dockerRepository=${{ env.REGISTRY }}
              platform=x86_64

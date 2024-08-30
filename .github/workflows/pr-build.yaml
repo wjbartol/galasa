@@ -42,6 +42,16 @@ jobs:
         with:
           repository: ${{ env.NAMESPACE }}/managers
           path: managers
+
+      - name: Test
+        if: ${{ github.ref_name }} != 'main'
+        run : | 
+          echo "not equal"
+
+      - name: Test
+        if: ${{ github.ref_name }} == 'main'
+        run : | 
+          echo "equal"
       
       - name: Set up JDK
         uses: actions/setup-java@v4

@@ -172,7 +172,24 @@ function get_galasabld_binary_location {
     if [ $ARCHITECTURE == "x86_64" ]; then
         export ARCHITECTURE="amd64"
     fi
-    export GALASA_BUILD_TOOL_NAME=galasabld-darwin-${ARCHITECTURE}
+
+    raw_os=$(uname -s) # eg: "Darwin"
+    os=""
+    case $raw_os in
+        Darwin*)
+            os="darwin"
+            ;;
+        Windows*)
+            os="windows"
+            ;;
+        Linux*)
+            os="linux"
+            ;;
+        *)
+            error "Failed to recognise which operating system is in use. $raw_os"
+            exit 1
+    esac
+    export GALASA_BUILD_TOOL_NAME=galasabld-${os}-${ARCHITECTURE}
 
     # Favour the galasabld tool if it's on the path, else use a locally-built version or fail if not available.
     GALASABLD_ON_PATH=$(which galasabld)

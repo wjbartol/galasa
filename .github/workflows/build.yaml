@@ -53,7 +53,6 @@ jobs:
         with:
           java-version: '17'
           distribution: 'semeru'
-          cache: maven
 
       # The githash is added to the development Maven registry to show what commit level it contains
       - name: Print githash

@@ -164,7 +164,7 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
     
       - name: Extract metadata for OBR image
-        id: metadata
+        id: metadata-obr
         uses: docker/metadata-action@9ec57ed1fcdbf14dcef7dfbe97b2010124a938b7
         with:
           images: ${{ env.REGISTRY }}/${{ env.NAMESPACE }}/obr-maven-artefacts
@@ -176,8 +176,8 @@ jobs:
           context: obr
           file: obr/dockerfiles/dockerfile.obr
           push: true
-          tags: ${{ steps.metadata.outputs.tags }}
-          labels: ${{ steps.metadata.outputs.labels }}
+          tags: ${{ steps.metadata-obr.outputs.tags }}
+          labels: ${{ steps.metadata-obr.outputs.labels }}
           build-args: |
             dockerRepository=${{ env.REGISTRY }}
             tag=${{ env.BRANCH }}
@@ -210,7 +210,7 @@ jobs:
           make all
 
       - name: Extract metadata for OBR and galasabld image
-        id: metadata
+        id: metadata-obr-galasabld
         uses: docker/metadata-action@9ec57ed1fcdbf14dcef7dfbe97b2010124a938b7
         with:
           images: ${{ env.REGISTRY }}/${{ env.NAMESPACE }}/obr-and-galasabld-executable
@@ -222,8 +222,8 @@ jobs:
           context: buildutils
           file: obr/dockerfiles/dockerfile.obrgalasabld
           push: true
-          tags: ${{ steps.metadata.outputs.tags }}
-          labels: ${{ steps.metadata.outputs.labels }}
+          tags: ${{ steps.metadata-obr-galasabld.outputs.tags }}
+          labels: ${{ steps.metadata-obr-galasabld.outputs.labels }}
           build-args: |
             dockerRepository=${{ env.REGISTRY }}
             tag=${{ env.BRANCH }}

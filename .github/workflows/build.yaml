@@ -62,7 +62,6 @@ jobs:
         with:
           java-version: '17'
           distribution: 'semeru'
-          cache: maven
   
       - name: Print githash
         working-directory: obr
@@ -227,7 +226,6 @@ jobs:
         with:
           java-version: '17'
           distribution: 'semeru'
-          cache: maven
       
       - name: Make secrets directory
         run : |
@@ -387,7 +385,6 @@ jobs:
         with:
           java-version: '17'
           distribution: 'semeru'
-          cache: maven
 
       - name: Make secrets directory
         run : |

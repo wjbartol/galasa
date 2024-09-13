@@ -170,7 +170,7 @@ jobs:
           images: ${{ env.REGISTRY }}/${{ env.NAMESPACE }}/obr-maven-artefacts
   
       - name: Build and push OBR image 
-        id: build
+        id: build-obr
         uses: docker/build-push-action@v5
         with:
           context: obr
@@ -216,7 +216,7 @@ jobs:
           images: ${{ env.REGISTRY }}/${{ env.NAMESPACE }}/obr-and-galasabld-executable
   
       - name: Build and push OBR and galasabld image 
-        id: build
+        id: build-obr-galasabld
         uses: docker/build-push-action@v5
         with:
           context: buildutils

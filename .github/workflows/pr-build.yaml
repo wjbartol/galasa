@@ -257,7 +257,7 @@ jobs:
           context: obr
           file: obr/dockerfiles/dockerfile.javadocsite
           load: true
-          tags: javadocsite:test
+          tags: javadoc-site:test
 
       - name: Build Javadoc Maven repo image for testing
         uses: docker/build-push-action@v5

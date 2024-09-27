@@ -557,8 +557,8 @@ jobs:
             dockerRepository=${{ env.REGISTRY }}
             platform=x86_64
 
-  trigger-workflow:
-    name: Trigger workflow depending upon the branch
+  trigger-next-workflows:
+    name: Trigger next workflows in the build chain
     needs: [build-obr, build-obr-generic, build-obr-javadocs]
     runs-on: ubuntu-latest
 
@@ -576,3 +576,9 @@ jobs:
            GH_TOKEN: ${{ secrets.GALASA_TEAM_GITHUB_TOKEN }}
         run: |
           gh workflow run build.yml --repo https://github.com/galasa-dev/cli --ref ${{ env.BRANCH }}
+
+      - name: Triggering simplatform build
+        env:
+           GH_TOKEN: ${{ secrets.GALASA_TEAM_GITHUB_TOKEN }}
+        run: |
+          gh workflow run build.yaml --repo https://github.com/galasa-dev/simplatform --ref ${{ env.BRANCH }}

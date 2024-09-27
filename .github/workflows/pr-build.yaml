@@ -115,8 +115,8 @@ jobs:
 
     steps:
       - name: Report failure in workflow to Slack
-        env: 
+        env:
           SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
         run : |
-          docker run --rm -v ${{ github.workspace }}:/var/workspace ghcr.io/galasa-dev/galasabld-ibm:main slackpost workflows --repo "wrapping" --workflowName "${{ github.workflow }}" --workflowRunNum "${{ github.run_number }}" --ref "${{ env.BRANCH }}" --hook "${{ env.SLACK_WEBHOOK }}"
+          docker run --rm -v ${{ github.workspace }}:/var/workspace ghcr.io/galasa-dev/galasabld-ibm:main slackpost workflows --repo "wrapping" --workflowName "${{ github.workflow }}" --workflowRunNum "${{ github.run_id }}" --ref "${{ env.BRANCH }}" --hook "${{ env.SLACK_WEBHOOK }}"
 

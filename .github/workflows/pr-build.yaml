@@ -105,3 +105,18 @@ jobs:
           build-args: |
             dockerRepository=ghcr.io
             baseVersion=latest
+
+  report-failure:
+    name: Report failure in workflow
+    runs-on: ubuntu-latest
+    # needs: [log-github-ref, build-wrapping, trigger-gradle-workflow]
+    needs: build-wrapping
+    # if: failure()
+
+    steps:
+      - name: Report failure in workflow to Slack
+        env: 
+          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+        run : |
+          docker run --rm -v ${{ github.workspace }}:/var/workspace ghcr.io/galasa-dev/galasabld-ibm:main slackpost workflows --repo "wrapping" --workflowName "${{ github.workflow }}" --workflowRunNum "${{ github.run_number }}" --ref "${{ env.BRANCH }}" --hook "${{ env.SLACK_WEBHOOK }}"
+

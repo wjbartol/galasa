@@ -36,6 +36,7 @@ jobs:
   log-github-ref:
     name: Log the GitHub ref this workflow is running on (Branch or tag that received dispatch)
     runs-on: ubuntu-latest
+    
     steps:
       - name: Log GitHub ref of workflow
         run: |
@@ -44,6 +45,9 @@ jobs:
   build-wrapping:
     name: Build Wrapping source code and Docker image for development Maven registry
     runs-on: ubuntu-latest
+    permissions:
+      packages: write
+
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4

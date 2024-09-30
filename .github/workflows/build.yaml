@@ -45,8 +45,6 @@ jobs:
   build-wrapping:
     name: Build Wrapping source code and Docker image for development Maven registry
     runs-on: ubuntu-latest
-    permissions:
-      packages: write
 
     steps:
       - name: Checkout Code

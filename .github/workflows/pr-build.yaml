@@ -91,7 +91,7 @@ jobs:
         with:
           registry: ${{ env.REGISTRY }}
           username: galasa-team
-          password: ${{ secrets.GALASA_TEAM_GITHUB_TOKEN }}
+          password: ${{ secrets.GALASA_TEAM_WRITE_PACKAGES_TOKEN }}
       
       - name: Extract metadata for Wrapping image
         id: metadata

@@ -85,6 +85,13 @@ jobs:
           -Dgalasa.release.repo=file:${{ github.workspace }}/repo \
           --batch-mode --errors --fail-at-end \
           --settings /home/runner/work/gpg/settings.xml 
+
+      - name: Login to Github Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: galasa-team
+          password: ${{ secrets.GALASA_TEAM_GITHUB_TOKEN }}
       
       - name: Extract metadata for Wrapping image
         id: metadata
@@ -99,7 +106,8 @@ jobs:
         with:
           context: .
           file: dockerfiles/dockerfile.wrapping
-          push: false
+          # push: false
+          push: true
           tags: ${{ steps.metadata.outputs.tags }}
           labels: ${{ steps.metadata.outputs.labels }}
           build-args: |

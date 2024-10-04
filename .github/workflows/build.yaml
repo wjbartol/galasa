@@ -349,7 +349,7 @@ jobs:
           file: obr/dockerfiles/dockerfile.javadocsite
           push: true
           tags: ${{ steps.metadata-javadoc-site.outputs.tags }}
-          labels: ${{ steps.metadata-javado-csite.outputs.labels }}
+          labels: ${{ steps.metadata-javadoc-site.outputs.labels }}
       
       - name: Recycle javadocsite application in ArgoCD
         run: |

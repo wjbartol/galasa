@@ -4,8 +4,8 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>dev.galasa</groupId>
-	<artifactId>galasa-wrapping-parent</artifactId>
-	<version>0.37.0</version>
+	<artifactId>dev.galasa.wrapping.parent</artifactId>
+	<version>0.38.0</version>
 	<packaging>pom</packaging>
 
 	<name>Galasa OSGi Wrapping</name>
@@ -33,7 +33,7 @@
 		<module>com.jcraft.jsch</module>
 		<module>com.google.gson</module>
 		<module>jakarta.transaction</module>
-		<module>io.grpc.java</module>
+		<module>dev.galasa.wrapping.io.grpc.java</module>
 		<module>kafka.clients</module>
 	</modules>
 

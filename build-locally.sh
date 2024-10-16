@@ -104,8 +104,19 @@ function check_secrets {
         error "Not all secrets found have been audited"
         exit 1  
     fi
-    sed -i '' '/[ ]*"generated_at": ".*",/d' .secrets.baseline
     success "secrets audit complete"
+
+    h2 "Removing the timestamp from the secrets baseline file so it doesn't always cause a git change."
+    mkdir -p temp
+    rc=$? 
+    check_exit_code $rc "Failed to create a temporary folder"
+    cat .secrets.baseline | grep -v "generated_at" > temp/.secrets.baseline.temp
+    rc=$? 
+    check_exit_code $rc "Failed to create a temporary file with no timestamp inside"
+    mv temp/.secrets.baseline.temp .secrets.baseline
+    rc=$? 
+    check_exit_code $rc "Failed to overwrite the secrets baseline with one containing no timestamp inside."
+    success "secrets baseline timestamp content has been removed ok"
 }
 
 #-----------------------------------------------------------------------------------------                   
@@ -186,6 +197,11 @@ info "Using command: $cmd"
 $cmd 2>&1 >> ${log_file}
 rc=$? ; if [[ "${rc}" != "0" ]]; then error "Failed to build ${project}" ; info "See log file at ${log_file}" ; exit 1 ; fi
 success "Built OK"
+
+h2 "Listing dependencies..."
+mvn dependency:tree > $BASEDIR/temp/dependencies.txt
+rc=$? ; if [[ "${rc}" != "0" ]]; then error "Failed to list dependencies ${project}" ; info "See log file at ${log_file}" ; exit 1 ; fi
+success "Dependencies listed here: $BASEDIR/temp/dependencies.txt"
 
 check_secrets
 

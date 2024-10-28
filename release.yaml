@@ -98,8 +98,8 @@ external:
     isolated: true
 
   - group: dev.galasa
-    artifact: io.grpc.java
-    version: 1.60.0
+    artifact: dev.galasa.wrapping.io.grpc.java
+    version: 0.38.0
     obr: true
     mvp: true
     isolated: true

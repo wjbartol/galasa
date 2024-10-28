@@ -273,6 +273,7 @@ external:
     version: 2.0
     obr: true
     isolated: true
+    mvp: true
 
   - group: org.bouncycastle
     artifact: bcpkix-jdk18on

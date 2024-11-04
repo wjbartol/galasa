@@ -3,7 +3,7 @@ This repository wraps Galasa dependencies that are not in an OSGI bundle into OS
 
 ## Documentation
 
-More information can be found on the [Galasa Homepage](https://galasa.dev). Questions related to the usage of Galasa can be posted on [Galasa Slack channel](https://galasa.slack.com).
+More information can be found on the [Galasa Homepage](https://galasa.dev). Questions related to the usage of Galasa can be posted on [Galasa Slack channel](https://galasa.slack.com)
 
 ## Where can I get the latest release?
 

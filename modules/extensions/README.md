@@ -1,5 +1,5 @@
 # Galasa Extensions
-This respository contains implementations of extensions that are required by the Galasa infrastructure, including RAS (ResultArchiveStore), etcd and CouchDB databases for storing test information.
+This respository contains implementations of extensions that are required by the Galasa infrastructure, including RAS (ResultArchiveStore), etcd and CouchDB databases for storing test information. 
 
 ## Documentation
 

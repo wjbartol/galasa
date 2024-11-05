@@ -29,6 +29,12 @@ dependencies {
     compileOnly 'io.swagger.codegen.v3:swagger-codegen-cli:3.0.41'
 }
 
+// A task 'allDeps' will get dependency reports on all the sub-projects
+// gradle -q allDeps
+subprojects {
+    task allDeps(type: DependencyReportTask) {}
+}
+
 allprojects {
    tasks.withType(Javadoc) {
       options.addStringOption('Xdoclint:none', '-quiet')

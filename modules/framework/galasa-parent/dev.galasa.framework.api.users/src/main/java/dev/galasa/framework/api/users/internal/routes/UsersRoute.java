@@ -35,8 +35,6 @@ public class UsersRoute extends BaseRoute {
     // Regex to match endpoint /users and /users/
     private static final String path = "\\/?";
 
-    public static final String QUERY_PARAMETER_LOGIN_ID_VALUE_MYSELF = "me";
-
     private Environment env;
     private IAuthStoreService authStoreService;
     private BeanTransformer beanTransformer ;
@@ -88,7 +86,7 @@ public class UsersRoute extends BaseRoute {
 
         JwtWrapper jwtWrapper = new JwtWrapper(request, env);
 
-        if (loginId.equals("me")) {
+        if (loginId.equals(UsersServlet.QUERY_PARAMETER_LOGIN_ID_VALUE_MYSELF)) {
             loginId = jwtWrapper.getUsername();
         }
 

@@ -80,7 +80,7 @@ public class RunArtifactsDownloadRoute extends RunArtifactsRoute {
 
     @Override
     public HttpServletResponse handleGetRequest(String pathInfo, QueryParameters queryParams,HttpServletRequest req, HttpServletResponse response) throws ServletException, IOException, FrameworkException {
-        Matcher matcher = this.getPath().matcher(pathInfo);
+        Matcher matcher = this.getPathRegex().matcher(pathInfo);
         matcher.matches();
         String runId = matcher.group(1);
         String artifactPath = matcher.group(2);

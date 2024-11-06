@@ -36,15 +36,16 @@ public abstract class BaseRoute implements IRoute {
 
 	private final ResponseBuilder responseBuilder ;
 
-    private final Pattern path;
+    private final Pattern pathRegex;
 
     public BaseRoute(ResponseBuilder responseBuilder, String path) {
-        this.path = Pattern.compile(path);
+        this.pathRegex = Pattern.compile(path);
 		this.responseBuilder = responseBuilder;
     }
 
-    public Pattern getPath() {
-        return path;
+    @Override
+    public Pattern getPathRegex() {
+        return pathRegex;
     }
 
 	public ResponseBuilder getResponseBuilder() {

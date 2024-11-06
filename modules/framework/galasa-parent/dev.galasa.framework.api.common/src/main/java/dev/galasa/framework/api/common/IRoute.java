@@ -21,7 +21,7 @@ import dev.galasa.framework.spi.FrameworkException;
  * Route paths represent the regex patterns that are used to match request paths against.
  */
 public interface IRoute {
-    Pattern getPath();
+    Pattern getPathRegex();
 
     HttpServletResponse handleGetRequest(String pathInfo, QueryParameters queryParams, HttpServletRequest request, HttpServletResponse response)
         throws ServletException, IOException, FrameworkException;

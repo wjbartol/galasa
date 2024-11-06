@@ -50,7 +50,7 @@ public class AuthTokensDetailsRoute extends BaseRoute {
     private String getTokenIdFromUrl(String pathInfo) throws InternalServletException {
         try {
             // The URL path is '/auth/tokens/{tokenid}' so we'll grab the {tokenid} part of the path
-            Matcher matcher = this.getPath().matcher(pathInfo);
+            Matcher matcher = this.getPathRegex().matcher(pathInfo);
             matcher.matches();
             return matcher.group(1);
         } catch (Exception ex) {

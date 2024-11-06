@@ -13,6 +13,7 @@ dependencies {
     implementation project(':dev.galasa.framework')
     implementation project(':dev.galasa.framework.api.beans')
     implementation project(':dev.galasa.framework.api.common')
+    implementation project(':dev.galasa.framework.auth.spi')
 
     implementation 'org.apache.commons:commons-lang3:3.14.0'
 
@@ -20,6 +21,7 @@ dependencies {
     compileOnly 'org.apache.tomcat:annotations-api:6.0.53'
     
     testImplementation(testFixtures(project(':dev.galasa.framework.api.common')))
+    testImplementation(testFixtures(project(':dev.galasa.framework.auth.spi')))
 }
 
 // Note: These values are consumed by the parent build process

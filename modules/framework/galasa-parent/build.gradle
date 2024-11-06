@@ -58,7 +58,7 @@ subprojects {
 // Download the Dex gRPC API .proto file
 //----------------------------------------------------------
 def dexVersion = "v2.38.0"
-def protoDirPath = "$rootDir/dev.galasa.framework.api.authentication/src/main/proto"
+def protoDirPath = "$rootDir/dev.galasa.framework.auth.spi/src/main/proto"
 def protoDir = new File(protoDirPath)
 def dexProtoFile = new File("$protoDirPath/dex.proto")
 task downloadDexProto() {

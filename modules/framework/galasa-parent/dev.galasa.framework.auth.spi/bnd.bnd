@@ -1,0 +1,6 @@
+-snapshot ${tstamp}
+Bundle-Name: Galasa Auth SPI
+Export-Package: dev.galasa.framework.auth.spi*,com.coreos.dex.api*;
+Import-Package: dev.galasa.framework.api.common*,\
+                *
+

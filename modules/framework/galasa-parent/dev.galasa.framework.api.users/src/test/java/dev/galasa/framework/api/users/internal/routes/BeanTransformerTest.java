@@ -19,7 +19,8 @@ import org.junit.Test;
 
 import dev.galasa.framework.api.beans.generated.FrontEndClient;
 import dev.galasa.framework.api.beans.generated.UserData;
-import dev.galasa.framework.api.common.mocks.*;
+import dev.galasa.framework.auth.spi.mocks.MockFrontEndClient;
+import dev.galasa.framework.auth.spi.mocks.MockUser;
 import dev.galasa.framework.spi.auth.*;
 
 

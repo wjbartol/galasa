@@ -41,6 +41,15 @@ framework:
     isolated:     false
     codecoverage: true
 
+  - artifact: dev.galasa.framework.auth.spi
+    version: 0.38.0
+    obr:          true
+    mvp:          false
+    bom:          false
+    javadoc:      true
+    isolated:     true
+    codecoverage: true
+
   - artifact: dev.galasa.framework.docker.controller
     version: 0.34.0
     obr:          true

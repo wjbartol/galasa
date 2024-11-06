@@ -20,15 +20,17 @@ import dev.galasa.framework.api.common.BaseServletTest;
 import dev.galasa.framework.api.common.EnvironmentVariables;
 import dev.galasa.framework.api.common.HttpMethod;
 import dev.galasa.framework.api.common.InternalUser;
-import dev.galasa.framework.api.common.mocks.MockAuthStoreService;
 import dev.galasa.framework.api.common.mocks.MockEnvironment;
 import dev.galasa.framework.api.common.mocks.MockFramework;
-import dev.galasa.framework.api.common.mocks.MockFrontEndClient;
 import dev.galasa.framework.api.common.mocks.MockHttpServletRequest;
 import dev.galasa.framework.api.common.mocks.MockHttpServletResponse;
 import dev.galasa.framework.api.common.mocks.MockTimeService;
-import dev.galasa.framework.api.common.mocks.MockUser;
 import dev.galasa.framework.api.users.mocks.MockUsersServlet;
+import dev.galasa.framework.auth.spi.internal.AuthService;
+import dev.galasa.framework.auth.spi.mocks.MockAuthStoreService;
+import dev.galasa.framework.auth.spi.mocks.MockDexGrpcClient;
+import dev.galasa.framework.auth.spi.mocks.MockFrontEndClient;
+import dev.galasa.framework.auth.spi.mocks.MockUser;
 import dev.galasa.framework.spi.auth.IInternalUser;
 
 public class UsersDeleteRouteTest extends BaseServletTest {
@@ -45,7 +47,6 @@ public class UsersDeleteRouteTest extends BaseServletTest {
         MockEnvironment env = new MockEnvironment();
         MockTimeService mockTimeService = new MockTimeService(Instant.now());
         MockAuthStoreService authStoreService = new MockAuthStoreService(mockTimeService);
-        MockFramework framework = new MockFramework(authStoreService);
 
         String baseUrl = "http://my.server/api";
 
@@ -53,7 +54,7 @@ public class UsersDeleteRouteTest extends BaseServletTest {
 
         env.setenv(EnvironmentVariables.GALASA_USERNAME_CLAIMS, "preferred_username");
         env.setenv(EnvironmentVariables.GALASA_EXTERNAL_API_URL,baseUrl);
-        MockUsersServlet servlet = new MockUsersServlet(framework, env);
+        MockUsersServlet servlet = new MockUsersServlet(new AuthService(authStoreService, null), env);
 
         MockHttpServletRequest mockRequest = new MockHttpServletRequest("/" + userNumber, headerMap);
         mockRequest.setMethod(HttpMethod.DELETE.toString());
@@ -77,7 +78,6 @@ public class UsersDeleteRouteTest extends BaseServletTest {
         MockEnvironment env = new MockEnvironment();
         MockTimeService mockTimeService = new MockTimeService(Instant.now());
         MockAuthStoreService authStoreService = new MockAuthStoreService(mockTimeService);
-        MockFramework framework = new MockFramework(authStoreService);
 
         String baseUrl = "http://my.server/api";
 
@@ -85,7 +85,7 @@ public class UsersDeleteRouteTest extends BaseServletTest {
 
         env.setenv(EnvironmentVariables.GALASA_USERNAME_CLAIMS, "preferred_username");
         env.setenv(EnvironmentVariables.GALASA_EXTERNAL_API_URL,baseUrl);
-        MockUsersServlet servlet = new MockUsersServlet(framework, env);
+        MockUsersServlet servlet = new MockUsersServlet(new AuthService(authStoreService, null), env);
 
         MockHttpServletRequest mockRequest = new MockHttpServletRequest("/" + userNumber, headerMap);
         mockRequest.setMethod(HttpMethod.DELETE.toString());
@@ -117,7 +117,7 @@ public class UsersDeleteRouteTest extends BaseServletTest {
 
         env.setenv(EnvironmentVariables.GALASA_USERNAME_CLAIMS, "preferred_username");
         env.setenv(EnvironmentVariables.GALASA_EXTERNAL_API_URL,baseUrl);
-        MockUsersServlet servlet = new MockUsersServlet(framework, env);
+        MockUsersServlet servlet = new MockUsersServlet(new AuthService(authStoreService, null), env);
 
         MockHttpServletRequest mockRequest = new MockHttpServletRequest("/" + userNumber, headerMap);
         mockRequest.setMethod(HttpMethod.DELETE.toString());
@@ -146,15 +146,15 @@ public class UsersDeleteRouteTest extends BaseServletTest {
         MockEnvironment env = new MockEnvironment();
         MockTimeService mockTimeService = new MockTimeService(Instant.now());
         MockAuthStoreService authStoreService = new MockAuthStoreService(mockTimeService);
-        MockFramework framework = new MockFramework(authStoreService);
+
+        MockDexGrpcClient mockDexGrpcClient = new MockDexGrpcClient("http://my-issuer");
 
         String baseUrl = "http://my.server/api";
-
         String userNumber = "docid";
 
         env.setenv(EnvironmentVariables.GALASA_USERNAME_CLAIMS, "preferred_username");
         env.setenv(EnvironmentVariables.GALASA_EXTERNAL_API_URL,baseUrl);
-        MockUsersServlet servlet = new MockUsersServlet(framework, env);
+        MockUsersServlet servlet = new MockUsersServlet(new AuthService(authStoreService, mockDexGrpcClient), env);
 
         MockHttpServletRequest mockRequest = new MockHttpServletRequest("/" + userNumber, headerMap);
         mockRequest.setMethod(HttpMethod.DELETE.toString());
@@ -173,6 +173,7 @@ public class UsersDeleteRouteTest extends BaseServletTest {
 
         assertThat(servletResponse.getStatus()).isEqualTo(204);
         assertThat(authStoreService.getUser(userNumber)).isNull();
+        assertThat(authStoreService.getTokensByLoginId("user-1")).hasSize(0);
     }
 
 

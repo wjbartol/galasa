@@ -47,7 +47,8 @@ public class UsersServlet extends BaseServlet {
 
         AuthServiceFactory factory = new AuthServiceFactory(framework, env);
         IAuthService authService = factory.getAuthService();
-        addRoute(new UsersRoute(getResponseBuilder(), env, authService.getAuthStoreService()));
+        addRoute(new UsersRoute(getResponseBuilder(), env, authService));
+        addRoute(new UsersDeleteRoute(getResponseBuilder(), env, authService));
 
         logger.info("Galasa Users API initialised");
     }

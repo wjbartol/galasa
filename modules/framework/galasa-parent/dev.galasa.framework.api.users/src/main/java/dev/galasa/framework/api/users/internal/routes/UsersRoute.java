@@ -23,6 +23,7 @@ import dev.galasa.framework.api.common.ResponseBuilder;
 import dev.galasa.framework.api.common.Environment;
 import dev.galasa.framework.api.common.EnvironmentVariables;
 import dev.galasa.framework.api.users.UsersServlet;
+import dev.galasa.framework.auth.spi.IAuthService;
 import dev.galasa.framework.api.common.JwtWrapper;
 
 import dev.galasa.framework.spi.FrameworkException;
@@ -40,10 +41,10 @@ public class UsersRoute extends BaseRoute {
     private BeanTransformer beanTransformer ;
 
     public UsersRoute(ResponseBuilder responseBuilder, Environment env,
-            IAuthStoreService authStoreService) {
+            IAuthService authService) {
         super(responseBuilder, path);
         this.env = env;
-        this.authStoreService = authStoreService;
+        this.authStoreService = authService.getAuthStoreService();
 
         String baseServletUrl = env.getenv(EnvironmentVariables.GALASA_EXTERNAL_API_URL);
 

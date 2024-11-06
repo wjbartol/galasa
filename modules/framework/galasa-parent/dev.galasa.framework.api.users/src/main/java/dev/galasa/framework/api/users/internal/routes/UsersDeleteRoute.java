@@ -22,6 +22,7 @@ import dev.galasa.framework.api.common.InternalServletException;
 import dev.galasa.framework.api.common.QueryParameters;
 import dev.galasa.framework.api.common.ResponseBuilder;
 import dev.galasa.framework.api.common.ServletError;
+import dev.galasa.framework.auth.spi.IAuthService;
 import dev.galasa.framework.spi.FrameworkException;
 import dev.galasa.framework.spi.auth.AuthStoreException;
 import dev.galasa.framework.spi.auth.IAuthStoreService;
@@ -34,18 +35,20 @@ public class UsersDeleteRoute extends BaseRoute{
 
     private Environment env;
     private IAuthStoreService authStoreService;
+    private IAuthService authService;
     private BeanTransformer beanTransformer;
     private Pattern pathPattern;
 
     public UsersDeleteRoute(ResponseBuilder responseBuilder, Environment env,
-            IAuthStoreService authStoreService) {
+            IAuthService authService) {
         super(responseBuilder, path);
         this.env = env;
-        this.authStoreService = authStoreService;
-
+        this.authService = authService;
+        
         String baseServletUrl = env.getenv(EnvironmentVariables.GALASA_EXTERNAL_API_URL);
-
+        
         this.beanTransformer = new BeanTransformer(baseServletUrl);
+        this.authStoreService = authService.getAuthStoreService();
         this.pathPattern = getPath();
     }
 
@@ -99,8 +102,7 @@ public class UsersDeleteRoute extends BaseRoute{
             //Need to delete access tokens of a user if we delete the user
             List<IInternalAuthToken> tokens = authStoreService.getTokensByLoginId(loginId);
             for (IInternalAuthToken token : tokens) {
-                authStoreService.deleteToken(token.getTokenId());
-                
+                authService.revokeToken(token.getTokenId());
             }
 
             logger.info("A user with the given loginId was found OK");

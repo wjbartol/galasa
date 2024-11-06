@@ -28,6 +28,7 @@ import dev.galasa.framework.api.common.EnvironmentVariables;
 import dev.galasa.framework.api.common.SystemEnvironment;
 import dev.galasa.framework.auth.spi.AuthServiceFactory;
 import dev.galasa.framework.auth.spi.IAuthService;
+import dev.galasa.framework.auth.spi.IAuthServiceFactory;
 import dev.galasa.framework.spi.IFramework;
 import dev.galasa.framework.spi.utils.ITimeService;
 import dev.galasa.framework.spi.utils.SystemTimeService;
@@ -51,6 +52,8 @@ public class AuthenticationServlet extends BaseServlet {
     protected ITimeService timeService = new SystemTimeService();
     protected IOidcProvider oidcProvider;
 
+    private IAuthServiceFactory factory;
+
     @Override
     public void init() throws ServletException {
         logger.info("Galasa Authentication API initialising");
@@ -61,7 +64,10 @@ public class AuthenticationServlet extends BaseServlet {
 
         initialiseDexClients(dexIssuerUrl);
 
-        AuthServiceFactory factory = new AuthServiceFactory(framework, env);
+        if (factory == null) {
+            factory = new AuthServiceFactory(framework, env);
+        }
+
         IAuthService authService = factory.getAuthService();
         addRoute(new AuthRoute(getResponseBuilder(), oidcProvider, authService, env));
         addRoute(new AuthClientsRoute(getResponseBuilder(), authService));
@@ -70,6 +76,10 @@ public class AuthenticationServlet extends BaseServlet {
         addRoute(new AuthTokensDetailsRoute(getResponseBuilder(), authService));
 
         logger.info("Galasa Authentication API initialised");
+    }
+
+    protected void setAuthServiceFactory(IAuthServiceFactory factory) {
+        this.factory = factory;
     }
 
     /**

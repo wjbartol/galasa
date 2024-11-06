@@ -12,10 +12,10 @@ import dev.galasa.framework.api.common.EnvironmentVariables;
 import dev.galasa.framework.api.common.ResponseBuilder;
 import dev.galasa.framework.api.common.mocks.MockEnvironment;
 import dev.galasa.framework.api.common.mocks.MockFramework;
-import dev.galasa.framework.auth.spi.AuthServiceFactory;
 import dev.galasa.framework.auth.spi.IAuthService;
 import dev.galasa.framework.auth.spi.IDexGrpcClient;
 import dev.galasa.framework.auth.spi.internal.AuthService;
+import dev.galasa.framework.auth.spi.mocks.MockAuthServiceFactory;
 import dev.galasa.framework.auth.spi.mocks.MockDexGrpcClient;
 import dev.galasa.framework.spi.IFramework;
 
@@ -51,7 +51,7 @@ public class MockAuthenticationServlet extends AuthenticationServlet {
         this.framework = framework;
 
         IAuthService authService = new AuthService(framework.getAuthStoreService(), dexGrpcClient);
-        AuthServiceFactory.setAuthService(authService);
+        setAuthServiceFactory(new MockAuthServiceFactory(authService));
         setResponseBuilder(new ResponseBuilder(env));
     }
 

@@ -79,6 +79,14 @@ public interface IAuthStoreService {
     IUser getUserByLoginId(String loginId) throws AuthStoreException;
 
     /**
+     * Retrieves a user record in the users store's database.
+     *
+     * @param userNumber    the ID of the user record to retrieve
+     * @throws AuthStoreException if there is an issue accessing the users store.
+     */
+    IUser getUser(String userNumber) throws AuthStoreException;
+
+    /**
      * Updates a user record in the users store's database.
      *
      * @param user    The user that needs to be updated

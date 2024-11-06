@@ -1,3 +1,8 @@
+/*
+ * Copyright contributors to the Galasa project
+ *
+ * SPDX-License-Identifier: EPL-2.0
+ */
 package dev.galasa.framework.api.users.internal.routes;
 
 import java.util.List;
@@ -14,11 +19,9 @@ import dev.galasa.framework.api.common.BaseRoute;
 import dev.galasa.framework.api.common.Environment;
 import dev.galasa.framework.api.common.EnvironmentVariables;
 import dev.galasa.framework.api.common.InternalServletException;
-import dev.galasa.framework.api.common.JwtWrapper;
 import dev.galasa.framework.api.common.QueryParameters;
 import dev.galasa.framework.api.common.ResponseBuilder;
 import dev.galasa.framework.api.common.ServletError;
-import dev.galasa.framework.api.users.UsersServlet;
 import dev.galasa.framework.spi.FrameworkException;
 import dev.galasa.framework.spi.auth.AuthStoreException;
 import dev.galasa.framework.spi.auth.IAuthStoreService;
@@ -43,7 +46,7 @@ public class UsersDeleteRoute extends BaseRoute{
         String baseServletUrl = env.getenv(EnvironmentVariables.GALASA_EXTERNAL_API_URL);
 
         this.beanTransformer = new BeanTransformer(baseServletUrl);
-        this.pathPattern = Pattern.compile(path);
+        this.pathPattern = getPath();
     }
 
     @Override
@@ -56,31 +59,24 @@ public class UsersDeleteRoute extends BaseRoute{
 
         logger.info("handleDeleteRequest() entered");
 
-        String loginId = validateAndFetchLoginId(request, pathInfo);
-        deleteUser(loginId);
+        String userNumber = extractUserNumberFromUrl(request, pathInfo);
+        IUser user = authStoreService.getUser(userNumber);
+
+        deleteUser(user);
 
         logger.info("handleDeleteRequest() exiting");
         return getResponseBuilder().buildResponse(request, response, HttpServletResponse.SC_NO_CONTENT);
     }
 
-    private String validateAndFetchLoginId(HttpServletRequest request, String pathInfo) throws InternalServletException{
-
-        JwtWrapper jwtWrapper = new JwtWrapper(request, env);
+    private String extractUserNumberFromUrl(HttpServletRequest request, String pathInfo) throws InternalServletException{
 
         try{
 
             Matcher matcher = pathPattern.matcher(pathInfo);
             matcher.matches();
 
-            String loginId = matcher.group(1);
-            
-            // Checking for 'me' keyword if someone wants to delete themselves from an ecosystem
-            // To be made admin only operation once we have RBAC ready
-            if(loginId.equals(UsersServlet.QUERY_PARAMETER_LOGIN_ID_VALUE_MYSELF)){
-                loginId = jwtWrapper.getUsername();
-            }
-
-            return loginId;
+            String userNumber = matcher.group(1);
+            return userNumber;
 
         }catch(Exception ex){
             ServletError error = new ServletError(GAL5085_FAILED_TO_GET_LOGIN_ID_FROM_URL);
@@ -89,25 +85,26 @@ public class UsersDeleteRoute extends BaseRoute{
 
     }
 
-    private void deleteUser(String loginId) throws AuthStoreException, InternalServletException{
-
-        //Need to delete access tokens of a user if we delete the user
-        List<IInternalAuthToken> tokens = authStoreService.getTokensByLoginId(loginId);
-        for (IInternalAuthToken token : tokens) {
-            authStoreService.deleteToken(token.getTokenId());
-        }
+    private void deleteUser(IUser user) throws AuthStoreException, InternalServletException{
 
         try{
 
-            IUser userToBeDeleted = authStoreService.getUserByLoginId(loginId);
-
-            if(userToBeDeleted == null){
+            if(user == null){
                 ServletError error = new ServletError(GAL5083_ERROR_USER_NOT_FOUND);
                 throw new InternalServletException(error, HttpServletResponse.SC_NOT_FOUND);
             }
 
+            String loginId = user.getLoginId();
+
+            //Need to delete access tokens of a user if we delete the user
+            List<IInternalAuthToken> tokens = authStoreService.getTokensByLoginId(loginId);
+            for (IInternalAuthToken token : tokens) {
+                authStoreService.deleteToken(token.getTokenId());
+                
+            }
+
             logger.info("A user with the given loginId was found OK");
-            authStoreService.deleteUser(userToBeDeleted);
+            authStoreService.deleteUser(user);
             logger.info("The user with the given loginId was deleted OK");
 
         }catch (AuthStoreException e) {

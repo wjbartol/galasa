@@ -1,7 +1,14 @@
+/*
+ * Copyright contributors to the Galasa project
+ *
+ * SPDX-License-Identifier: EPL-2.0
+ */
 package dev.galasa.framework.api.users.internal.routes;
 
 import java.time.Instant;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.servlet.ServletOutputStream;
 
@@ -23,13 +30,14 @@ import dev.galasa.framework.api.common.mocks.MockTimeService;
 import dev.galasa.framework.api.common.mocks.MockUser;
 import dev.galasa.framework.api.users.mocks.MockUsersServlet;
 import dev.galasa.framework.spi.auth.IInternalUser;
-import dev.galasa.framework.spi.utils.GalasaGson;
 
 public class UsersDeleteRouteTest extends BaseServletTest {
 
 
-    GalasaGson gson = new GalasaGson(); 
     Map<String, String> headerMap = Map.of("Authorization", "Bearer " + BaseServletTest.DUMMY_JWT);
+
+    private static final String path = "\\/([a-zA-Z0-9\\-\\_]+)\\/?";
+    private static final Pattern pattern = Pattern.compile(path);
 
     @Test
     public void testUsersDeleteRequestReturnsNotFoundDueToMissingUserDoc() throws Exception {
@@ -41,13 +49,13 @@ public class UsersDeleteRouteTest extends BaseServletTest {
 
         String baseUrl = "http://my.server/api";
 
-        String loginId = "admin";
+        String userNumber = "admin";
 
         env.setenv(EnvironmentVariables.GALASA_USERNAME_CLAIMS, "preferred_username");
         env.setenv(EnvironmentVariables.GALASA_EXTERNAL_API_URL,baseUrl);
         MockUsersServlet servlet = new MockUsersServlet(framework, env);
 
-        MockHttpServletRequest mockRequest = new MockHttpServletRequest("/" + loginId, headerMap);
+        MockHttpServletRequest mockRequest = new MockHttpServletRequest("/" + userNumber, headerMap);
         mockRequest.setMethod(HttpMethod.DELETE.toString());
 
         MockHttpServletResponse servletResponse = new MockHttpServletResponse();
@@ -59,7 +67,7 @@ public class UsersDeleteRouteTest extends BaseServletTest {
 
         assertThat(servletResponse.getStatus()).isEqualTo(404);
         checkErrorStructure(outStream.toString(), 5083, "GAL5083E",
-            "Unable to retrieve a user with the given ‘loginId’. No such user exists. Check your request query parameters and try again.");
+            "Unable to retrieve a user with the given user number. No such user exists. Check your request query parameters and try again.");
         assertThat(servletResponse.getContentType()).isEqualTo("application/json");
     }
 
@@ -73,13 +81,13 @@ public class UsersDeleteRouteTest extends BaseServletTest {
 
         String baseUrl = "http://my.server/api";
 
-        String loginId = "user-1";
+        String userNumber = "docid";
 
         env.setenv(EnvironmentVariables.GALASA_USERNAME_CLAIMS, "preferred_username");
         env.setenv(EnvironmentVariables.GALASA_EXTERNAL_API_URL,baseUrl);
         MockUsersServlet servlet = new MockUsersServlet(framework, env);
 
-        MockHttpServletRequest mockRequest = new MockHttpServletRequest("/" + loginId, headerMap);
+        MockHttpServletRequest mockRequest = new MockHttpServletRequest("/" + userNumber, headerMap);
         mockRequest.setMethod(HttpMethod.DELETE.toString());
 
         MockHttpServletResponse servletResponse = new MockHttpServletResponse();     
@@ -92,10 +100,11 @@ public class UsersDeleteRouteTest extends BaseServletTest {
         servlet.doDelete(mockRequest, servletResponse);
 
         assertThat(servletResponse.getStatus()).isEqualTo(204);
+        assertThat(authStoreService.getUser(userNumber)).isNull();
     }
 
     @Test
-    public void testUsersDeletesAUserUsingMeKeywordReturnsOK() throws Exception {
+    public void testUsersDeletesAUserWhenMultipleUsersPresentReturnsOK() throws Exception {
         // Given...
         MockEnvironment env = new MockEnvironment();
         MockTimeService mockTimeService = new MockTimeService(Instant.now());
@@ -104,25 +113,31 @@ public class UsersDeleteRouteTest extends BaseServletTest {
 
         String baseUrl = "http://my.server/api";
 
-        String loginId = "me";
+        String userNumber = "docid-2";
 
         env.setenv(EnvironmentVariables.GALASA_USERNAME_CLAIMS, "preferred_username");
         env.setenv(EnvironmentVariables.GALASA_EXTERNAL_API_URL,baseUrl);
         MockUsersServlet servlet = new MockUsersServlet(framework, env);
 
-        MockHttpServletRequest mockRequest = new MockHttpServletRequest("/" + loginId, headerMap);
+        MockHttpServletRequest mockRequest = new MockHttpServletRequest("/" + userNumber, headerMap);
         mockRequest.setMethod(HttpMethod.DELETE.toString());
 
         MockHttpServletResponse servletResponse = new MockHttpServletResponse();     
         
-        MockUser mockUser1 = createMockUser("testRequestor", "docid", "web-ui");
+        MockUser mockUser1 = createMockUser("user-1", "docid", "web-ui");
+        MockUser mockUser2 = createMockUser("user-2", "docid-2", "web-ui");
+        MockUser mockUser3 = createMockUser("user-3", "docid-3", "web-ui");
         authStoreService.addUser(mockUser1);
+        authStoreService.addUser(mockUser2);
+        authStoreService.addUser(mockUser3);
 
         // When...
         servlet.init();
         servlet.doDelete(mockRequest, servletResponse);
 
         assertThat(servletResponse.getStatus()).isEqualTo(204);
+        assertThat(authStoreService.getUser(userNumber)).isNull();
+        assertThat(authStoreService.getAllUsers()).hasSize(2);
     }
 
     @Test
@@ -135,13 +150,13 @@ public class UsersDeleteRouteTest extends BaseServletTest {
 
         String baseUrl = "http://my.server/api";
 
-        String loginId = "user-1";
+        String userNumber = "docid";
 
         env.setenv(EnvironmentVariables.GALASA_USERNAME_CLAIMS, "preferred_username");
         env.setenv(EnvironmentVariables.GALASA_EXTERNAL_API_URL,baseUrl);
         MockUsersServlet servlet = new MockUsersServlet(framework, env);
 
-        MockHttpServletRequest mockRequest = new MockHttpServletRequest("/" + loginId, headerMap);
+        MockHttpServletRequest mockRequest = new MockHttpServletRequest("/" + userNumber, headerMap);
         mockRequest.setMethod(HttpMethod.DELETE.toString());
 
         MockHttpServletResponse servletResponse = new MockHttpServletResponse();     
@@ -157,6 +172,74 @@ public class UsersDeleteRouteTest extends BaseServletTest {
         servlet.doDelete(mockRequest, servletResponse);
 
         assertThat(servletResponse.getStatus()).isEqualTo(204);
+        assertThat(authStoreService.getUser(userNumber)).isNull();
+    }
+
+
+    /// ---------------------------------------
+    /// ---------------------------------------
+    /// REGEX TESTS
+    /// ---------------------------------------
+    /// ---------------------------------------
+    
+    private boolean matchesPattern(String input) {
+        Matcher matcher = pattern.matcher(input);
+        return matcher.matches();
+    }
+
+    @Test
+    public void testValidPathWithoutTrailingSlash() throws Exception {
+        assertThat(matchesPattern("/test123")).isTrue();
+    }
+
+    @Test
+    public void testValidPathWithTrailingSlash() {
+        assertThat(matchesPattern("/test123/")).isTrue();
+    }
+
+    @Test
+    public void testPathWithDash() {
+        assertThat(matchesPattern("/test-123/")).isTrue();
+    }
+
+    @Test
+    public void testPathWithUnderscore() {
+        assertThat(matchesPattern("/test_123")).isTrue();
+    }
+
+    @Test
+    public void testPathWithUppercaseCharacters() {
+        assertThat(matchesPattern("/TEST")).isTrue();
+    }
+
+    @Test
+    public void testEmptyPath() {
+        assertThat(matchesPattern("/")).isFalse();
+    }
+
+    @Test
+    public void testPathWithMixedCharacters() {
+        assertThat(matchesPattern("//Test-123_Abc")).isFalse();
+    }
+
+    @Test
+    public void testInvalidPathWithSpecialCharacters() {
+        assertThat(matchesPattern("/test!123")).isFalse();
+    }
+
+    @Test
+    public void testInvalidPathWithMultipleSegments() {
+        assertThat(matchesPattern("/test/123")).isFalse();
+    }
+
+    @Test
+    public void testInvalidPathWithMultipleSpecialChars() {
+        assertThat(matchesPattern("/@..#2231!")).isFalse();
+    }
+
+    @Test
+    public void testInvalidPathWithoutLeadingSlash() {
+        assertThat(matchesPattern("test123")).isFalse();
     }
 
     

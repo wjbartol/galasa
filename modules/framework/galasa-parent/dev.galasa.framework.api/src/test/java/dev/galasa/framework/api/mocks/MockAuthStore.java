@@ -63,6 +63,11 @@ public class MockAuthStore implements IAuthStore, IAuthStoreService {
     }
 
     @Override
+    public IUser getUser(String userNumber) throws AuthStoreException {
+        throw new UnsupportedOperationException("Unimplemented method 'getUser'");
+    }
+
+    @Override
     public IUser updateUser(IUser user) throws AuthStoreException {
         throw new UnsupportedOperationException("Unimplemented method 'updateUserClientActivity'");
     }

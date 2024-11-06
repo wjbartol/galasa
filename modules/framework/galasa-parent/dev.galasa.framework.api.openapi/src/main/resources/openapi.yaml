@@ -331,16 +331,16 @@ paths:
                     error_code: 5400
                     error_message: "E: Error occurred when trying to execute request '/users'. Please check your request parameters or report the problem to your Galasa Ecosystem owner."
                   summary: One or more required query parameters are missing
-  /users/{loginId}:
+  /users/{userNumber}:
     delete:
-      operationId: deleteUserByLoginId
+      operationId: deleteUserByNumber
       summary: Deletes a user in the ecosystem
       tags:
         - Users API
       parameters:
-        - name: loginId
+        - name: userNumber
           in: path
-          description: Login Id of the user to be deleted
+          description: User number of the user to be deleted.
           required: true
           schema:
             type: string
@@ -358,7 +358,7 @@ paths:
                   value:
                     error_code: 5083
                     error_message: "GAL5083E: Error deleting user"
-                  summary: An Error occurred when trying to delete a user using the given loginId
+                  summary: An Error occurred when trying to delete a user using the given user number.
         '401':
           $ref: "#/components/responses/Unauthorized"
         '500':

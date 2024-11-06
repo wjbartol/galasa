@@ -137,6 +137,25 @@ public class MockAuthStoreService implements IAuthStoreService {
     }
 
     @Override
+    public IUser getUser(String userNumber) throws AuthStoreException {
+
+        IUser userOut = null;
+
+        if(!users.isEmpty()){
+            for(IUser user : users.values()){
+
+                if(user.getUserNumber().equals(userNumber)){
+                    userOut = user;
+                }
+    
+            }
+        }
+
+        return userOut;
+
+    }
+
+    @Override
     public IUser updateUser(IUser userToUpdate) throws AuthStoreException {
         String loginId = userToUpdate.getLoginId();
         IUser userGot = users.get(loginId);

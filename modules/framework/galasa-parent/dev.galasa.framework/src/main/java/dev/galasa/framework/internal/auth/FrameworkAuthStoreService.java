@@ -76,6 +76,11 @@ public class FrameworkAuthStoreService implements IAuthStoreService {
     }
 
     @Override
+    public IUser getUser(String userNumber) throws AuthStoreException {
+        return authStore.getUser(userNumber);
+    }
+
+    @Override
     public IUser updateUser(IUser user) throws AuthStoreException {
         return authStore.updateUser(user);
     }

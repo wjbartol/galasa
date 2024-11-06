@@ -15,11 +15,12 @@ import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.component.annotations.ServiceScope;
 
 import dev.galasa.framework.api.users.internal.routes.UsersRoute;
+import dev.galasa.framework.auth.spi.AuthServiceFactory;
+import dev.galasa.framework.auth.spi.IAuthService;
+import dev.galasa.framework.spi.IFramework;
 import dev.galasa.framework.api.common.BaseServlet;
 import dev.galasa.framework.api.common.Environment;
 import dev.galasa.framework.api.common.SystemEnvironment;
-import dev.galasa.framework.spi.IFramework;
-import dev.galasa.framework.spi.auth.IAuthStoreService;
 
 @Component(service = Servlet.class, scope = ServiceScope.PROTOTYPE, property = {
         "osgi.http.whiteboard.servlet.pattern=/users/*" }, name = "Galasa Users microservice")
@@ -36,22 +37,15 @@ public class UsersServlet extends BaseServlet {
 
     protected Environment env = new SystemEnvironment();
 
-    protected IFramework getFramework() {
-        return this.framework;
-    }
-
-    protected void setFramework(IFramework framework) {
-        this.framework = framework;
-    }
-
     @Override
     public void init() throws ServletException {
         logger.info("Galasa Users API initialising");
 
         super.init();
 
-        IAuthStoreService authStoreService = framework.getAuthStoreService();
-        addRoute(new UsersRoute(getResponseBuilder(), env,authStoreService));
+        AuthServiceFactory factory = new AuthServiceFactory(framework, env);
+        IAuthService authService = factory.getAuthService();
+        addRoute(new UsersRoute(getResponseBuilder(), env, authService.getAuthStoreService()));
 
         logger.info("Galasa Users API initialised");
     }

@@ -2,4 +2,5 @@
 Bundle-Name: Galasa API Authentication microservices
 Export-Package: !dev.galasa.framework.api.authentication.internal*;dev.galasa.framework.api.authentication*;
 Import-Package: dev.galasa.framework.api.common,\
+                dev.galasa.framework.auth.spi,\
                 *

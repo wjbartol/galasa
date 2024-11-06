@@ -24,9 +24,7 @@ import com.auth0.jwt.algorithms.Algorithm;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
-import dev.galasa.framework.api.authentication.internal.DexGrpcClient;
 import dev.galasa.framework.api.authentication.mocks.MockAuthenticationServlet;
-import dev.galasa.framework.api.authentication.mocks.MockDexGrpcClient;
 import dev.galasa.framework.api.authentication.mocks.MockOidcProvider;
 import dev.galasa.framework.api.beans.AuthToken;
 import dev.galasa.framework.api.beans.User;
@@ -40,8 +38,14 @@ import dev.galasa.framework.spi.auth.IInternalAuthToken;
 import dev.galasa.framework.spi.auth.IInternalUser;
 import dev.galasa.framework.spi.auth.IUser;
 import dev.galasa.framework.spi.utils.GalasaGson;
-import dev.galasa.framework.api.common.mocks.MockFramework;
-import dev.galasa.framework.api.common.mocks.MockHttpResponse;
+import dev.galasa.framework.auth.spi.IAuthService;
+import dev.galasa.framework.auth.spi.IDexGrpcClient;
+import dev.galasa.framework.auth.spi.internal.AuthService;
+import dev.galasa.framework.auth.spi.mocks.MockAuthStoreService;
+import dev.galasa.framework.auth.spi.mocks.MockDexGrpcClient;
+import dev.galasa.framework.auth.spi.mocks.MockFrontEndClient;
+import dev.galasa.framework.auth.spi.mocks.MockInternalAuthToken;
+import dev.galasa.framework.auth.spi.mocks.MockUser;
 
 public class AuthTokensRouteTest extends BaseServletTest {
 
@@ -104,7 +108,7 @@ public class AuthTokensRouteTest extends BaseServletTest {
     @Test
     public void testAuthTokensRouteRegexMatchesOnlyTokens(){
         //Given...
-        String tokensRoutePath = new AuthTokensRoute(null, null, null, null,null, null).getPath().toString();
+        String tokensRoutePath = new AuthTokensRoute(null, null, new AuthService(null, null), null, null).getPath().toString();
 
         //When...
         Pattern tokensRoutePattern = Pattern.compile(tokensRoutePath);
@@ -620,7 +624,7 @@ public class AuthTokensRouteTest extends BaseServletTest {
 
         MockOidcProvider mockOidcProvider = new MockOidcProvider(mockResponse);
 
-        DexGrpcClient mockDexGrpcClient = new MockDexGrpcClient("http://issuer", clientId, clientSecret, "http://callback");
+        IDexGrpcClient mockDexGrpcClient = new MockDexGrpcClient("http://issuer", clientId, clientSecret, "http://callback");
 
         MockTimeService mockTimeService = new MockTimeService(Instant.now());
         MockAuthStoreService mockAuthStoreService = new MockAuthStoreService(mockTimeService);
@@ -678,7 +682,7 @@ public class AuthTokensRouteTest extends BaseServletTest {
         String issuerUrl = "http://dummy.host";
 
         MockOidcProvider mockOidcProvider = new MockOidcProvider(mockResponse);
-        DexGrpcClient mockDexGrpcClient = new MockDexGrpcClient(issuerUrl, clientId, clientSecret, callbackUri);
+        IDexGrpcClient mockDexGrpcClient = new MockDexGrpcClient(issuerUrl, clientId, clientSecret, callbackUri);
 
         Instant tokenCreationTime = Instant.now();
         MockTimeService mockTimeService = new MockTimeService(tokenCreationTime);
@@ -737,7 +741,7 @@ public class AuthTokensRouteTest extends BaseServletTest {
 
         MockOidcProvider mockOidcProvider = new MockOidcProvider(mockResponse);
 
-        DexGrpcClient mockDexGrpcClient = new MockDexGrpcClient(issuerUrl, clientId, clientSecret, callbackUri);
+        IDexGrpcClient mockDexGrpcClient = new MockDexGrpcClient(issuerUrl, clientId, clientSecret, callbackUri);
 
         Instant tokenCreationTime = Instant.now();
         MockTimeService mockTimeService = new MockTimeService(tokenCreationTime);
@@ -799,7 +803,7 @@ public class AuthTokensRouteTest extends BaseServletTest {
 
         MockOidcProvider mockOidcProvider = new MockOidcProvider(mockResponse);
 
-        DexGrpcClient mockDexGrpcClient = new MockDexGrpcClient(issuerUrl, clientId, clientSecret, callbackUri);
+        IDexGrpcClient mockDexGrpcClient = new MockDexGrpcClient(issuerUrl, clientId, clientSecret, callbackUri);
 
         Instant tokenCreationTime = Instant.now();
         MockTimeService mockTimeService = new MockTimeService(tokenCreationTime);
@@ -922,11 +926,12 @@ public class AuthTokensRouteTest extends BaseServletTest {
         mockEnv.setenv(EnvironmentVariables.GALASA_USERNAME_CLAIMS,"sub");
         String dummyJwt = DUMMY_JWT;
 
+        IAuthService authService = new AuthService(authStoreService, mockDexGrpcClient);
+
         AuthTokensRoute route = new AuthTokensRoute(
             responseBuilder,
             mockOidcProvider,
-            mockDexGrpcClient,
-            authStoreService,
+            authService,
             mockTimeService,
             mockEnv);
 
@@ -991,11 +996,12 @@ public class AuthTokensRouteTest extends BaseServletTest {
         mockEnv.setenv(EnvironmentVariables.GALASA_USERNAME_CLAIMS,"sub");
         String dummyJwt = DUMMY_JWT;
 
+        IAuthService authService = new AuthService(authStoreService, mockDexGrpcClient);
+
         AuthTokensRoute route = new AuthTokensRoute(
             responseBuilder,
             mockOidcProvider,
-            mockDexGrpcClient,
-            authStoreService,
+            authService,
             mockTimeService,
             mockEnv);
 
@@ -1038,11 +1044,12 @@ public class AuthTokensRouteTest extends BaseServletTest {
         mockEnv.setenv(EnvironmentVariables.GALASA_USERNAME_CLAIMS,"sub");
         String dummyJwt = DUMMY_JWT;
 
+        IAuthService authService = new AuthService(authStoreService, mockDexGrpcClient);
+
         AuthTokensRoute route = new AuthTokensRoute(
             responseBuilder,
             mockOidcProvider,
-            mockDexGrpcClient,
-            authStoreService,
+            authService,
             mockTimeService,
             mockEnv);
 

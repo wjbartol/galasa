@@ -13,26 +13,27 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.coreos.dex.api.DexOuterClass.Client;
 
-import dev.galasa.framework.api.authentication.internal.DexClient;
-import dev.galasa.framework.api.authentication.internal.DexGrpcClient;
+import dev.galasa.framework.api.authentication.internal.beans.DexClient;
 import dev.galasa.framework.api.common.BaseRoute;
 import dev.galasa.framework.api.common.InternalServletException;
 import dev.galasa.framework.api.common.QueryParameters;
 import dev.galasa.framework.api.common.ResponseBuilder;
 import dev.galasa.framework.api.common.ServletError;
+import dev.galasa.framework.auth.spi.IAuthService;
+import dev.galasa.framework.auth.spi.IDexGrpcClient;
 import dev.galasa.framework.spi.FrameworkException;
 
 import static dev.galasa.framework.api.common.ServletErrorMessage.*;
 
 public class AuthClientsRoute extends BaseRoute {
 
-    private DexGrpcClient dexGrpcClient;
+    private IDexGrpcClient dexGrpcClient;
 
     private static final String PATH_PATTERN = "\\/clients\\/?";
 
-    public AuthClientsRoute(ResponseBuilder responseBuilder, DexGrpcClient dexGrpcClient) {
+    public AuthClientsRoute(ResponseBuilder responseBuilder, IAuthService authService) {
         super(responseBuilder, PATH_PATTERN);
-        this.dexGrpcClient = dexGrpcClient;
+        this.dexGrpcClient = authService.getDexGrpcClient();
     }
 
     /**

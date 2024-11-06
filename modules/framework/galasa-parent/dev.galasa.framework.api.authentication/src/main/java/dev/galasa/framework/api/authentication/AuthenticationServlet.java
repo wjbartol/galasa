@@ -16,7 +16,6 @@ import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.component.annotations.ServiceScope;
 
-import dev.galasa.framework.api.authentication.internal.DexGrpcClient;
 import dev.galasa.framework.api.authentication.internal.OidcProvider;
 import dev.galasa.framework.api.authentication.internal.routes.AuthCallbackRoute;
 import dev.galasa.framework.api.authentication.internal.routes.AuthClientsRoute;
@@ -27,8 +26,9 @@ import dev.galasa.framework.api.common.BaseServlet;
 import dev.galasa.framework.api.common.Environment;
 import dev.galasa.framework.api.common.EnvironmentVariables;
 import dev.galasa.framework.api.common.SystemEnvironment;
+import dev.galasa.framework.auth.spi.AuthServiceFactory;
+import dev.galasa.framework.auth.spi.IAuthService;
 import dev.galasa.framework.spi.IFramework;
-import dev.galasa.framework.spi.auth.IAuthStoreService;
 import dev.galasa.framework.spi.utils.ITimeService;
 import dev.galasa.framework.spi.utils.SystemTimeService;
 
@@ -50,7 +50,6 @@ public class AuthenticationServlet extends BaseServlet {
     protected Environment env = new SystemEnvironment();
     protected ITimeService timeService = new SystemTimeService();
     protected IOidcProvider oidcProvider;
-    protected DexGrpcClient dexGrpcClient;
 
     @Override
     public void init() throws ServletException {
@@ -59,19 +58,16 @@ public class AuthenticationServlet extends BaseServlet {
         // Make sure the relevant environment variables have been set, otherwise the servlet won't be able to talk to Dex
         String externalApiServerUrl = getRequiredEnvVariable(EnvironmentVariables.GALASA_EXTERNAL_API_URL);
         String dexIssuerUrl = getRequiredEnvVariable(EnvironmentVariables.GALASA_DEX_ISSUER);
-        String dexGrpcHostname = getRequiredEnvVariable(EnvironmentVariables.GALASA_DEX_GRPC_HOSTNAME);
 
-        String externalWebUiUrl = externalApiServerUrl.replace("/api", "");
+        initialiseDexClients(dexIssuerUrl);
 
-        initialiseDexClients(dexIssuerUrl, dexGrpcHostname, externalWebUiUrl);
-
-        IAuthStoreService authStoreService = framework.getAuthStoreService();
-
-        addRoute(new AuthRoute(getResponseBuilder(), oidcProvider, dexGrpcClient, authStoreService, env));
-        addRoute(new AuthClientsRoute(getResponseBuilder(), dexGrpcClient));
+        AuthServiceFactory factory = new AuthServiceFactory(framework, env);
+        IAuthService authService = factory.getAuthService();
+        addRoute(new AuthRoute(getResponseBuilder(), oidcProvider, authService, env));
+        addRoute(new AuthClientsRoute(getResponseBuilder(), authService));
         addRoute(new AuthCallbackRoute(getResponseBuilder(), externalApiServerUrl));
-        addRoute(new AuthTokensRoute(getResponseBuilder(), oidcProvider, dexGrpcClient, authStoreService,timeService,env));
-        addRoute(new AuthTokensDetailsRoute(getResponseBuilder(), dexGrpcClient, authStoreService));
+        addRoute(new AuthTokensRoute(getResponseBuilder(), oidcProvider, authService, timeService, env));
+        addRoute(new AuthTokensDetailsRoute(getResponseBuilder(), authService));
 
         logger.info("Galasa Authentication API initialised");
     }
@@ -81,9 +77,8 @@ public class AuthenticationServlet extends BaseServlet {
      * the authentication servlet to communicate with Dex.
      * @throws ServletException if there was an issue contacting Dex
      */
-    protected void initialiseDexClients(String dexIssuerUrl, String dexGrpcHostname, String externalWebUiUrl) throws ServletException {
+    protected void initialiseDexClients(String dexIssuerUrl) throws ServletException {
         this.oidcProvider = new OidcProvider(dexIssuerUrl, HttpClient.newHttpClient());
-        this.dexGrpcClient = new DexGrpcClient(dexGrpcHostname, externalWebUiUrl);
     }
 
     /**

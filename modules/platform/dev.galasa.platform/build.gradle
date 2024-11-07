@@ -1,0 +1,49 @@
+plugins {
+    id 'java-platform'
+    id 'maven-publish'
+}
+
+version = '0.38.0'
+
+// PLATFORM
+
+dependencies {
+    constraints {
+        api 'org.osgi:org.osgi.service.cm:1.6.0'
+        api 'commons-logging:commons-logging:1.2'
+        api 'junit:junit:4.13.1'
+    }
+}
+
+
+publishing {
+    publications {
+        myPlatform(MavenPublication) {
+            from components.javaPlatform
+
+            groupId = 'dev.galasa'
+            artifactId = 'dev.galasa.platform'
+            version = '0.38.0'
+        }
+
+        // mavenBom(MavenPublication) {
+        //     from components.java
+
+        //     groupId = 'com.example'
+        //     artifactId = 'my-dependencies-bom'
+        //     version = '1.0.0'
+
+        //     // Optional: Customize the generated POM file if needed
+        //     pom {
+        //         name = 'My Dependencies BOM'
+        //         description = 'A BOM of dependency versions for Java projects'
+        //     }
+        // }
+    }
+
+
+    repositories {
+        mavenLocal()  
+    }
+
+}

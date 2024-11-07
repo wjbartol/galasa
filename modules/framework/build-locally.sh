@@ -178,8 +178,8 @@ function publish_to_maven {
     publishToMavenLocal"
     info "Command is $cmd"
     $cmd 2>&1 >> ${log_file}
-    info "Log information is at ${log_file}"
     rc=$? 
+    info "Log information is at ${log_file}"
     check_exit_code $rc "Failed to publish ${project} log is at ${log_file}"
     success "Published OK"
 }

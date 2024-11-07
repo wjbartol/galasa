@@ -7,12 +7,16 @@ package dev.galasa.framework.api.authentication.mocks;
 
 import dev.galasa.framework.api.authentication.AuthenticationServlet;
 import dev.galasa.framework.api.authentication.IOidcProvider;
-import dev.galasa.framework.api.authentication.internal.DexGrpcClient;
 import dev.galasa.framework.api.common.Environment;
 import dev.galasa.framework.api.common.EnvironmentVariables;
 import dev.galasa.framework.api.common.ResponseBuilder;
 import dev.galasa.framework.api.common.mocks.MockEnvironment;
 import dev.galasa.framework.api.common.mocks.MockFramework;
+import dev.galasa.framework.auth.spi.IAuthService;
+import dev.galasa.framework.auth.spi.IDexGrpcClient;
+import dev.galasa.framework.auth.spi.internal.AuthService;
+import dev.galasa.framework.auth.spi.mocks.MockAuthServiceFactory;
+import dev.galasa.framework.auth.spi.mocks.MockDexGrpcClient;
 import dev.galasa.framework.spi.IFramework;
 
 public class MockAuthenticationServlet extends AuthenticationServlet {
@@ -21,7 +25,7 @@ public class MockAuthenticationServlet extends AuthenticationServlet {
         this(new MockOidcProvider());
     }
 
-    public MockAuthenticationServlet(DexGrpcClient dexGrpcClient) {
+    public MockAuthenticationServlet(IDexGrpcClient dexGrpcClient) {
         this(new MockOidcProvider(), dexGrpcClient, new MockFramework());
     }
 
@@ -33,25 +37,26 @@ public class MockAuthenticationServlet extends AuthenticationServlet {
         this(new MockOidcProvider(), new MockDexGrpcClient("https://my-issuer/dex"), framework);
     }
 
-    public MockAuthenticationServlet(IOidcProvider oidcProvider, DexGrpcClient dexGrpcClient) {
+    public MockAuthenticationServlet(IOidcProvider oidcProvider, IDexGrpcClient dexGrpcClient) {
         this(oidcProvider, dexGrpcClient, new MockFramework());
     }
 
-    public MockAuthenticationServlet(IOidcProvider oidcProvider, DexGrpcClient dexGrpcClient, IFramework framework) {
+    public MockAuthenticationServlet(IOidcProvider oidcProvider, IDexGrpcClient dexGrpcClient, IFramework framework) {
         this(getEnvironmentWithRequiredEnvVariablesSet(), oidcProvider, dexGrpcClient, framework);
     }
 
-    public MockAuthenticationServlet(Environment env, IOidcProvider oidcProvider, DexGrpcClient dexGrpcClient, IFramework framework) {
+    public MockAuthenticationServlet(Environment env, IOidcProvider oidcProvider, IDexGrpcClient dexGrpcClient, IFramework framework) {
         this.env = env;
         this.oidcProvider = oidcProvider;
-        this.dexGrpcClient = dexGrpcClient;
         this.framework = framework;
-        this.timeService = timeService;
+
+        IAuthService authService = new AuthService(framework.getAuthStoreService(), dexGrpcClient);
+        setAuthServiceFactory(new MockAuthServiceFactory(authService));
         setResponseBuilder(new ResponseBuilder(env));
     }
 
     @Override
-    protected void initialiseDexClients(String dexIssuerUrl, String dexGrpcHostname, String externalWebUiUrl) {
+    protected void initialiseDexClients(String dexIssuerUrl) {
         // Do nothing...
     }
 

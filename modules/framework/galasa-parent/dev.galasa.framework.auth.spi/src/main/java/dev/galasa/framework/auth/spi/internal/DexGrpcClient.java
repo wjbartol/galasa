@@ -3,7 +3,7 @@
  *
  * SPDX-License-Identifier: EPL-2.0
  */
-package dev.galasa.framework.api.authentication.internal;
+package dev.galasa.framework.auth.spi.internal;
 
 import static dev.galasa.framework.api.common.ServletErrorMessage.*;
 
@@ -27,6 +27,7 @@ import com.coreos.dex.api.DexOuterClass.CreateClientReq.Builder;
 
 import dev.galasa.framework.api.common.InternalServletException;
 import dev.galasa.framework.api.common.ServletError;
+import dev.galasa.framework.auth.spi.IDexGrpcClient;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
 import io.grpc.StatusRuntimeException;
@@ -35,7 +36,7 @@ import io.grpc.StatusRuntimeException;
  * A gRPC client class that interacts with Dex's API over gRPC, using the
  * auto-generated Dex gRPC code
  */
-public class DexGrpcClient {
+public class DexGrpcClient implements IDexGrpcClient {
 
     private final Log logger = LogFactory.getLog(getClass());
 

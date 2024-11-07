@@ -19,15 +19,16 @@ import dev.galasa.framework.api.beans.generated.FrontEndClient;
 import dev.galasa.framework.api.beans.generated.UserData;
 import dev.galasa.framework.api.common.BaseServletTest;
 import dev.galasa.framework.api.common.EnvironmentVariables;
-import dev.galasa.framework.api.common.mocks.MockAuthStoreService;
 import dev.galasa.framework.api.common.mocks.MockEnvironment;
-import dev.galasa.framework.api.common.mocks.MockFramework;
-import dev.galasa.framework.api.common.mocks.MockFrontEndClient;
 import dev.galasa.framework.api.common.mocks.MockHttpServletRequest;
 import dev.galasa.framework.api.common.mocks.MockHttpServletResponse;
 import dev.galasa.framework.api.common.mocks.MockTimeService;
-import dev.galasa.framework.api.common.mocks.MockUser;
 import dev.galasa.framework.api.users.mocks.MockUsersServlet;
+import dev.galasa.framework.auth.spi.IAuthService;
+import dev.galasa.framework.auth.spi.internal.AuthService;
+import dev.galasa.framework.auth.spi.mocks.MockAuthStoreService;
+import dev.galasa.framework.auth.spi.mocks.MockFrontEndClient;
+import dev.galasa.framework.auth.spi.mocks.MockUser;
 import dev.galasa.framework.spi.utils.GalasaGson;
 
 
@@ -43,7 +44,7 @@ public class UsersRouteTest extends BaseServletTest {
         MockEnvironment env = new MockEnvironment();
         MockTimeService mockTimeService = new MockTimeService(Instant.now());
         MockAuthStoreService authStoreService = new MockAuthStoreService(mockTimeService);
-        MockFramework framework = new MockFramework(authStoreService);
+        IAuthService authService = new AuthService(authStoreService, null);
 
         String baseUrl = "http://my.server/api";
 
@@ -54,7 +55,7 @@ public class UsersRouteTest extends BaseServletTest {
 
         env.setenv(EnvironmentVariables.GALASA_USERNAME_CLAIMS, "preferred_username");
         env.setenv(EnvironmentVariables.GALASA_EXTERNAL_API_URL,baseUrl);
-        MockUsersServlet servlet = new MockUsersServlet(framework, env);
+        MockUsersServlet servlet = new MockUsersServlet(authService, env);
 
 
         MockHttpServletRequest mockRequest = new MockHttpServletRequest(queryParams,null, headerMap);
@@ -90,13 +91,13 @@ public class UsersRouteTest extends BaseServletTest {
         MockEnvironment env = new MockEnvironment();
         MockTimeService mockTimeService = new MockTimeService(Instant.now());
         MockAuthStoreService authStoreService = new MockAuthStoreService(mockTimeService);
-        MockFramework framework = new MockFramework(authStoreService);
+        IAuthService authService = new AuthService(authStoreService, null);
 
         String baseUrl = "http://my.server/api";
 
         env.setenv(EnvironmentVariables.GALASA_USERNAME_CLAIMS, "preferred_username");
         env.setenv(EnvironmentVariables.GALASA_EXTERNAL_API_URL,baseUrl);
-        MockUsersServlet servlet = new MockUsersServlet(framework, env);
+        MockUsersServlet servlet = new MockUsersServlet(authService, env);
 
 
         MockHttpServletRequest mockRequest = new MockHttpServletRequest(null, headerMap);

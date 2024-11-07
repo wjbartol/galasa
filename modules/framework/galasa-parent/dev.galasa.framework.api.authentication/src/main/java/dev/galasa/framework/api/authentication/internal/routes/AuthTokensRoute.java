@@ -9,7 +9,6 @@ import static dev.galasa.framework.api.common.ServletErrorMessage.*;
 
 import java.io.IOException;
 import java.net.http.HttpResponse;
-import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -25,7 +24,6 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 import dev.galasa.framework.api.authentication.IOidcProvider;
-import dev.galasa.framework.api.authentication.internal.DexGrpcClient;
 import dev.galasa.framework.api.authentication.internal.TokenPayloadValidator;
 import dev.galasa.framework.api.beans.AuthToken;
 import dev.galasa.framework.api.beans.TokenPayload;
@@ -39,6 +37,8 @@ import dev.galasa.framework.api.common.InternalUser;
 import dev.galasa.framework.api.common.QueryParameters;
 import dev.galasa.framework.api.common.ResponseBuilder;
 import dev.galasa.framework.api.common.ServletError;
+import dev.galasa.framework.auth.spi.IAuthService;
+import dev.galasa.framework.auth.spi.IDexGrpcClient;
 import dev.galasa.framework.spi.FrameworkException;
 import dev.galasa.framework.spi.auth.IAuthStoreService;
 import dev.galasa.framework.spi.auth.IFrontEndClient;
@@ -46,14 +46,13 @@ import dev.galasa.framework.spi.auth.IInternalAuthToken;
 import dev.galasa.framework.spi.auth.IInternalUser;
 import dev.galasa.framework.spi.auth.IUser;
 import dev.galasa.framework.spi.utils.ITimeService;
-import dev.galasa.framework.spi.utils.SystemTimeService;
 import dev.galasa.framework.spi.auth.AuthStoreException;
 
 public class AuthTokensRoute extends BaseRoute {
 
     private IAuthStoreService authStoreService;
     private IOidcProvider oidcProvider;
-    private DexGrpcClient dexGrpcClient;
+    private IDexGrpcClient dexGrpcClient;
     private Environment env;
 
     private static final String ID_TOKEN_KEY = "id_token";
@@ -73,14 +72,13 @@ public class AuthTokensRoute extends BaseRoute {
     public AuthTokensRoute(
             ResponseBuilder responseBuilder,
             IOidcProvider oidcProvider,
-            DexGrpcClient dexGrpcClient,
-            IAuthStoreService authStoreService,
+            IAuthService authService,
             ITimeService timeService,
             Environment env) {
         super(responseBuilder, PATH_PATTERN);
         this.oidcProvider = oidcProvider;
-        this.dexGrpcClient = dexGrpcClient;
-        this.authStoreService = authStoreService;
+        this.dexGrpcClient = authService.getDexGrpcClient();
+        this.authStoreService = authService.getAuthStoreService();
         this.env = env;
 
         this.timeService = timeService;

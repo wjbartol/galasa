@@ -22,7 +22,6 @@ import com.google.gson.JsonObject;
 
 import dev.galasa.framework.api.authentication.IOidcProvider;
 import dev.galasa.framework.api.common.JwtWrapper;
-import dev.galasa.framework.api.authentication.internal.DexGrpcClient;
 import dev.galasa.framework.api.authentication.internal.TokenPayloadValidator;
 import dev.galasa.framework.api.beans.TokenPayload;
 import dev.galasa.framework.api.common.BaseRoute;
@@ -33,6 +32,8 @@ import dev.galasa.framework.api.common.InternalUser;
 import dev.galasa.framework.api.common.QueryParameters;
 import dev.galasa.framework.api.common.ResponseBuilder;
 import dev.galasa.framework.api.common.ServletError;
+import dev.galasa.framework.auth.spi.IAuthService;
+import dev.galasa.framework.auth.spi.IDexGrpcClient;
 import dev.galasa.framework.spi.FrameworkException;
 import dev.galasa.framework.spi.auth.AuthStoreException;
 import dev.galasa.framework.spi.auth.IAuthStoreService;
@@ -44,7 +45,7 @@ public class AuthRoute extends BaseRoute {
 
     private IAuthStoreService authStoreService;
     private IOidcProvider oidcProvider;
-    private DexGrpcClient dexGrpcClient;
+    private IDexGrpcClient dexGrpcClient;
     private Environment env;
 
     private static final String ID_TOKEN_KEY      = "id_token";
@@ -58,14 +59,13 @@ public class AuthRoute extends BaseRoute {
     public AuthRoute(
         ResponseBuilder responseBuilder,
         IOidcProvider oidcProvider,
-        DexGrpcClient dexGrpcClient,
-        IAuthStoreService authStoreService,
+        IAuthService authService,
         Environment env
     ) {
         super(responseBuilder, PATH_PATTERN);
         this.oidcProvider = oidcProvider;
-        this.dexGrpcClient = dexGrpcClient;
-        this.authStoreService = authStoreService;
+        this.dexGrpcClient = authService.getDexGrpcClient();
+        this.authStoreService = authService.getAuthStoreService();
         this.env = env;
     }
 

@@ -110,7 +110,7 @@ public class RunDetailsRoute extends RunsRoute {
    }
 
    private String getRunIdFromPath(String pathInfo) throws InternalServletException {
-      Matcher matcher = this.getPath().matcher(pathInfo);
+      Matcher matcher = this.getPathRegex().matcher(pathInfo);
       matcher.matches();
       String runId = matcher.group(1);
       return runId;

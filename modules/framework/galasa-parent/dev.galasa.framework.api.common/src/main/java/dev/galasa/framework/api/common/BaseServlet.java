@@ -37,7 +37,7 @@ public class BaseServlet extends HttpServlet {
     private ResponseBuilder responseBuilder = new ResponseBuilder();
 
     protected void addRoute(IRoute route) {
-        Pattern path = route.getPath();
+        Pattern path = route.getPathRegex();
         logger.info("Base servlet adding route " + path);
         routes.put(path, route);
     }

@@ -29,7 +29,7 @@ public class TestBaseServlet extends BaseServletTest {
     class MockRoute implements IRoute {
 
         @Override
-        public Pattern getPath() {
+        public Pattern getPathRegex() {
             return Pattern.compile("\\/");
         }
 

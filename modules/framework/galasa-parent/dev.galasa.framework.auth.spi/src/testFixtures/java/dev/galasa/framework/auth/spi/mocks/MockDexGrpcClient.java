@@ -3,7 +3,7 @@
  *
  * SPDX-License-Identifier: EPL-2.0
  */
-package dev.galasa.framework.api.authentication.mocks;
+package dev.galasa.framework.auth.spi.mocks;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,9 +17,11 @@ import com.coreos.dex.api.DexOuterClass.GetClientReq;
 import com.coreos.dex.api.DexOuterClass.GetClientResp;
 import com.coreos.dex.api.DexOuterClass.RevokeRefreshReq;
 import com.coreos.dex.api.DexOuterClass.RevokeRefreshResp;
+
+import dev.galasa.framework.auth.spi.internal.DexGrpcClient;
+
 import com.coreos.dex.api.DexOuterClass.CreateClientResp.Builder;
 
-import dev.galasa.framework.api.authentication.internal.DexGrpcClient;
 import io.grpc.Status;
 import io.grpc.StatusRuntimeException;
 

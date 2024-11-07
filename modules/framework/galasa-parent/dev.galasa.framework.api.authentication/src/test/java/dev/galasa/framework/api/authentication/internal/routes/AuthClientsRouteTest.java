@@ -13,12 +13,12 @@ import org.junit.Test;
 
 import com.google.gson.JsonObject;
 
-import dev.galasa.framework.api.authentication.internal.DexGrpcClient;
 import dev.galasa.framework.api.authentication.mocks.MockAuthenticationServlet;
-import dev.galasa.framework.api.authentication.mocks.MockDexGrpcClient;
 import dev.galasa.framework.api.common.BaseServletTest;
 import dev.galasa.framework.api.common.mocks.MockHttpServletRequest;
 import dev.galasa.framework.api.common.mocks.MockHttpServletResponse;
+import dev.galasa.framework.auth.spi.IDexGrpcClient;
+import dev.galasa.framework.auth.spi.mocks.MockDexGrpcClient;
 import dev.galasa.framework.spi.utils.GalasaGson;
 
 public class AuthClientsRouteTest extends BaseServletTest {
@@ -28,7 +28,7 @@ public class AuthClientsRouteTest extends BaseServletTest {
     @Test
     public void testAuthClientsPostRequestWithNoCreatedClientReturnsError() throws Exception {
         // Given...
-        DexGrpcClient mockDexGrpcClient = new MockDexGrpcClient("http://issuer.url");
+        IDexGrpcClient mockDexGrpcClient = new MockDexGrpcClient("http://issuer.url");
 
         MockAuthenticationServlet servlet = new MockAuthenticationServlet(mockDexGrpcClient);
 
@@ -58,7 +58,7 @@ public class AuthClientsRouteTest extends BaseServletTest {
         String clientSecret = "my-client-secret"; // Mock value, not a secret //pragma: allowlist secret
         String redirectUri = "http://my.app/callback";
 
-        DexGrpcClient mockDexGrpcClient = new MockDexGrpcClient("http://issuer.url", clientId, clientSecret, redirectUri);
+        IDexGrpcClient mockDexGrpcClient = new MockDexGrpcClient("http://issuer.url", clientId, clientSecret, redirectUri);
 
         MockAuthenticationServlet servlet = new MockAuthenticationServlet(mockDexGrpcClient);
 
@@ -89,7 +89,7 @@ public class AuthClientsRouteTest extends BaseServletTest {
         String clientSecret = "my-client-secret"; // Mock value, not a secret //pragma: allowlist secret
         String redirectUri = "http://my.app/callback";
 
-        DexGrpcClient mockDexGrpcClient = new MockDexGrpcClient("http://issuer.url", clientId, clientSecret, redirectUri);
+        IDexGrpcClient mockDexGrpcClient = new MockDexGrpcClient("http://issuer.url", clientId, clientSecret, redirectUri);
 
         MockAuthenticationServlet servlet = new MockAuthenticationServlet(mockDexGrpcClient);
 

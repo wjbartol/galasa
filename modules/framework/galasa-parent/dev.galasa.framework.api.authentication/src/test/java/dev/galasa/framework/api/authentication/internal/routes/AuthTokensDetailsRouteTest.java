@@ -17,14 +17,15 @@ import javax.servlet.ServletOutputStream;
 import org.junit.Test;
 
 import dev.galasa.framework.api.authentication.mocks.MockAuthenticationServlet;
-import dev.galasa.framework.api.authentication.mocks.MockDexGrpcClient;
 import dev.galasa.framework.api.common.BaseServletTest;
 import dev.galasa.framework.api.common.InternalUser;
-import dev.galasa.framework.api.common.mocks.MockAuthStoreService;
 import dev.galasa.framework.api.common.mocks.MockFramework;
 import dev.galasa.framework.api.common.mocks.MockHttpServletRequest;
 import dev.galasa.framework.api.common.mocks.MockHttpServletResponse;
-import dev.galasa.framework.api.common.mocks.MockInternalAuthToken;
+import dev.galasa.framework.auth.spi.internal.AuthService;
+import dev.galasa.framework.auth.spi.mocks.MockAuthStoreService;
+import dev.galasa.framework.auth.spi.mocks.MockDexGrpcClient;
+import dev.galasa.framework.auth.spi.mocks.MockInternalAuthToken;
 import dev.galasa.framework.spi.auth.IInternalAuthToken;
 import dev.galasa.framework.spi.auth.IInternalUser;
 
@@ -33,7 +34,7 @@ public class AuthTokensDetailsRouteTest extends BaseServletTest {
     @Test
     public void testAuthTokensDetailsRouteRegexMatchesExpectedPaths() throws Exception {
         //Given...
-        String tokensDetailsRoutePath = new AuthTokensDetailsRoute(null, null, null).getPath().toString();
+        String tokensDetailsRoutePath = new AuthTokensDetailsRoute(null, new AuthService(null, null)).getPathRegex().toString();
 
         //When...
         Pattern routePattern = Pattern.compile(tokensDetailsRoutePath);

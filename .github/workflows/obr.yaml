@@ -325,7 +325,7 @@ jobs:
           labels: ${{ steps.metadata-obr.outputs.labels }}
           build-args: |
             dockerRepository=${{ env.REGISTRY }}
-            tag=${{ env.BRANCH }}
+            baseVersion=latest
       
       - name: Recycle OBR application in ArgoCD
         run: |

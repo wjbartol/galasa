@@ -353,11 +353,43 @@ public class CouchdbAuthStore extends CouchdbStore implements IAuthStore {
         }
     }
 
+    @Override
+    public IUser getUser(String userNumber) throws AuthStoreException {
+
+        try{
+
+            logger.info("Retrieving user from CouchDB");
+
+            IUser user = null;
+            UserDoc userGotBack = getUserFromDocument(userNumber);
+
+            if(userGotBack != null){
+                user = new UserImpl(userGotBack);
+            }
+
+            logger.info("User fecthed from CouchDB");
+            return user;
+
+        }catch (CouchdbException e) {
+
+            String errorMessage = ERROR_FAILED_TO_RETRIEVE_USERS.getMessage(e.getMessage());
+            throw new AuthStoreException(errorMessage, e);
+
+        }
+
+    }
+
 
     @Override
     public void deleteUser(IUser user) throws AuthStoreException {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'deleteUser'");
+
+        try {
+            deleteDocumentFromDatabase(USERS_DATABASE_NAME, user.getUserNumber());
+        } catch (CouchdbException e) {
+            String errorMessage = ERROR_FAILED_TO_DELETE_USER_DOCUMENT.getMessage(e.getMessage());
+            throw new AuthStoreException(errorMessage, e);
+        }
+
     }
 
     @Override

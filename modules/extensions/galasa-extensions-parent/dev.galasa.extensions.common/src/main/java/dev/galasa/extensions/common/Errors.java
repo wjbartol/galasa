@@ -42,6 +42,7 @@ public enum Errors {
     ERROR_FAILED_TO_UPDATE_USER_DOCUMENT_MISMATCH_DOC_ID                (6205,"GAL6205E: Failed to update user document in the CouchDB users store. Cause: Couchdb returned a document with an unexpected _id field."),
     ERROR_FAILED_TO_UPDATE_USER_DOCUMENT_INPUT_INVALID_NULL_USER_NUMBER (6206,"GAL6206E: Failed to update user document in the CouchDB users store. Cause: Bad input. User number is invalid or null."),
     ERROR_FAILED_TO_UPDATE_USER_DOCUMENT_INPUT_INVALID_NULL_USER_VERSION(6207,"GAL6207E: Failed to update user document in the CouchDB users store. Cause: Bad input. User document version is invalid or null."),
+    ERROR_FAILED_TO_DELETE_USER_DOCUMENT                                (6208,"GAL6208E: Failed to delete user from the CouchDB users database. Cause: {0}"),
 
     // REST CPS errors
     ERROR_GALASA_WRONG_NUMBER_OF_PARAMETERS_IN_MESSAGE                 (6999,"GAL6999E: Failed to render message template. Not the expected number of parameters. Got ''{0}''. Expected ''{1}''"),

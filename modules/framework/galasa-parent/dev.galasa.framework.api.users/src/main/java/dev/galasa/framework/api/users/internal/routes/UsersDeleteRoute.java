@@ -49,7 +49,7 @@ public class UsersDeleteRoute extends BaseRoute{
         
         this.beanTransformer = new BeanTransformer(baseServletUrl);
         this.authStoreService = authService.getAuthStoreService();
-        this.pathPattern = getPath();
+        this.pathPattern = getPathRegex();
     }
 
     @Override

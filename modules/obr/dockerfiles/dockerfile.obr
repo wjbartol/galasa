@@ -1,7 +1,15 @@
 ARG dockerRepository
-ARG tag
+ARG baseVersion
 
-FROM ${dockerRepository}/galasa-dev/managers-maven-artefacts:${tag}
+FROM ${dockerRepository}/galasa-dev/base-image:${baseVersion}
 
 COPY repo/ /usr/local/apache2/htdocs/
+
 COPY obr.githash /usr/local/apache2/htdocs/obr.githash
+COPY buildutils.githash /usr/local/apache2/htdocs/buildutils.githash
+COPY wrapping.githash /usr/local/apache2/htdocs/wrapping.githash
+COPY gradle.githash /usr/local/apache2/htdocs/gradle.githash
+COPY maven.githash /usr/local/apache2/htdocs/maven.githash
+COPY framework.githash /usr/local/apache2/htdocs/framework.githash
+COPY extensions.githash /usr/local/apache2/htdocs/extensions.githash
+COPY managers.githash /usr/local/apache2/htdocs/managers.githash

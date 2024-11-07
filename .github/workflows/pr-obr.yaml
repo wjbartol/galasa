@@ -341,7 +341,7 @@ jobs:
           tags: obr-maven-artefacts:test
           build-args: |
             dockerRepository=${{ env.REGISTRY }}
-            tag=main
+            baseVersion=latest
 
   build-obr-javadocs:
     name: Build OBR javadocs using galasabld image and maven

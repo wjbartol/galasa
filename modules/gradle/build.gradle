@@ -103,3 +103,10 @@ publishing {
     }
 
 }
+
+
+// A task 'allDeps' will get dependency reports on all the sub-projects
+// gradle -q allDeps
+subprojects {
+    task allDeps(type: DependencyReportTask) {}
+}

@@ -145,7 +145,7 @@ public class SecretDetailsRoute extends AbstractSecretsRoute {
     }
 
     private String getSecretNameFromPath(String pathInfo) throws InternalServletException {
-        Matcher matcher = this.getPath().matcher(pathInfo);
+        Matcher matcher = this.getPathRegex().matcher(pathInfo);
         matcher.matches();
         return matcher.group(1);
     }

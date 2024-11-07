@@ -18,6 +18,7 @@ import dev.galasa.framework.api.users.internal.routes.UsersDeleteRoute;
 import dev.galasa.framework.api.users.internal.routes.UsersRoute;
 import dev.galasa.framework.auth.spi.AuthServiceFactory;
 import dev.galasa.framework.auth.spi.IAuthService;
+import dev.galasa.framework.auth.spi.IAuthServiceFactory;
 import dev.galasa.framework.spi.IFramework;
 import dev.galasa.framework.api.common.BaseServlet;
 import dev.galasa.framework.api.common.Environment;
@@ -39,18 +40,25 @@ public class UsersServlet extends BaseServlet {
 
     protected Environment env = new SystemEnvironment();
 
+    private IAuthServiceFactory factory;
+
     @Override
     public void init() throws ServletException {
         logger.info("Galasa Users API initialising");
 
-        super.init();
+        if (factory == null) {
+            factory = new AuthServiceFactory(framework, env);
+        }
 
-        AuthServiceFactory factory = new AuthServiceFactory(framework, env);
         IAuthService authService = factory.getAuthService();
         addRoute(new UsersRoute(getResponseBuilder(), env, authService));
         addRoute(new UsersDeleteRoute(getResponseBuilder(), env, authService));
 
         logger.info("Galasa Users API initialised");
+    }
+
+    protected void setAuthServiceFactory(IAuthServiceFactory factory) {
+        this.factory = factory;
     }
 
 }

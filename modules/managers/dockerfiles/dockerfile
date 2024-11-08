@@ -1,6 +1,0 @@
-ARG dockerRepository
-ARG tag
-FROM ${dockerRepository}/galasa-dev/extensions-maven-artefacts:${tag}
-
-COPY repo/ /usr/local/apache2/htdocs/
-COPY managers.githash /usr/local/apache2/htdocs/managers.githash

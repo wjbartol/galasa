@@ -147,3 +147,11 @@ jobs:
       framework-artifact-id: ${{ needs.find-artifacts.outputs.framework_artifacts_id }}
       extensions-artifact-id: ${{ needs.find-artifacts.outputs.extensions_artifacts_id }}
       managers-artifact-id: ${{ needs.find-artifacts.outputs.managers_artifacts_id }}
+
+  # This is required as all previous jobs are optional based on if a module has changed.
+  # This job is set in the branch protection rules as required to merge a Pull Request.
+  end-pull-request-orchestrator:
+    name: End of Pull Request build
+    needs: [pr-build-obr]
+    runs-on: ubuntu-latest
+    

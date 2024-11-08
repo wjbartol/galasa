@@ -261,7 +261,8 @@ public class CouchdbAuthStore extends CouchdbStore implements IAuthStore {
 
     @Override
     public IUser updateUser(IUser user) throws AuthStoreException {
-        // Take a clone of the user we are passed, so we can guarantee we are using our bean which
+        // Take a clone of the user we are passed, so we can guarantee we are using our
+        // bean which
         // serialises to the correct format.
         UserImpl userImpl = new UserImpl(user);
         updateUser(httpClient, storeUri, userImpl);
@@ -277,10 +278,11 @@ public class CouchdbAuthStore extends CouchdbStore implements IAuthStore {
      * @param dbName  the name of the database to retrieve the documents of
      * @param loginId the loginId of the user to retrieve the doucemnts of
      * @return a list of rows corresponding to documents within the database
-     * @throws CouchdbException             if there was a problem accessing the
-     *                                      CouchDB store or its response
+     * @throws CouchdbException if there was a problem accessing the
+     *                          CouchDB store or its response
      */
-    protected List<ViewRow> getAllDocsByLoginId(String dbName, String loginId, String viewName) throws CouchdbException {
+    protected List<ViewRow> getAllDocsByLoginId(String dbName, String loginId, String viewName)
+            throws CouchdbException {
 
         String encodedLoginId = URLEncoder.encode("\"" + loginId + "\"", StandardCharsets.UTF_8);
         String url = storeUri + "/" + dbName + "/_design/docs/_view/" + viewName + "?key=" + encodedLoginId;
@@ -312,7 +314,8 @@ public class CouchdbAuthStore extends CouchdbStore implements IAuthStore {
 
         validateCouchdbResponseJson(user.getUserNumber(), putResponse);
 
-        // The version of the document in couchdb has updated, so lets update our version in the doc we were sent,
+        // The version of the document in couchdb has updated, so lets update our
+        // version in the doc we were sent,
         // so that the same document could be used for another update.
         user.setVersion(putResponse.rev);
     }
@@ -325,7 +328,7 @@ public class CouchdbAuthStore extends CouchdbStore implements IAuthStore {
 
         } catch (CouchdbException e) {
             String errorMessage = ERROR_FAILED_TO_UPDATE_USER_DOCUMENT.getMessage(e.getMessage());
-            throw new AuthStoreException(errorMessage,e);
+            throw new AuthStoreException(errorMessage, e);
         }
         return putResponse;
     }
@@ -337,12 +340,13 @@ public class CouchdbAuthStore extends CouchdbStore implements IAuthStore {
         request = httpRequestFactory
                 .getHttpPutRequest(couchdbUri + "/" + USERS_DATABASE_NAME + "/" + user.getUserNumber());
         request.setHeader("If-Match", user.getVersion());
-    
+
         request.setEntity(new StringEntity(jsonStructure, StandardCharsets.UTF_8));
         return request;
     }
 
-    private void validateCouchdbResponseJson(String expectedUserNumber , PutPostResponse putResponse) throws AuthStoreException {
+    private void validateCouchdbResponseJson(String expectedUserNumber, PutPostResponse putResponse)
+            throws AuthStoreException {
         if (putResponse.id == null || putResponse.rev == null) {
             String errorMessage = ERROR_FAILED_TO_UPDATE_USER_DOCUMENT_INVALID_RESP.getMessage();
             throw new AuthStoreException(errorMessage);
@@ -356,21 +360,21 @@ public class CouchdbAuthStore extends CouchdbStore implements IAuthStore {
     @Override
     public IUser getUser(String userNumber) throws AuthStoreException {
 
-        try{
+        try {
 
             logger.info("Retrieving user from CouchDB");
 
             IUser user = null;
             UserDoc userGotBack = getUserFromDocument(userNumber);
 
-            if(userGotBack != null){
+            if (userGotBack != null) {
                 user = new UserImpl(userGotBack);
             }
 
             logger.info("User fecthed from CouchDB");
             return user;
 
-        }catch (CouchdbException e) {
+        } catch (CouchdbException e) {
 
             String errorMessage = ERROR_FAILED_TO_RETRIEVE_USERS.getMessage(e.getMessage());
             throw new AuthStoreException(errorMessage, e);
@@ -378,7 +382,6 @@ public class CouchdbAuthStore extends CouchdbStore implements IAuthStore {
         }
 
     }
-
 
     @Override
     public void deleteUser(IUser user) throws AuthStoreException {

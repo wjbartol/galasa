@@ -847,6 +847,7 @@ public class TestCouchdbAuthStore {
 
         assertThat(user).isInstanceOf(UserImpl.class);
         assertThat(user).isNotNull();
+        assertThat(user.getLoginId()).isEqualTo("johndoe");
 
     }
 
@@ -920,7 +921,7 @@ public class TestCouchdbAuthStore {
         // Then...
         assertThat(thrown).isNotNull();
         assertThat(thrown.getMessage()).contains("GAL6202E",
-                "Failed to get user documents from the CouchDB users store");
+                "Failed to get user documents from the CouchDB users database");
     }
 
     @Test
@@ -991,8 +992,6 @@ public class TestCouchdbAuthStore {
         List<HttpInteraction> interactions = new ArrayList<HttpInteraction>();
         interactions.add(new GetDocumentInteraction<IdRev>(expectedGetRequestUrl, HttpStatus.SC_OK, mockIdRev));
 
-        // The DELETE request may return a 202 Accepted, which shouldn't be a problem
-        // for us
         interactions.add(new DeleteDocumentInteraction(expectedDeleteRequestUrl, HttpStatus.SC_INTERNAL_SERVER_ERROR));
 
         MockCloseableHttpClient mockHttpClient = new MockCloseableHttpClient(interactions);

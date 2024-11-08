@@ -558,7 +558,7 @@ public class TestCouchdbAuthStore {
         // Then...
         assertThat(thrown).isNotNull();
         assertThat(thrown.getMessage()).contains("GAL6202E",
-                "Failed to get user documents from the CouchDB users store.");
+                "Failed to get user documents from the CouchDB users database.");
     }
 
     @Test

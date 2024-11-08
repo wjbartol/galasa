@@ -241,7 +241,7 @@ jobs:
           --batch-mode --errors --fail-at-end \
           --settings /home/runner/work/gpg/settings.xml 2>&1 | tee galasa-bom-build.log
         
-      - name: Upload Galasa BOM Build Log
+      - name: Upload Galasa BOM build log
         if: failure()
         uses: actions/upload-artifact@v4
         with:
@@ -268,7 +268,7 @@ jobs:
           --batch-mode --errors --fail-at-end \
           --settings /home/runner/work/gpg/settings.xml 2>&1 | tee galasa-obr-build.log
     
-      - name: Upload Galasa OBR Build Log
+      - name: Upload Galasa OBR build log
         if: failure()
         uses: actions/upload-artifact@v4
         with:
@@ -299,7 +299,6 @@ jobs:
         with:
           name: obr
           path: modules/obr/repo
-          retention-days: 7
 
       - name: Login to Github Container Registry
         uses: docker/login-action@v3
@@ -514,7 +513,7 @@ jobs:
           --batch-mode --errors --fail-at-end \
           --settings /home/runner/work/gpg/settings.xml 2>&1 | tee build.log
       
-      - name: Upload javadoc site Build Log
+      - name: Upload Javadoc site build log
         if: failure()
         uses: actions/upload-artifact@v4
         with:
@@ -766,7 +765,7 @@ jobs:
           --batch-mode --errors --fail-at-end \
           --settings /home/runner/work/gpg/settings.xml 2>&1 | tee build.log
         
-      - name: Upload galasa obr generic Build Log
+      - name: Upload Galasa OBR Generic build log
         if: failure()
         uses: actions/upload-artifact@v4
         with:

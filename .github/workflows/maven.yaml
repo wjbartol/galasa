@@ -141,14 +141,14 @@ jobs:
           --batch-mode --errors --fail-at-end \
           --settings /home/runner/work/gpg/settings.xml 2>&1 | tee build.log
       
-      - name: Upload Maven Build Log
+      - name: Upload Maven build log
         if: failure()
         uses: actions/upload-artifact@v4
         with:
           name: maven-maven-build-log
           path: modules/maven/build.log
             
-      - name: Upload Junit Test report
+      - name: Upload Junit report
         if: failure()
         uses: actions/upload-artifact@v4
         with:
@@ -160,7 +160,6 @@ jobs:
         with:
           name: maven
           path: modules/maven/repo
-          retention-days: 7
 
   report-failure:
     name: Report failure in workflow

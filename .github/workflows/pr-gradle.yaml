@@ -60,4 +60,3 @@ jobs:
         with:
           name: gradle
           path: modules/gradle/repo
-          retention-days: 7

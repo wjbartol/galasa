@@ -154,4 +154,8 @@ jobs:
     name: End of Pull Request build
     needs: [pr-build-obr]
     runs-on: ubuntu-latest
-    
+
+    steps:
+      - name: End of Pull Request build
+        run: |
+          echo "End of Pull Request build - successful."

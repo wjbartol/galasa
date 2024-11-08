@@ -30,8 +30,8 @@ import dev.galasa.framework.spi.auth.IUser;
 
 public class UsersDeleteRoute extends BaseRoute{
 
-    // Regex to match endpoint /users/{someLoginId}
-    private static final String path = "\\/([a-zA-Z0-9\\-\\_]+)\\/?";
+    // Regex to match endpoint /users/{userDocumentId}
+    protected static final String path = "\\/([a-zA-Z0-9\\-\\_]+)\\/?";
 
     private Environment env;
     private IAuthStoreService authStoreService;
@@ -58,11 +58,11 @@ public class UsersDeleteRoute extends BaseRoute{
         QueryParameters queryParams,
         HttpServletRequest request,
         HttpServletResponse response
-    ) throws FrameworkException{
+    ) throws FrameworkException {
 
         logger.info("handleDeleteRequest() entered");
 
-        String userNumber = extractUserNumberFromUrl(request, pathInfo);
+        String userNumber = extractUserNumberFromUrl(pathInfo);
         IUser user = authStoreService.getUser(userNumber);
 
         deleteUser(user);
@@ -71,9 +71,9 @@ public class UsersDeleteRoute extends BaseRoute{
         return getResponseBuilder().buildResponse(request, response, HttpServletResponse.SC_NO_CONTENT);
     }
 
-    private String extractUserNumberFromUrl(HttpServletRequest request, String pathInfo) throws InternalServletException{
+    private String extractUserNumberFromUrl(String pathInfo) throws InternalServletException{
 
-        try{
+        try {
 
             Matcher matcher = pathPattern.matcher(pathInfo);
             matcher.matches();
@@ -81,7 +81,7 @@ public class UsersDeleteRoute extends BaseRoute{
             String userNumber = matcher.group(1);
             return userNumber;
 
-        }catch(Exception ex){
+        } catch(Exception ex){
             ServletError error = new ServletError(GAL5085_FAILED_TO_GET_LOGIN_ID_FROM_URL);
             throw new InternalServletException(error, HttpServletResponse.SC_NOT_FOUND, ex);
         }
@@ -90,9 +90,9 @@ public class UsersDeleteRoute extends BaseRoute{
 
     private void deleteUser(IUser user) throws AuthStoreException, InternalServletException{
 
-        try{
+        try {
 
-            if(user == null){
+            if (user == null) {
                 ServletError error = new ServletError(GAL5083_ERROR_USER_NOT_FOUND);
                 throw new InternalServletException(error, HttpServletResponse.SC_NOT_FOUND);
             }
@@ -109,7 +109,7 @@ public class UsersDeleteRoute extends BaseRoute{
             authStoreService.deleteUser(user);
             logger.info("The user with the given loginId was deleted OK");
 
-        }catch (AuthStoreException e) {
+        } catch (AuthStoreException e) {
             ServletError error = new ServletError(GAL5084_FAILED_TO_DELETE_USER);
             throw new InternalServletException(error, HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         }

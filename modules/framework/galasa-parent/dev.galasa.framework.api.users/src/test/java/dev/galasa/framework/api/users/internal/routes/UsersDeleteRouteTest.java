@@ -38,8 +38,7 @@ public class UsersDeleteRouteTest extends BaseServletTest {
 
     Map<String, String> headerMap = Map.of("Authorization", "Bearer " + BaseServletTest.DUMMY_JWT);
 
-    private static final String path = "\\/([a-zA-Z0-9\\-\\_]+)\\/?";
-    private static final Pattern pattern = Pattern.compile(path);
+    private static final Pattern pattern = Pattern.compile(UsersDeleteRoute.path);
 
     @Test
     public void testUsersDeleteRequestReturnsNotFoundDueToMissingUserDoc() throws Exception {

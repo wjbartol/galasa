@@ -71,18 +71,18 @@ public interface IAuthStoreService {
     void createUser(String loginId, String clientName) throws AuthStoreException;
 
     /**
-     * Retrieves a user record in the users store's database.
+     * Retrieves a user record in the users database.
      *
      * @param loginId    the loginId of the user trying to access Galasa API
-     * @throws AuthStoreException if there is an issue accessing the users store.
+     * @throws AuthStoreException if there is an issue accessing the auth store.
      */
     IUser getUserByLoginId(String loginId) throws AuthStoreException;
 
     /**
-     * Retrieves a user record in the users store's database.
+     * Retrieves a user record in the users database.
      *
      * @param userNumber    the ID of the user record to retrieve
-     * @throws AuthStoreException if there is an issue accessing the users store.
+     * @throws AuthStoreException if there is an issue accessing the auth store.
      */
     IUser getUser(String userNumber) throws AuthStoreException;
 

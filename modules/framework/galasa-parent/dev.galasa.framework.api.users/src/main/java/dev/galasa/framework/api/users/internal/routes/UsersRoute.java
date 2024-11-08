@@ -23,6 +23,7 @@ import dev.galasa.framework.api.common.ResponseBuilder;
 import dev.galasa.framework.api.common.Environment;
 import dev.galasa.framework.api.common.EnvironmentVariables;
 import dev.galasa.framework.api.users.UsersServlet;
+import dev.galasa.framework.auth.spi.IAuthService;
 import dev.galasa.framework.api.common.JwtWrapper;
 
 import dev.galasa.framework.spi.FrameworkException;
@@ -35,17 +36,15 @@ public class UsersRoute extends BaseRoute {
     // Regex to match endpoint /users and /users/
     private static final String path = "\\/?";
 
-    public static final String QUERY_PARAMETER_LOGIN_ID_VALUE_MYSELF = "me";
-
     private Environment env;
     private IAuthStoreService authStoreService;
     private BeanTransformer beanTransformer ;
 
     public UsersRoute(ResponseBuilder responseBuilder, Environment env,
-            IAuthStoreService authStoreService) {
+            IAuthService authService) {
         super(responseBuilder, path);
         this.env = env;
-        this.authStoreService = authStoreService;
+        this.authStoreService = authService.getAuthStoreService();
 
         String baseServletUrl = env.getenv(EnvironmentVariables.GALASA_EXTERNAL_API_URL);
 
@@ -88,7 +87,7 @@ public class UsersRoute extends BaseRoute {
 
         JwtWrapper jwtWrapper = new JwtWrapper(request, env);
 
-        if (loginId.equals("me")) {
+        if (loginId.equals(UsersServlet.QUERY_PARAMETER_LOGIN_ID_VALUE_MYSELF)) {
             loginId = jwtWrapper.getUsername();
         }
 

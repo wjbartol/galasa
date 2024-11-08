@@ -124,8 +124,11 @@ public enum ServletErrorMessage {
     GAL5071_FAILED_TO_PARSE_YAML_INTO_JSON            (5071, "E: Internal server error. Failed to convert OpenAPI specification from YAML into JSON. Report the problem to your Galasa Ecosystem owner"),
 
     // User APIs...
-    GAL5081_INVALID_QUERY_PARAM_VALUE                 (5081, "E: A request to get the user details for a particular user failed. The query parameter provided is not valid. Supported values for the ‘loginId’ query parameter are : ‘me’. This problem is caused by the client program sending a bad request. Please report this problem to the owner of your client program."),
-    GAL5082_NO_LOGINID_PARAM_PROVIDED                 (5082, "E: A request to get the user details failed. The request did not supply a ‘loginId’ filter. A ‘loginId’ query parameter with a value of : ‘me’ was expected. This problem is caused by the client program sending a bad request. Please report this problem to the owner of your client program."),
+    GAL5081_INVALID_QUERY_PARAM_VALUE                 (5081, "E: A request to get the user details for a particular user failed. The query parameter provided is not valid. Supported values for the 'loginId' query parameter are : 'me'. This problem is caused by the client program sending a bad request. Please report this problem to the owner of your client program."),
+    GAL5082_NO_LOGINID_PARAM_PROVIDED                 (5082, "E: A request to get the user details failed. The request did not supply a 'loginId' filter. A 'loginId' query parameter with a value of : 'me' was expected. This problem is caused by the client program sending a bad request. Please report this problem to the owner of your client program."),
+    GAL5083_ERROR_USER_NOT_FOUND                      (5083, "E: Unable to retrieve a user with the given user number. No such user exists. Check your request query parameters and try again."),
+    GAL5084_FAILED_TO_DELETE_USER                     (5084, "E: Failed to delete a user with the given 'loginId' from the auth store. The auth store might be experiencing temporary issues. Report the problem to your Galasa Ecosystem owner."),
+    GAL5085_FAILED_TO_GET_LOGIN_ID_FROM_URL           (5085, "E: Failed to retrieve a loginId from the request path. Please ensure that you have provided a valid ID representing an existing auth token in your request and try again"),
 
     // Secrets APIs...
     GAL5092_INVALID_SECRET_NAME_PROVIDED              (5092, "E: Invalid secret name provided. The name of a Galasa secret cannot be empty, contain only spaces or tabs, or contain dots ('.'), and must only contain characters in the Latin-1 character set. Check your request payload and try again."),

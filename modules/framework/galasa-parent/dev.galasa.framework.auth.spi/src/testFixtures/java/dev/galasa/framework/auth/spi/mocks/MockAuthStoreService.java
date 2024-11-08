@@ -118,7 +118,11 @@ public class MockAuthStoreService implements IAuthStoreService {
 
     @Override
     public void deleteUser(IUser user) throws AuthStoreException {
-        throw new UnsupportedOperationException("Unimplemented method 'deleteUser'");
+
+        if(users.containsKey(user.getLoginId())){
+            users.remove(user.getLoginId());
+        }
+
     }
 
   
@@ -132,6 +136,25 @@ public class MockAuthStoreService implements IAuthStoreService {
     @Override
     public IUser getUserByLoginId(String loginId) throws AuthStoreException {
         return users.get(loginId);
+    }
+
+    @Override
+    public IUser getUser(String userNumber) throws AuthStoreException {
+
+        IUser userOut = null;
+
+        if(!users.isEmpty()){
+            for(IUser user : users.values()){
+
+                if(user.getUserNumber().equals(userNumber)){
+                    userOut = user;
+                }
+    
+            }
+        }
+
+        return userOut;
+
     }
 
     @Override

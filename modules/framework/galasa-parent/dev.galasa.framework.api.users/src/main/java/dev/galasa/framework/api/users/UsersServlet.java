@@ -14,6 +14,7 @@ import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.component.annotations.ServiceScope;
 
+import dev.galasa.framework.api.users.internal.routes.UsersDeleteRoute;
 import dev.galasa.framework.api.users.internal.routes.UsersRoute;
 import dev.galasa.framework.auth.spi.AuthServiceFactory;
 import dev.galasa.framework.auth.spi.IAuthService;
@@ -31,6 +32,7 @@ public class UsersServlet extends BaseServlet {
     protected IFramework framework;
 
     public static final String QUERY_PARAM_LOGIN_ID = "loginId";
+    public static final String QUERY_PARAMETER_LOGIN_ID_VALUE_MYSELF = "me";
 
     private static final long serialVersionUID = 1L;
 
@@ -49,7 +51,8 @@ public class UsersServlet extends BaseServlet {
         }
 
         IAuthService authService = factory.getAuthService();
-        addRoute(new UsersRoute(getResponseBuilder(), env, authService.getAuthStoreService()));
+        addRoute(new UsersRoute(getResponseBuilder(), env, authService));
+        addRoute(new UsersDeleteRoute(getResponseBuilder(), env, authService));
 
         logger.info("Galasa Users API initialised");
     }

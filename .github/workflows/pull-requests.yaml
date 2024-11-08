@@ -150,12 +150,12 @@ jobs:
 
   # This is required as all previous jobs are optional based on if a module has changed.
   # This job is set in the branch protection rules as required to merge a Pull Request.
-  end-pull-request-orchestrator:
-    name: End of Pull Request build
+  end-pull-request-build:
+    name: Pull Request build was successful
     needs: [pr-build-obr]
     runs-on: ubuntu-latest
 
     steps:
       - name: End of Pull Request build
         run: |
-          echo "End of Pull Request build - successful."
+          echo "Pull Request build was successful"

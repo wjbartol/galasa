@@ -166,7 +166,7 @@ jobs:
           -PjacocoEnabled=${{ inputs.jacoco_enabled }} \
           -PisMainOrRelease=${{ inputs.sign_artifacts }} 2>&1 | tee build.log
 
-      - name: Upload Gradle Build Log
+      - name: Upload Gradle build log
         if: failure()
         uses: actions/upload-artifact@v4
         with:
@@ -178,7 +178,6 @@ jobs:
         with:
           name: framework
           path: modules/framework/repo
-          retention-days: 7
 
   build-rest-api-documentation:
     name: Build REST API documentation using openapi2beans and gradle

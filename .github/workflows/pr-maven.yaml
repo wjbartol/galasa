@@ -123,4 +123,3 @@ jobs:
         with:
           name: maven
           path: modules/maven/repo
-          retention-days: 7

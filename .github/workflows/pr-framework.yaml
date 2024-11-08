@@ -168,7 +168,7 @@ jobs:
           -PcentralMaven=https://repo.maven.apache.org/maven2/ \
           -PtargetMaven=${{ github.workspace }}/modules/framework/repo
       
-      - name: Upload Jacoco Reports as artifact
+      - name: Upload Jacoco report
         if: failure()
         uses: actions/upload-artifact@v3
         with:
@@ -182,7 +182,6 @@ jobs:
         with:
           name: framework
           path: modules/framework/repo
-          retention-days: 7
 
   build-rest-api-documentation:
     name: Build REST API documentation using openapi2beans and gradle

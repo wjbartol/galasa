@@ -4,18 +4,18 @@ plugins {
 }
 
 dependencies {
-    implementation 'javax.servlet:javax.servlet-api:3.1.0'
-    implementation 'org.osgi:org.osgi.core:6.0.0'
-    implementation 'org.osgi:org.osgi.service.component.annotations:1.3.0'
-    implementation 'javax.validation:validation-api:2.0.1.Final'
-    implementation 'commons-logging:commons-logging:1.2'
-    implementation 'com.google.code.gson:gson:2.10.1'
-    implementation 'io.prometheus:simpleclient:0.6.0'
+    implementation platform('dev.galasa:dev.galasa.platform:0.38.0')
 
-    // testImplementation platform('dev.galasa:dev.galasa.platform:0.38.0')
-    testImplementation 'junit:junit:4.13.1'
+    implementation 'javax.servlet:javax.servlet-api'
+    implementation 'org.osgi:org.osgi.core'
+    implementation 'org.osgi:org.osgi.service.component.annotations'
+    implementation 'javax.validation:validation-api'
+    implementation 'commons-logging:commons-logging'
+    implementation 'com.google.code.gson:gson'
+    implementation 'io.prometheus:simpleclient'
 
-    testImplementation 'org.mockito:mockito-core:3.1.0'
-    testImplementation 'org.awaitility:awaitility:3.0.0'
-    testImplementation 'org.assertj:assertj-core:3.16.1'
+    testImplementation 'junit:junit'
+    testImplementation 'org.mockito:mockito-core'
+    testImplementation 'org.awaitility:awaitility'
+    testImplementation 'org.assertj:assertj-core'
 }

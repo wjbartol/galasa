@@ -76,6 +76,14 @@ jobs:
           name: openapi2beans
           path: modules/artifacts/openapi2beans
 
+      - name: Download platform from this workflow
+        id: download-platform
+        continue-on-error: true
+        uses: actions/download-artifact@v4
+        with:
+          name: platform
+          path: modules/artifacts
+
       - name: Download wrapping artifacts from this workflow
         id: download-wrapping
         continue-on-error: true
@@ -111,6 +119,15 @@ jobs:
           path: modules/artifacts/openapi2beans
           github-token: ${{ github.token }}
           run-id: ${{ inputs.openapi2beans-artifact-id }}
+
+      # - name: Download platform from last successful workflow
+      #   if: ${{ steps.download-platform.outcome == 'failure' }}
+      #   uses: actions/download-artifact@v4
+      #   with:
+      #     name: platform
+      #     path: modules/artifacts
+      #     github-token: ${{ github.token }}
+      #     run-id: ${{ inputs.platform-artifact-id }}
 
       - name: Download wrapping artifacts from last successful workflow
         if: ${{ steps.download-wrapping.outcome == 'failure' }}

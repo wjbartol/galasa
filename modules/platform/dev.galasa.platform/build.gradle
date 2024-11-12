@@ -56,9 +56,9 @@ dependencies {
         api 'org.apache.felix:org.apache.felix.framework:7.0.5'
         api 'org.apache.felix:org.apache.felix.scr:2.1.14'
 
-        api 'org.apache.logging.log4j:log4j-api:2.17.1'
-        api 'org.apache.logging.log4j:log4j-core:2.17.1'
-        api 'org.apache.logging.log4j:log4j-slf4j-impl:2.17.1'
+        api 'org.apache.logging.log4j:log4j-api:2.24.1'
+        api 'org.apache.logging.log4j:log4j-core:2.24.1'
+        api 'org.apache.logging.log4j:log4j-slf4j-impl:2.24.1'
 
         api 'org.apache.maven:maven-repository-metadata:3.3.9'
 
@@ -71,8 +71,8 @@ dependencies {
 
         api 'org.awaitility:awaitility:3.0.0'
 
-        api 'org.bouncycastle:bcpkix-jdk18on:1.75'
-        api 'org.bouncycastle:bcprov-jdk18on:1.75'
+        api 'org.bouncycastle:bcpkix-jdk18on:1.79'
+        api 'org.bouncycastle:bcprov-jdk18on:1.79'
 
         api 'org.jetbrains.kotlin:kotlin-osgi-bundle:1.4.0'
 

@@ -16,6 +16,10 @@ on:
         description: 'The Workflow Run ID of the last workflow containing artifacts for openapi2beans'
         required: true
         type: string
+      platform-artifact-id:
+        description: 'The Workflow Run ID of the last workflow containing artifacts for the platform'
+        required: true
+        type: string
       wrapping-artifact-id:
         description: 'The Workflow Run ID of the last workflow containing artifacts for the wrapping module'
         required: true
@@ -120,15 +124,14 @@ jobs:
           github-token: ${{ github.token }}
           run-id: ${{ inputs.openapi2beans-artifact-id }}
 
-      # Commented out for now as there are no historical runs with Platform artifacts.
-      # - name: Download platform from last successful workflow
-      #   if: ${{ steps.download-platform.outcome == 'failure' }}
-      #   uses: actions/download-artifact@v4
-      #   with:
-      #     name: platform
-      #     path: modules/artifacts
-      #     github-token: ${{ github.token }}
-      #     run-id: ${{ inputs.platform-artifact-id }}
+      - name: Download platform from last successful workflow
+        if: ${{ steps.download-platform.outcome == 'failure' }}
+        uses: actions/download-artifact@v4
+        with:
+          name: platform
+          path: modules/artifacts
+          github-token: ${{ github.token }}
+          run-id: ${{ inputs.platform-artifact-id }}
 
       - name: Download wrapping artifacts from last successful workflow
         if: ${{ steps.download-wrapping.outcome == 'failure' }}

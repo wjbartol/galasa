@@ -69,7 +69,7 @@ Options are:
 Environment variables used:
 DEBUG - Optional. Valid values "1" (on) or "0" (off). Defaults to "0" (off).
 SOURCE_MAVEN - Optional. Where maven/gradle can look for pre-built development levels of things.
-    Defaults to https://development.galasa.dev/main/maven-repo/framework/
+    Defaults to https://development.galasa.dev/main/maven-repo/obr/
 
 EOF
 }
@@ -132,7 +132,7 @@ fi
 
 # Over-rode SOURCE_MAVEN if you want to build from a different maven repo...
 if [[ -z ${SOURCE_MAVEN} ]]; then
-    export SOURCE_MAVEN=https://development.galasa.dev/main/maven-repo/framework/
+    export SOURCE_MAVEN=https://development.galasa.dev/main/maven-repo/obr/
     info "SOURCE_MAVEN repo defaulting to ${SOURCE_MAVEN}."
     info "Set this environment variable if you want to over-ride this value."
 else

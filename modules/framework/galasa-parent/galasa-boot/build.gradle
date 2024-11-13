@@ -25,16 +25,11 @@ dependencies {
     implementation platform ('dev.galasa:dev.galasa.platform:0.38.0')
     implementation 'org.apache.felix:org.apache.felix.scr'
 
-    // embedImplementation platform ('dev.galasa:dev.galasa.platform:0.38.0')
     embedImplementation 'org.apache.felix:org.apache.felix.framework:7.0.5'
     embedImplementation 'org.apache.felix:org.apache.felix.bundlerepository:2.0.2'
-    // embedImplementation('org.apache.felix:org.apache.felix.framework')
-    // embedImplementation('org.apache.felix:org.apache.felix.bundlerepository')
 
     embedImplementation 'commons-cli:commons-cli:1.4'
     embedImplementation 'commons-io:commons-io:2.16.1'
-    // embedImplementation('commons-cli:commons-cli')
-    // embedImplementation('commons-io:commons-io')
 
     bundleDependency 'org.apache.felix:org.apache.felix.bundlerepository:2.0.2'
     bundleDependency 'org.apache.felix:org.apache.felix.scr:2.1.14'

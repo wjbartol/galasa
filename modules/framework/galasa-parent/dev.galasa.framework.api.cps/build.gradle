@@ -14,7 +14,7 @@ dependencies {
     testImplementation(testFixtures(project(':dev.galasa.framework.api.common')))
     testImplementation platform('dev.galasa:dev.galasa.platform:0.38.0')
 
-    testImplementation 'org.assertj:assertj-core'
+    testImplementation 'org.assertj:assertj-core:3.23.1' // Overriding version 3.16.1 suggested by the Platform.
 }
 
 // Note: These values are consumed by the parent build process

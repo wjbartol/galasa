@@ -128,6 +128,7 @@ jobs:
       # For any modules that weren't changed in this push,
       # download artifacts from the last successful workflow.
 
+      # Commented out for now as there are no historical runs with Platform artifacts.
       # - name: Download platform from last successful workflow
       #   if: ${{ steps.download-platform.outcome == 'failure' }}
       #   uses: actions/download-artifact@v4

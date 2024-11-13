@@ -120,6 +120,7 @@ jobs:
           github-token: ${{ github.token }}
           run-id: ${{ inputs.openapi2beans-artifact-id }}
 
+      # Commented out for now as there are no historical runs with Platform artifacts.
       # - name: Download platform from last successful workflow
       #   if: ${{ steps.download-platform.outcome == 'failure' }}
       #   uses: actions/download-artifact@v4

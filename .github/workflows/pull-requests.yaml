@@ -46,7 +46,7 @@ jobs:
     outputs: 
       galasabld_artifacts_id: ${{ steps.find-artifacts.outputs.galasabld_artifacts_id }}
       openapi2beans_artifacts_id: ${{ steps.find-artifacts.outputs.openapi2beans_artifacts_id }}
-      # platform_artifacts_id: ${{ steps.find-artifacts.outputs.platform_artifacts_id }}
+      # platform_artifacts_id: ${{ steps.find-artifacts.outputs.platform_artifacts_id }} Commented out for now as there are no historical runs with Platform artifacts.
       wrapping_artifacts_id: ${{ steps.find-artifacts.outputs.wrapping_artifacts_id }}
       gradle_artifacts_id: ${{ steps.find-artifacts.outputs.gradle_artifacts_id }}
       maven_artifacts_id: ${{ steps.find-artifacts.outputs.maven_artifacts_id }}
@@ -84,7 +84,7 @@ jobs:
 
   pr-build-wrapping:
     name: Build the 'wrapping' module
-    needs: [get-changed-modules, find-artifacts]
+    needs: [get-changed-modules, find-artifacts, pr-build-platform]
     uses: ./.github/workflows/pr-wrapping.yaml
     secrets: inherit
     with:
@@ -92,7 +92,7 @@ jobs:
 
   pr-build-gradle:
     name: Build the 'gradle' module
-    needs: [get-changed-modules, find-artifacts]
+    needs: [get-changed-modules, find-artifacts, pr-build-platform]
     uses: ./.github/workflows/pr-gradle.yaml
     secrets: inherit
     with:
@@ -109,7 +109,7 @@ jobs:
 
   pr-build-framework:
     name: Build the 'framework' module
-    needs: [get-changed-modules, find-artifacts, pr-build-buildutils, pr-build-platform, pr-build-wrapping, pr-build-maven]
+    needs: [get-changed-modules, find-artifacts, pr-build-buildutils, pr-build-wrapping, pr-build-maven]
     uses: ./.github/workflows/pr-framework.yaml
     secrets: inherit
     with:

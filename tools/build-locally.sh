@@ -157,7 +157,7 @@ function build_module() {
     chain=$2
     h1 "Building... module:'$module' chain:'$chain'"
 
-    # buildutils
+    # platform
     if [[ "$module" == "platform" ]]; then
         h2 "Building $module"
         cd ${PROJECT_DIR}/modules/$module

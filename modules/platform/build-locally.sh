@@ -66,15 +66,17 @@ function build_platform() {
     cd $BASEDIR/dev.galasa.platform
     rc=$?
     check_exit_code $rc "Failed to cd to the platform source folder"
-    gradle build check publishToMavenLocal
+    gradle build check publish -PtargetMaven=${TARGET_MAVEN_FOLDER}
     rc=$?
     check_exit_code $rc "Failed to build the plaform module source"
     success "OK"
 }
 
 function clean_platform() {
-    h2 "Cleaning the exisitng built platform in the ~/.m2 repository"
-    rm -fr ~/.m2/repository/dev/galasa/dev.galasa.platform
+    TARGET_MAVEN_FOLDER=~/.m2/repository
+    h2 "Cleaning the exisitng built platform in the ${TARGET_MAVEN_FOLDER} repository"
+    rm -fr ${TARGET_MAVEN_FOLDER}/dev/galasa/dev.galasa.platform
+    success "Cleaned up ${TARGET_MAVEN_FOLDER} repository"
 }
 
 clean_platform

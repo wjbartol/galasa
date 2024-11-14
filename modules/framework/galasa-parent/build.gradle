@@ -45,7 +45,7 @@ allprojects {
         gradlePluginPortal()
         mavenLocal()
         maven {
-            url "https://development.galasa.dev/main/maven-repo/maven/"
+            url "https://development.galasa.dev/main/maven-repo/obr/"
         }
         mavenCentral()
     }

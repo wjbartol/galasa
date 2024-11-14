@@ -13,17 +13,18 @@ dependencies {
 
     api project (':dev.galasa')
     implementation project (':dev.galasa.framework.maven.repository.spi')
+    implementation platform('dev.galasa:dev.galasa.platform:0.38.0')
 
-    implementation 'org.apache.logging.log4j:log4j-api:2.24.1'
-    implementation 'org.apache.logging.log4j:log4j-core:2.24.1'
-    implementation 'org.apache.logging.log4j:log4j-slf4j-impl:2.24.1'
-    implementation 'org.apache.commons:commons-lang3:3.14.0'
-    implementation 'org.apache.felix:org.apache.felix.bundlerepository:2.0.2'
+    implementation 'org.apache.logging.log4j:log4j-api'
+    implementation 'org.apache.logging.log4j:log4j-core'
+    implementation 'org.apache.logging.log4j:log4j-slf4j-impl'
+    implementation 'org.apache.commons:commons-lang3'
+    implementation 'org.apache.felix:org.apache.felix.bundlerepository'
 
-    implementation 'org.apache.bcel:bcel:6.7.0'
-    implementation 'commons-io:commons-io:2.16.1'
-    implementation 'com.google.code.gson:gson:2.10.1'
-    implementation 'org.yaml:snakeyaml:2.0'
+    implementation 'org.apache.bcel:bcel'
+    implementation 'commons-io:commons-io'
+    implementation 'com.google.code.gson:gson'
+    implementation 'org.yaml:snakeyaml'
 
     testImplementation project (':dev.galasa')
 

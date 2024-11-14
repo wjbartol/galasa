@@ -81,6 +81,7 @@ function check_chain_is_true_or_false() {
 }
 
 module_names=(\
+    "platform" \
     "wrapping" \
     "buildutils" \
     "gradle" \
@@ -111,7 +112,7 @@ function check_module_name_is_supported() {
 #-----------------------------------------------------------------------------------------                   
 # Process parameters
 #-----------------------------------------------------------------------------------------
-module_input="buildutils"
+module_input="platform"
 chain_input="true"
 while [ "$1" != "" ]; do
     case $1 in
@@ -155,6 +156,18 @@ function build_module() {
     module=$1
     chain=$2
     h1 "Building... module:'$module' chain:'$chain'"
+
+    # platform
+    if [[ "$module" == "platform" ]]; then
+        h2 "Building $module"
+        cd ${PROJECT_DIR}/modules/$module
+        ${PROJECT_DIR}/modules/$module/build-locally.sh
+        rc=$? ;  if [[ "${rc}" != "0" ]]; then error "Failed to build module $module. rc=$rc" ; exit 1 ; fi
+        success "Built module $module OK"
+        if [[ "$chain" == "true" ]]; then
+            module="buildutils"
+        fi
+    fi
 
     # buildutils
     if [[ "$module" == "buildutils" ]]; then

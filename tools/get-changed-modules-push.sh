@@ -68,6 +68,7 @@ EOF
 
 module_names=(\
     "buildutils" \
+    "platform" \
     "wrapping" \
     "gradle" \
     "maven" \
@@ -154,6 +155,10 @@ function get_changed_modules_and_set_in_environment() {
             echo "BUILDUTILS_CHANGED=true" >> $GITHUB_OUTPUT
             continue
         fi
+        if [[ "$module" == "platform" ]]; then
+            echo "PLATFORM_CHANGED=true" >> $GITHUB_OUTPUT
+            continue
+        fi
         if [[ "$module" == "wrapping" ]]; then
             echo "WRAPPING_CHANGED=true" >> $GITHUB_OUTPUT
             continue
@@ -187,6 +192,7 @@ function get_changed_modules_and_set_in_environment() {
 
 # Set outputs to false as default value.
 echo "BUILDUTILS_CHANGED=false" >> $GITHUB_OUTPUT
+echo "PLATFORM_CHANGED=false" >> $GITHUB_OUTPUT
 echo "WRAPPING_CHANGED=false" >> $GITHUB_OUTPUT
 echo "GRADLE_CHANGED=false" >> $GITHUB_OUTPUT
 echo "MAVEN_CHANGED=false" >> $GITHUB_OUTPUT

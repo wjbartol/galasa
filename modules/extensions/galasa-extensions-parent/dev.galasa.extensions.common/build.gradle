@@ -3,7 +3,7 @@ plugins {
     id 'galasa.extensions'
 }
 
-description = 'Galasa CPS access over http - Provides the CPS stores via the public REST interface over http'
+description = 'Galasa extensions common code'
 
 version = '0.38.0'
 

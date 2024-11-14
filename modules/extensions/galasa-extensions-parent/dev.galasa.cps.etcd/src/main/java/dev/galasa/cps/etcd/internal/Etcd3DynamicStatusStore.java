@@ -262,7 +262,7 @@ public class Etcd3DynamicStatusStore implements IDynamicStatusStore {
     @Override
     public @NotNull Map<String, String> getPrefix(@NotNull String keyPrefix) throws DynamicStatusStoreException {
         ByteSequence bsPrefix = ByteSequence.from(keyPrefix, UTF_8);
-        GetOption options = GetOption.newBuilder().withPrefix(bsPrefix).build();
+        GetOption options = GetOption.builder().withPrefix(bsPrefix).build();
         CompletableFuture<GetResponse> getFuture = kvClient.get(bsPrefix, options);
         Map<String, String> keyValues = new HashMap<>();
 
@@ -340,7 +340,7 @@ public class Etcd3DynamicStatusStore implements IDynamicStatusStore {
     @Override
     public void deletePrefix(@NotNull String keyPrefix) throws DynamicStatusStoreException {
         ByteSequence bsKey = ByteSequence.from(keyPrefix, UTF_8);
-        DeleteOption options = DeleteOption.newBuilder().withPrefix(bsKey).build();
+        DeleteOption options = DeleteOption.builder().withPrefix(bsKey).build();
         CompletableFuture<DeleteResponse> deleteFuture = kvClient.delete(bsKey, options);
 
         try {
@@ -597,7 +597,7 @@ public class Etcd3DynamicStatusStore implements IDynamicStatusStore {
     private Txn performActionsDeletePrefixThen(Txn txn, DssDeletePrefix action) {
         ByteSequence bsKey = ByteSequence.from(action.getPrefix(), UTF_8);
         
-        DeleteOption option = DeleteOption.newBuilder().withPrefix(bsKey).build();
+        DeleteOption option = DeleteOption.builder().withPrefix(bsKey).build();
         
         txn = txn.Then(Op.delete(bsKey, option));
         

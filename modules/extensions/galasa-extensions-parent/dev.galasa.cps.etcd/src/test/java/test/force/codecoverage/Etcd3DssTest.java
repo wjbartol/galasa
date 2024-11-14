@@ -353,7 +353,6 @@ public class Etcd3DssTest {
 //    @Test
     public void testGetprefixWithoKeys() throws DynamicStatusStoreException, InterruptedException, ExecutionException {
         ByteSequence bsPrefix = ByteSequence.from("foo", UTF_8);
-        ByteSequence bsValue = ByteSequence.from("bar", UTF_8);
 
         GetResponse response = Mockito.mock(GetResponse.class);
 

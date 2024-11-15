@@ -18,8 +18,8 @@ jobs:
     runs-on: ubuntu-latest
 
     outputs:
-      buildutils_changed: ${{ steps.get-changed-modules.outputs.BUILDUTILS_CHANGED }}
       platform_changed: ${{ steps.get-changed-modules.outputs.PLATFORM_CHANGED }}
+      buildutils_changed: ${{ steps.get-changed-modules.outputs.BUILDUTILS_CHANGED }}
       wrapping_changed: ${{ steps.get-changed-modules.outputs.WRAPPING_CHANGED }}
       gradle_changed: ${{ steps.get-changed-modules.outputs.GRADLE_CHANGED }}
       maven_changed: ${{ steps.get-changed-modules.outputs.MAVEN_CHANGED }}
@@ -69,14 +69,6 @@ jobs:
         run: |
           ./tools/get-last-successful-workflow-run-for-artifacts.sh --repo ${{ github.repository }}
 
-  build-buildutils:
-    name: Build the 'buildutils' module
-    needs: [get-changed-modules]
-    uses: ./.github/workflows/buildutils.yaml
-    secrets: inherit
-    with:
-      changed: ${{ needs.get-changed-modules.outputs.buildutils_changed }}
-
   build-platform:
     name: Build the 'platform' module
     needs: [get-changed-modules]
@@ -84,6 +76,14 @@ jobs:
     secrets: inherit
     with:
       changed: ${{ needs.get-changed-modules.outputs.platform_changed }}
+        
+  build-buildutils:
+    name: Build the 'buildutils' module
+    needs: [get-changed-modules]
+    uses: ./.github/workflows/buildutils.yaml
+    secrets: inherit
+    with:
+      changed: ${{ needs.get-changed-modules.outputs.buildutils_changed }}
 
   build-wrapping:
     name: Build the 'wrapping' module

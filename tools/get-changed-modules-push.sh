@@ -151,12 +151,14 @@ function get_changed_modules_and_set_in_environment() {
     h1 "Finding changed modules and setting environment variables that can be used in the GitHub Actions workflows..."
 
     for module in "${unique_modules_found_in_push[@]}"; do
-        if [[ "$module" == "buildutils" ]]; then
-            echo "BUILDUTILS_CHANGED=true" >> $GITHUB_OUTPUT
-            continue
-        fi
         if [[ "$module" == "platform" ]]; then
             echo "PLATFORM_CHANGED=true" >> $GITHUB_OUTPUT
+            # Also rebuild modules that depend on the Platform...
+            echo "FRAMEWORK_CHANGED=true" >> $GITHUB_OUTPUT
+            continue
+        fi
+        if [[ "$module" == "buildutils" ]]; then
+            echo "BUILDUTILS_CHANGED=true" >> $GITHUB_OUTPUT
             continue
         fi
         if [[ "$module" == "wrapping" ]]; then

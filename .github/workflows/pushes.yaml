@@ -100,6 +100,7 @@ jobs:
     secrets: inherit
     with:
       changed: ${{ needs.get-changed-modules.outputs.gradle_changed }}
+      platform-artifact-id: ${{ needs.find-artifacts.outputs.platform_artifacts_id }}
 
   build-maven:
     name: Build the 'maven' module

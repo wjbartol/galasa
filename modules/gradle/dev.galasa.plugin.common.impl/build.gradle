@@ -23,8 +23,8 @@ dependencies {
     implementation 'com.google.code.gson:gson'
     implementation 'commons-codec:commons-codec'
 	implementation 'commons-io:commons-io'
-	implementation 'org.apache.httpcomponents:httpcore'
-	implementation 'org.apache.httpcomponents:httpclient'
+    implementation 'org.apache.httpcomponents:httpcore:4.4.11'
+    implementation 'org.apache.httpcomponents:httpclient:4.5.14'
     testImplementation 'junit:junit'
     // Overriding version 3.16.1 suggested by the Platform - as upgrading the other projects
     // to higher versions caused unit test failures. Fixes for this to be completed in a future story.

@@ -27,8 +27,8 @@ dependencies {
     // Overriding version 3.16.1 suggested by the Platform - as upgrading the other projects
     // to higher versions caused unit test failures. Fixes for this to be completed in a future story.
 	implementation 'org.assertj:assertj-core:3.25.3'
-	implementation 'org.apache.httpcomponents:httpcore'
-	implementation 'org.apache.httpcomponents:httpclient'
+    implementation 'org.apache.httpcomponents:httpcore:4.4.11'
+    implementation 'org.apache.httpcomponents:httpclient:4.5.14'
     implementation project(':dev.galasa.plugin.common')
 }
 

@@ -477,14 +477,14 @@ jobs:
       # download artifacts from the last successful workflow.
 
       # Commented out for now as there are no historical runs with Platform artifacts.
-      # - name: Download platform from last successful workflow
-      #   if: ${{ steps.download-platform.outcome == 'failure' }}
-      #   uses: actions/download-artifact@v4
-      #   with:
-      #     name: platform
-      #     path: modules/artifacts
-      #     github-token: ${{ github.token }}
-      #     run-id: ${{ inputs.platform-artifact-id }}
+      - name: Download platform from last successful workflow
+        if: ${{ steps.download-platform.outcome == 'failure' }}
+        uses: actions/download-artifact@v4
+        with:
+          name: platform
+          path: modules/artifacts
+          github-token: ${{ github.token }}
+          run-id: ${{ inputs.platform-artifact-id }}
 
       - name: Download wrapping artifacts from last successful workflow
         if: ${{ steps.download-wrapping.outcome == 'failure' }}
@@ -748,14 +748,14 @@ jobs:
       # download artifacts from the last successful workflow.
 
       # Commented out for now as there are no historical runs with Platform artifacts.
-      # - name: Download platform from last successful workflow
-      #   if: ${{ steps.download-platform.outcome == 'failure' }}
-      #   uses: actions/download-artifact@v4
-      #   with:
-      #     name: platform
-      #     path: modules/artifacts
-      #     github-token: ${{ github.token }}
-      #     run-id: ${{ inputs.platform-artifact-id }}
+      - name: Download platform from last successful workflow
+        if: ${{ steps.download-platform.outcome == 'failure' }}
+        uses: actions/download-artifact@v4
+        with:
+          name: platform
+          path: modules/artifacts
+          github-token: ${{ github.token }}
+          run-id: ${{ inputs.platform-artifact-id }}
 
       - name: Download wrapping artifacts from last successful workflow
         if: ${{ steps.download-wrapping.outcome == 'failure' }}

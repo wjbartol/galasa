@@ -18,8 +18,8 @@ jobs:
     runs-on: ubuntu-latest
 
     outputs:
-      buildutils_changed: ${{ steps.get-changed-modules.outputs.BUILDUTILS_CHANGED }}
       platform_changed: ${{ steps.get-changed-modules.outputs.PLATFORM_CHANGED }}
+      buildutils_changed: ${{ steps.get-changed-modules.outputs.BUILDUTILS_CHANGED }}
       wrapping_changed: ${{ steps.get-changed-modules.outputs.WRAPPING_CHANGED }}
       gradle_changed: ${{ steps.get-changed-modules.outputs.GRADLE_CHANGED }}
       maven_changed: ${{ steps.get-changed-modules.outputs.MAVEN_CHANGED }}
@@ -44,9 +44,9 @@ jobs:
     runs-on: ubuntu-latest
 
     outputs: 
+      platform_artifacts_id: ${{ steps.find-artifacts.outputs.platform_artifacts_id }}
       galasabld_artifacts_id: ${{ steps.find-artifacts.outputs.galasabld_artifacts_id }}
       openapi2beans_artifacts_id: ${{ steps.find-artifacts.outputs.openapi2beans_artifacts_id }}
-      platform_artifacts_id: ${{ steps.find-artifacts.outputs.platform_artifacts_id }}
       wrapping_artifacts_id: ${{ steps.find-artifacts.outputs.wrapping_artifacts_id }}
       gradle_artifacts_id: ${{ steps.find-artifacts.outputs.gradle_artifacts_id }}
       maven_artifacts_id: ${{ steps.find-artifacts.outputs.maven_artifacts_id }}
@@ -66,14 +66,6 @@ jobs:
         run: |
           ./tools/get-last-successful-workflow-run-for-artifacts.sh --repo ${{ github.repository }}
 
-  pr-build-buildutils:
-    name: Build the 'buildutils' module
-    needs: [get-changed-modules, find-artifacts]
-    uses: ./.github/workflows/pr-buildutils.yaml
-    secrets: inherit
-    with:
-      changed: ${{ needs.get-changed-modules.outputs.buildutils_changed }}
-
   pr-build-platform:
     name: Build the 'platform' module
     needs: [get-changed-modules, find-artifacts]
@@ -81,6 +73,14 @@ jobs:
     secrets: inherit
     with:
       changed: ${{ needs.get-changed-modules.outputs.platform_changed }}
+
+  pr-build-buildutils:
+    name: Build the 'buildutils' module
+    needs: [get-changed-modules, find-artifacts]
+    uses: ./.github/workflows/pr-buildutils.yaml
+    secrets: inherit
+    with:
+      changed: ${{ needs.get-changed-modules.outputs.buildutils_changed }}
 
   pr-build-wrapping:
     name: Build the 'wrapping' module
@@ -114,8 +114,8 @@ jobs:
     secrets: inherit
     with:
       changed: ${{ needs.get-changed-modules.outputs.framework_changed }}
-      openapi2beans-artifact-id: ${{ needs.find-artifacts.outputs.openapi2beans_artifacts_id }}
       platform-artifact-id: ${{ needs.find-artifacts.outputs.platform_artifacts_id }}
+      openapi2beans-artifact-id: ${{ needs.find-artifacts.outputs.openapi2beans_artifacts_id }}
       wrapping-artifact-id: ${{ needs.find-artifacts.outputs.wrapping_artifacts_id }}
       gradle-artifact-id: ${{ needs.find-artifacts.outputs.gradle_artifacts_id }}
       maven-artifact-id: ${{ needs.find-artifacts.outputs.maven_artifacts_id }}
@@ -153,8 +153,8 @@ jobs:
     secrets: inherit
     with:
       changed: ${{ needs.get-changed-modules.outputs.obr_changed }}
-      galasabld-artifact-id: ${{ needs.find-artifacts.outputs.galasabld_artifacts_id }}
       platform-artifact-id: ${{ needs.find-artifacts.outputs.platform_artifacts_id }}
+      galasabld-artifact-id: ${{ needs.find-artifacts.outputs.galasabld_artifacts_id }}
       wrapping-artifact-id: ${{ needs.find-artifacts.outputs.wrapping_artifacts_id }}
       gradle-artifact-id: ${{ needs.find-artifacts.outputs.gradle_artifacts_id }}
       maven-artifact-id: ${{ needs.find-artifacts.outputs.maven_artifacts_id }}

@@ -44,7 +44,7 @@ Embed-Dependency: *;scope=compile
     gson-*.jar; lib:=true,\
     gson-fire-1.8.5.jar; lib:=true,\
     javax.annotation-api-1.3.2.jar; lib:=true,\
-    simpleclient-*.jar; lib:=true,\
-    simpleclient_httpserver-*.jar; lib:=true
+    simpleclient-0.15.0.jar; lib:=true,\
+    simpleclient_httpserver-0.15.0.jar; lib:=true
 -fixupmessages "Classes found in the wrong directory"; restrict:=error; is:=warning
 

@@ -97,7 +97,7 @@ managers:
     codecoverage: false
 
   - artifact: dev.galasa.cicsts.resource.manager
-    version: 0.37.0
+    version: 0.38.0
     obr:          true
     mvp:          true
     bom:          true
@@ -115,7 +115,7 @@ managers:
     codecoverage: true
 
   - artifact: dev.galasa.docker.manager
-    version: 0.34.0
+    version: 0.38.0
     obr:          true
     mvp:          true
     bom:          true
@@ -187,7 +187,7 @@ managers:
     codecoverage: true
 
   - artifact: dev.galasa.http.manager.ivt
-    version: 0.31.0
+    version: 0.38.0
     obr:          true
     mvp:          true
     bom:          false
@@ -196,7 +196,7 @@ managers:
     codecoverage: false
 
   - artifact: dev.galasa.ipnetwork.manager
-    version: 0.25.0
+    version: 0.38.0
     obr:          true
     mvp:          true
     bom:          true
@@ -205,7 +205,7 @@ managers:
     codecoverage: true
 
   - artifact: dev.galasa.mq.manager
-    version: 0.25.0
+    version: 0.38.0
     obr:          true
     mvp:          false
     bom:          true
@@ -223,7 +223,7 @@ managers:
     codecoverage: false
 
   - artifact: dev.galasa.artifact.manager
-    version: 0.34.0
+    version: 0.38.0
     obr:          true
     mvp:          true
     bom:          true
@@ -241,7 +241,7 @@ managers:
     codecoverage: false
 
   - artifact: dev.galasa.core.manager
-    version: 0.31.0
+    version: 0.38.0
     obr:          true
     mvp:          true
     bom:          true
@@ -259,7 +259,7 @@ managers:
     codecoverage: false
 
   - artifact: dev.galasa.textscan.manager
-    version: 0.34.0
+    version: 0.38.0
     obr:          true
     mvp:          true
     bom:          true
@@ -268,7 +268,7 @@ managers:
     codecoverage: true
 
   - artifact: dev.galasa.db2.manager
-    version: 0.35.0
+    version: 0.38.0
     obr:          true
     mvp:          true
     bom:          true
@@ -331,7 +331,7 @@ managers:
     codecoverage: true
 
   - artifact: dev.galasa.elasticlog.manager
-    version: 0.32.0
+    version: 0.38.0
     obr:          true
     mvp:          false
     bom:          true
@@ -349,7 +349,7 @@ managers:
     codecoverage: false
 
   - artifact: dev.galasa.phoenix2.manager
-    version: 0.31.0
+    version: 0.38.0
     obr:          true
     mvp:          false
     bom:          true
@@ -358,7 +358,7 @@ managers:
     codecoverage: false
 
   - artifact: dev.galasa.galasaecosystem.manager
-    version: 0.36.0
+    version: 0.38.0
     obr:          true
     mvp:          false
     bom:          true
@@ -376,7 +376,7 @@ managers:
     codecoverage: false
 
   - artifact: dev.galasa.jmeter.manager
-    version: 0.25.0
+    version: 0.38.0
     obr:          true
     mvp:          false
     bom:          true
@@ -412,7 +412,7 @@ managers:
     codecoverage: false
 
   - artifact: dev.galasa.selenium.manager
-    version: 0.34.0
+    version: 0.38.0
     obr:          true
     mvp:          true
     bom:          true
@@ -466,7 +466,7 @@ managers:
     codecoverage: false
 
   - artifact: dev.galasa.windows.manager
-    version: 0.21.0
+    version: 0.38.0
     obr:          true
     mvp:          false
     bom:          true
@@ -475,7 +475,7 @@ managers:
     codecoverage: false
 
   - artifact: dev.galasa.githubissue.manager
-    version: 0.31.0
+    version: 0.38.0
     obr:          true
     mvp:          true
     bom:          true
@@ -484,7 +484,7 @@ managers:
     codecoverage: false
 
   - artifact: dev.galasa.zos.manager
-    version: 0.34.0
+    version: 0.38.0
     obr:          true
     mvp:          true
     bom:          true
@@ -502,7 +502,7 @@ managers:
     codecoverage: false
 
   - artifact: dev.galasa.zos3270.common
-    version: 0.32.0
+    version: 0.38.0
     obr:          true
     mvp:          true
     bom:          true
@@ -511,7 +511,7 @@ managers:
     codecoverage: false
 
   - artifact: dev.galasa.zos3270.manager
-    version: 0.36.0
+    version: 0.38.0
     obr:          true
     mvp:          true
     bom:          true
@@ -529,7 +529,7 @@ managers:
     codecoverage: false
 
   - artifact: dev.galasa.zosbatch.rseapi.manager
-    version: 0.34.0
+    version: 0.38.0
     obr:          true
     mvp:          true
     bom:          true
@@ -538,7 +538,7 @@ managers:
     codecoverage: true
 
   - artifact: dev.galasa.zosbatch.zosmf.manager
-    version: 0.34.0
+    version: 0.38.0
     obr:          true
     mvp:          true
     bom:          true
@@ -556,7 +556,7 @@ managers:
     codecoverage: true
 
   - artifact: dev.galasa.zosconsole.zosmf.manager
-    version: 0.31.0
+    version: 0.38.0
     obr:          true
     mvp:          true
     bom:          true
@@ -565,7 +565,7 @@ managers:
     codecoverage: true
 
   - artifact: dev.galasa.zosfile.rseapi.manager
-    version: 0.34.0
+    version: 0.38.0
     obr:          true
     mvp:          true
     bom:          true
@@ -574,7 +574,7 @@ managers:
     codecoverage: true
 
   - artifact: dev.galasa.zosfile.zosmf.manager
-    version: 0.34.0
+    version: 0.38.0
     obr:          true
     mvp:          true
     bom:          true
@@ -583,7 +583,7 @@ managers:
     codecoverage: true
 
   - artifact: dev.galasa.zosliberty.angel.manager
-    version: 0.34.0
+    version: 0.38.0
     obr:          true
     mvp:          false
     bom:          true
@@ -601,7 +601,7 @@ managers:
     codecoverage: true
 
   - artifact: dev.galasa.zosmf.manager
-    version: 0.34.0
+    version: 0.38.0
     obr:          true
     mvp:          true
     bom:          true
@@ -619,7 +619,7 @@ managers:
     codecoverage: true
 
   - artifact: dev.galasa.zosrseapi.manager
-    version: 0.34.0
+    version: 0.38.0
     obr:          true
     mvp:          true
     bom:          true

@@ -104,7 +104,7 @@ jobs:
         run: |
           mvn deploy -X \
           -Dgpg.skip=true \
-          -Dgalasa.source.repo=${{ github.workspace }}/modules/artifacts \
+          -Dgalasa.source.repo=file://${{ github.workspace }}/modules/artifacts \
           -Dgalasa.central.repo=https://repo.maven.apache.org/maven2/ \
           -Dgalasa.release.repo=file:${{ github.workspace }}/modules/wrapping/repo \
           --batch-mode --errors --fail-at-end \

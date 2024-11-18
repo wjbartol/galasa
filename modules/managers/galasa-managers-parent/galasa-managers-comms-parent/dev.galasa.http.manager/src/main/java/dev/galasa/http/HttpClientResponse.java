@@ -15,6 +15,8 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.http.Header;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
@@ -48,6 +50,7 @@ public class HttpClientResponse<T> {
     private String                    protocolVersion;
     private T                         content;
     private final Map<String, String> headers = new HashMap<>();
+    private static final Log logger = LogFactory.getLog(HttpClientResponse.class);
 
     private HttpClientResponse() {
     }
@@ -280,7 +283,7 @@ public class HttpClientResponse<T> {
                         try{
                             jsonElement = new GalasaGson().fromJson(sResponse, JsonElement.class);
                         }catch(JsonSyntaxException jse){
-                            System.err.println("Unable to parse JSON from the following: " + sResponse);
+                            logger.info("Unable to parse JSON from the following: " + sResponse);
                             throw jse;
                         }
                         if (jsonElement != null) {
@@ -288,7 +291,7 @@ public class HttpClientResponse<T> {
                             response.setContent(json);
                         }
                     } else {
-                      System.err.println("Did not attempt to parse JSON from the following: " + sResponse);
+                        logger.info("Did not attempt to parse JSON from the following: " + sResponse);
                     }
                 } else {
                     EntityUtils.consume(httpResponse.getEntity());

@@ -167,6 +167,8 @@ public class AuthTokensRoute extends BaseRoute {
 
         logger.info("AuthRoute: handlePostRequest() entered.");
 
+        boolean isNewAccessTokenBeingCreated = false;
+
         // Check that the request body contains the required payload
         TokenPayload requestPayload = parseRequestBody(request, TokenPayload.class);
         validator.validate(requestPayload);
@@ -191,10 +193,11 @@ public class AuthTokensRoute extends BaseRoute {
                 String tokenDescription = requestPayload.getDescription();
                 if (requestPayload.getRefreshToken() == null && tokenDescription != null) {
                     addTokenToAuthStore(requestPayload.getClientId(), jwt, tokenDescription);
+                    isNewAccessTokenBeingCreated = true;
                 }
 
                 boolean isWebUiLogin = isLoggingIntoWebUI(requestPayload.getRefreshToken(), tokenDescription);
-                recordUserJustLoggedIn(isWebUiLogin , jwt, this.timeService, this.env);
+                recordUserJustLoggedIn(isWebUiLogin , jwt, this.timeService, this.env, isNewAccessTokenBeingCreated);
 
             } else {
                 logger.info("Unable to get new bearer and refresh tokens from issuer.");
@@ -310,7 +313,7 @@ public class AuthTokensRoute extends BaseRoute {
     }
 
     // This method is protected so we can unit test it easily.
-    protected void recordUserJustLoggedIn(boolean isWebUI, String jwt, ITimeService timeService, Environment env)
+    protected void recordUserJustLoggedIn(boolean isWebUI, String jwt, ITimeService timeService, Environment env, boolean isNewAccessTokenBeingCreated)
             throws InternalServletException, AuthStoreException {
 
         JwtWrapper jwtWrapper = new JwtWrapper(jwt, env);
@@ -328,15 +331,18 @@ public class AuthTokensRoute extends BaseRoute {
             authStoreService.createUser(loginId, clientName);
         } else {
 
-            IFrontEndClient client = user.getClient(clientName);
-            if (client == null) {
-                client = authStoreService.createClient(clientName);
-                user.addClient(client);
+            // Only update the document if the user has not created a Galasa Access Token
+            // or is using the web-ui
+            if(!isNewAccessTokenBeingCreated || clientName.equals(WEB_UI_CLIENT)){
+                IFrontEndClient client = user.getClient(clientName);
+                if (client == null) {
+                    client = authStoreService.createClient(clientName);
+                    user.addClient(client);
+                }
+
+                client.setLastLogin(timeService.now());
+                authStoreService.updateUser(user);
             }
-
-            client.setLastLogin(timeService.now());
-
-            authStoreService.updateUser(user);
         }
     }
 

@@ -331,7 +331,7 @@ public class AuthTokensRoute extends BaseRoute {
             authStoreService.createUser(loginId, clientName);
         } else {
 
-            // Only update the document if the user has not created a Galasa Access Token
+            // Only update the document if the user has not created a new Galasa Access Token
             // or is using the web-ui
             if(!isNewAccessTokenBeingCreated || clientName.equals(WEB_UI_CLIENT)){
                 IFrontEndClient client = user.getClient(clientName);

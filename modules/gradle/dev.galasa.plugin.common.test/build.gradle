@@ -6,7 +6,7 @@ plugins {
 }
 
 group   = "dev.galasa"
-version = "0.36.0"
+version = "0.38.0"
 
 repositories {
     maven {
@@ -19,13 +19,16 @@ repositories {
 }
 
 dependencies {
-    implementation 'junit:junit:4.13'
-    implementation 'com.google.code.gson:gson:2.10.1'
-    implementation 'commons-codec:commons-codec:1.13'
-	implementation 'commons-io:commons-io:2.15.1'
+    implementation platform('dev.galasa:dev.galasa.platform:0.38.0')
+    implementation 'junit:junit'
+    implementation 'com.google.code.gson:gson'
+    implementation 'commons-codec:commons-codec'
+	implementation 'commons-io:commons-io'
+    // Overriding version 3.16.1 suggested by the Platform - as upgrading the other projects
+    // to higher versions caused unit test failures. Fixes for this to be completed in a future story.
 	implementation 'org.assertj:assertj-core:3.25.3'
-	implementation 'org.apache.httpcomponents:httpcore:4.4.11'
-	implementation 'org.apache.httpcomponents:httpclient:4.5.14'
+    implementation 'org.apache.httpcomponents:httpcore'
+    implementation 'org.apache.httpcomponents:httpclient'
     implementation project(':dev.galasa.plugin.common')
 }
 

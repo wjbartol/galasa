@@ -12,6 +12,15 @@
 	<description>Wraps non-OSGi JARs into OSGi Bundles for use in the Galasa Ecosystem</description>
 	<url>https://galasa.dev</url>
 
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+		<java.version>1.8</java.version>
+		<maven.compiler.source>1.8</maven.compiler.source>
+		<maven.compiler.target>1.8</maven.compiler.target>
+		<maven.build.timestamp.format>yyyyMMddHHmm</maven.build.timestamp.format>
+	</properties>
+
 	<licenses>
 		<license>
 			<name>Eclipse Public License - v 2.0</name>
@@ -29,7 +38,7 @@
 	</developers>
 
 	<modules>
-		<module>com.auth0.jwt</module>
+		<module>dev.galasa.wrapping.com.auth0.jwt</module>
 		<module>com.jcraft.jsch</module>
 		<module>com.google.gson</module>
 		<module>jakarta.transaction</module>
@@ -48,6 +57,18 @@
 		<system>GitHub</system>
 	</issueManagement>
 
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>dev.galasa</groupId>
+				<artifactId>dev.galasa.platform</artifactId>
+				<version>0.38.0</version>
+				<type>pom</type>
+          		<scope>import</scope>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
+
 	<distributionManagement>
 		<repository>
 			<id>galasa.release.repo</id>
@@ -59,14 +80,7 @@
 		</snapshotRepository>
 	</distributionManagement>
 
-	<properties>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-		<java.version>1.8</java.version>
-		<maven.compiler.source>1.8</maven.compiler.source>
-		<maven.compiler.target>1.8</maven.compiler.target>
-		<maven.build.timestamp.format>yyyyMMddHHmm</maven.build.timestamp.format>
-	</properties>
+
 
 	<build>
 		<pluginManagement>

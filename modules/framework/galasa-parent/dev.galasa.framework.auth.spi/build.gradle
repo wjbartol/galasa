@@ -17,7 +17,7 @@ dependencies {
     implementation platform('dev.galasa:dev.galasa.platform:0.38.0')
 
     implementation 'org.apache.commons:commons-lang3'
-    implementation 'dev.galasa:com.auth0.jwt'
+    implementation 'dev.galasa:dev.galasa.wrapping.com.auth0.jwt'
 
     implementation 'dev.galasa:dev.galasa.wrapping.io.grpc.java'
     compileOnly 'org.apache.tomcat:annotations-api'

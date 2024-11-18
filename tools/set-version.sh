@@ -19,10 +19,9 @@
 BASEDIR=$(dirname "$0");pushd $BASEDIR 2>&1 >> /dev/null ;BASEDIR=$(pwd);popd 2>&1 >> /dev/null
 # echo "Running from directory ${BASEDIR}"
 export ORIGINAL_DIR=$(pwd)
-# cd "${BASEDIR}"
 
 cd "${BASEDIR}/.."
-WORKSPACE_DIR=$(pwd)
+REPO_ROOT_DIR=$(pwd)
 
 
 #-----------------------------------------------------------------------------------------                   
@@ -55,6 +54,7 @@ warn() { printf "${tan}➜ %s${reset}\n" "$@" ;}
 bold() { printf "${bold}%s${reset}\n" "$@" ;}
 note() { printf "\n${underline}${bold}${blue}Note:${reset} ${blue}%s${reset}\n" "$@" ;}
 
+
 #-----------------------------------------------------------------------------------------                   
 # Functions
 #-----------------------------------------------------------------------------------------                   
@@ -65,7 +65,7 @@ set-version.sh [OPTIONS]
 Options are:
 -v | --version xxx : Mandatory. Set the version number to something explicitly. 
     Re-builds the release.yaml based on the contents of sub-projects.
-    For example '--version 0.29.0'
+    For example '--version 0.38.0'
 EOF
 }
 
@@ -95,74 +95,30 @@ if [[ -z $component_version ]]; then
     exit 1
 fi
 
-#-------------------------------------------------------------------------------
-function update_release_yaml {
+function check_for_error() {
+    rc=$?
+    message="$1"
+    if [[ "${rc}" != "0" ]]; then 
+        error "$message"
+        exit 1
+    fi
+}
 
-    h1 "Updating the release.yaml so the OBR version gets set."
-
-    source_file=$1
-    target_file=$2
-    temp_dir=$3
-    regex="$4"
-    indent="$5"
-
-    # Read through the release yaml and set the version of the framework bundle explicitly.
-    # It's on the line after the line containing 'release:'
-    # The line we need to change looks like this: version: 0.29.0
-    is_line_supressed=false
-    while IFS= read -r line
-    do
-        
-        if [[ "$line" =~ $regex ]]; then
-            # We found the marker, so the next line needs supressing.
-            echo "$line"
-            is_line_supressed=true
-        else
-            if [[ $is_line_supressed == true ]]; then
-                # Don't echo this line, but we only want to supress one line.
-                is_line_supressed=false
-                echo "${indent}version: $component_version"
-            else
-                # Nothing special about this line, so echo it.
-                echo "$line"
-            fi
+function set_version_in_all_modules() {
+    h2 "Setting the version number in all modules to $component_version"
+    for module_name in $(ls $REPO_ROOT_DIR/modules); do
+        info "Looking at module $module_name"
+        if [[ -f "$REPO_ROOT_DIR/modules/$module_name/set-version.sh" ]]; then
+            info "Module $module_name contains a set-version.sh script. Calling it."
+            ${REPO_ROOT_DIR}/modules/${module_name}/set-version.sh --version $component_version
+            check_for_error "Failed to set the version for module $module_name"
         fi
-
-    done < $source_file > $target_file
-
-    # Copy the temp files back to where they belong...
-    cp $temp_dir/release.yaml ${BASEDIR}/release.yaml
-
-    success "OBR release.yaml updated OK."
+    done
+    success "OK - All modules have had their versions set to $component_version"
 }
 
-
-function update_dependency_versions {
-    h1 "Updating the version in the dependencies so we pull in the correct managers, framework...etc."
-    temp_dir=$1
-
-    set -o pipefail
-
-    temp_file="$temp_dir/dependency-build.gradle"
-    source_file="${BASEDIR}/dependency-download/build.gradle"
-    info "Using temporary file $temp_file"
-    info "Updating file $source_file"
-
-    cat $source_file | sed "s/^version[ ]*=[ ]*\".*\"[ ]*$/version = \"$component_version\"/1" > $temp_file
-    rc=$?; if [[ "${rc}" != "0" ]]; then error "Failed to set version into dependency-download build.gradle file."; exit 1; fi
-    cp $temp_file ${source_file}
-    rc=$?; if [[ "${rc}" != "0" ]]; then error "Failed to overwrite new version of dependency-download build.gradle file."; exit 1; fi
-
-    success "Dependency versions updated OK."
-}
-
-temp_dir=$BASEDIR/temp/versions
-rm -fr $temp_dir
-mkdir -p $temp_dir
-
-update_release_yaml ${BASEDIR}/release.yaml $temp_dir/release.yaml $temp_dir "^.*release[ ]*:[ ]*$" "  "
-update_release_yaml ${BASEDIR}/release.yaml $temp_dir/release.yaml $temp_dir "^.*artifact: dev.galasa.wrapping.com.auth0.jwt*$" "    "
-update_release_yaml ${BASEDIR}/release.yaml $temp_dir/release.yaml $temp_dir "^.*artifact: dev.galasa.wrapping.io.grpc.java*$" "    "
-
-update_dependency_versions $temp_dir
+h1 "Setting version of this repository to $component_version"
+set_version_in_all_modules
+check_for_error "Failed to set version in all modules"
+success "OK"
 

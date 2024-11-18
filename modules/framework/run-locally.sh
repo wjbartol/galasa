@@ -123,7 +123,7 @@ OBR_VERSION="0.31.0"
 # version = "0.37.0"
 
 framework_version=$(cat $BASEDIR/galasa-parent/dev.galasa.framework/build.gradle | grep "version =" | cut -f2 -d'"' | xargs)
-OBR_VERSION="$framework_version"
+OBR_VERSION="0.31.0"
 info "Using OBR version $OBR_VERSION"
 
 M2_PATH=~/.m2

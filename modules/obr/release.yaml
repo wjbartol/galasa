@@ -84,8 +84,8 @@ external:
     isolated: true
 
   - group: dev.galasa
-    artifact: com.auth0.jwt
-    version: 4.4.1
+    artifact: dev.galasa.wrapping.com.auth0.jwt
+    version: 0.38.0
     obr: true
     mvp: true
     isolated: true

@@ -14,7 +14,7 @@ dependencies {
     implementation project(':dev.galasa.framework.api.beans')
     implementation platform('dev.galasa:dev.galasa.platform:0.38.0')
 
-    implementation 'dev.galasa:com.auth0.jwt'
+    implementation 'dev.galasa:dev.galasa.wrapping.com.auth0.jwt'
 
     testFixturesImplementation platform('dev.galasa:dev.galasa.platform:0.38.0')
 

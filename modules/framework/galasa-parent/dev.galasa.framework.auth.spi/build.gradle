@@ -18,7 +18,6 @@ dependencies {
 
     implementation 'org.apache.commons:commons-lang3'
     implementation 'dev.galasa:dev.galasa.wrapping.com.auth0.jwt'
-
     implementation 'dev.galasa:dev.galasa.wrapping.io.grpc.java'
     compileOnly 'org.apache.tomcat:annotations-api'
 

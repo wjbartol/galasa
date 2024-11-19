@@ -5,6 +5,7 @@ plugins {
 description = 'Galasa Windows Manager'
 
 version = '0.38.0'
+version = '0.38.0'
 
 dependencies {
     api project(':galasa-managers-comms-parent:dev.galasa.ipnetwork.manager')

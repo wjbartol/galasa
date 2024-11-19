@@ -24,6 +24,7 @@ dependencies {
         api 'com.github.docker-java:docker-java-transport-httpclient5:3.2.14'
 
         api 'com.google.code.gson:gson:2.10.1'
+        api 'com.google.protobuf:protobuf-java:4.28.3'
 
         api 'com.squareup.okhttp3:okhttp:4.9.2'
 

@@ -46,11 +46,11 @@ dependencies {
         api 'dev.galasa:dev.galasa.wrapping.com.auth0.jwt:'+version
         api 'dev.galasa:com.jcraft.jsch:0.1.55'
         api 'dev.galasa:dev.galasa:0.34.0'
-        api 'dev.galasa:dev.galasa.framework:0.38.0'
+        api 'dev.galasa:dev.galasa.framework:'+version
         api 'dev.galasa:dev.galasa.wrapping.gson:'+version
         api 'dev.galasa:dev.galasa.wrapping.io.grpc.java:'+version
         api 'dev.galasa:dev.galasa.wrapping.io.kubernetes.client-java:'+version
-        api 'dev.galasa:dev.galasa.wrapping.protobuf-java:0.38.0'
+        api 'dev.galasa:dev.galasa.wrapping.protobuf-java:'+version
         api 'dev.galasa:galasa-testharness:0.18.0'
         api 'dev.galasa:jta:2.0.1'
 

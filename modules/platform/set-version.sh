@@ -102,6 +102,6 @@ mkdir -p $temp_dir
 # The galasa-parent/dev.galasa.framework/build.gradle file is where the 'master' version number 
 # of the framework component lives.
 # For example: version = "0.29.0"
-cat $BASEDIR/dev.galasa.platform/build.gradle | sed "s/^[ ]*version[ ]*=.*/version = \"$component_version\"/1" > $temp_dir/platform-build.gradle
+cat $BASEDIR/dev.galasa.platform/build.gradle | sed "s/^[ ]*version[ ]*=.*/            version = \"$component_version\"/1" > $temp_dir/platform-build.gradle
 cp $temp_dir/platform-build.gradle $BASEDIR/dev.galasa.platform/build.gradle
 

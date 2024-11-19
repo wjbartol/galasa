@@ -938,7 +938,7 @@ public class AuthTokensRouteTest extends BaseServletTest {
         boolean isWebUiJustLoggedIn = true ;
 
         // When...
-        route.recordUserJustLoggedIn(isWebUiJustLoggedIn,dummyJwt, mockTimeService, mockEnv);
+        route.recordUserJustLoggedIn(isWebUiJustLoggedIn,dummyJwt, mockTimeService, mockEnv, false);
 
         // Then...
         IUser userGotBack = authStoreService.getUserByLoginId("requestorId");
@@ -1006,7 +1006,7 @@ public class AuthTokensRouteTest extends BaseServletTest {
             mockEnv);
 
         // When...
-        route.recordUserJustLoggedIn(isWebUiJustLoggedIn,dummyJwt, mockTimeService,mockEnv);
+        route.recordUserJustLoggedIn(isWebUiJustLoggedIn,dummyJwt, mockTimeService,mockEnv, false);
 
         // Then...
         IUser userGotBack = authStoreService.getUserByLoginId("requestorId");
@@ -1056,7 +1056,7 @@ public class AuthTokensRouteTest extends BaseServletTest {
         boolean isWebUiJustLoggedIn = true ;
 
         // When...
-        route.recordUserJustLoggedIn(isWebUiJustLoggedIn,dummyJwt, mockTimeService, mockEnv);
+        route.recordUserJustLoggedIn(isWebUiJustLoggedIn,dummyJwt, mockTimeService, mockEnv, true);
 
         // Then...
         IUser userGotBack = authStoreService.getUserByLoginId("requestorId");

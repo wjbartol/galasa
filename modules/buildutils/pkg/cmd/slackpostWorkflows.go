@@ -22,14 +22,16 @@ var (
 		Long:  "",
 		Run:   slackpostWorkflowsExecute,
 	}
-	repo				string
-	workflowName        	string
-	workflowRunNumber  	string
-	ref          		string
+	repo              string
+	module            string
+	workflowName      string
+	workflowRunNumber string
+	ref               string
 )
- 
+
 func init() {
 	slackpostWorkflowsCmd.PersistentFlags().StringVar(&repo, "repo", "", "The name of the repository of the workflow that failed")
+	slackpostWorkflowsCmd.PersistentFlags().StringVar(&module, "module", "", "The name of the module in the workflow that failed") // Used for the 'galasa' repo where there are multiple modules
 	slackpostWorkflowsCmd.PersistentFlags().StringVar(&workflowName, "workflowName", "", "The name of the workflow that failed")
 	slackpostWorkflowsCmd.PersistentFlags().StringVar(&workflowRunNumber, "workflowRunNum", "", "The number of the workflow run that failed")
 	slackpostWorkflowsCmd.PersistentFlags().StringVar(&ref, "ref", "", "The name of the branch/ref that was being built")
@@ -41,16 +43,21 @@ func init() {
 
 	slackpostCmd.AddCommand(slackpostWorkflowsCmd)
 }
- 
+
 func slackpostWorkflowsExecute(cmd *cobra.Command, args []string) {
 	fmt.Printf("Galasa Build - Slack Failed GitHub Workflow Report - version %v\n", rootCmd.Version)
 
 	linkToWorkflowRun := fmt.Sprintf("https://github.com/galasa-dev/%s/actions/runs/%s", repo, workflowRunNumber)
 
-	content := fmt.Sprintf("Galasa GitHub workflow failure:\n\nThe '%s' workflow failed for the '%s' repository when building the '%s' ref. Please see %s for details.", workflowName, repo, ref, linkToWorkflowRun)
+	moduleString := ""
+	if repo == "galasa" {
+		moduleString = fmt.Sprintf(" in the '%s' module", module)
+	}
+
+	content := fmt.Sprintf("Galasa GitHub workflow failure:\n\nThe '%s' workflow failed for the '%s' repository%s when building the '%s' ref. Please see %s for details.", workflowName, repo, moduleString, ref, linkToWorkflowRun)
 
 	client := http.Client{
-	Timeout: time.Second * 30,
+		Timeout: time.Second * 30,
 	}
 
 	body := fmt.Sprintf("{\"text\":\"%s\"}", content)

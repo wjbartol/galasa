@@ -52,11 +52,12 @@ jobs:
 
   build-wrapping:
     name: Build the 'wrapping' module
-    needs: [build-platform]
+    needs: [find-artifacts, build-platform]
     uses: ./.github/workflows/wrapping.yaml
     secrets: inherit
     with:
       changed: ${{ true }}
+      platform-artifact-id: ${{ needs.find-artifacts.outputs.platform_artifacts_id }}
 
   build-gradle:
     name: Build the 'gradle' module

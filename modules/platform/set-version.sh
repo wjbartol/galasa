@@ -55,6 +55,7 @@ warn() { printf "${tan}➜ %s${reset}\n" "$@" ;}
 bold() { printf "${bold}%s${reset}\n" "$@" ;}
 note() { printf "\n${underline}${bold}${blue}Note:${reset} ${blue}%s${reset}\n" "$@" ;}
 
+
 #-----------------------------------------------------------------------------------------                   
 # Functions
 #-----------------------------------------------------------------------------------------                   
@@ -95,74 +96,12 @@ if [[ -z $component_version ]]; then
     exit 1
 fi
 
-#-------------------------------------------------------------------------------
-function update_release_yaml {
-
-    h1 "Updating the release.yaml so the OBR version gets set."
-
-    source_file=$1
-    target_file=$2
-    temp_dir=$3
-    regex="$4"
-    indent="$5"
-
-    # Read through the release yaml and set the version of the framework bundle explicitly.
-    # It's on the line after the line containing 'release:'
-    # The line we need to change looks like this: version: 0.29.0
-    is_line_supressed=false
-    while IFS= read -r line
-    do
-        
-        if [[ "$line" =~ $regex ]]; then
-            # We found the marker, so the next line needs supressing.
-            echo "$line"
-            is_line_supressed=true
-        else
-            if [[ $is_line_supressed == true ]]; then
-                # Don't echo this line, but we only want to supress one line.
-                is_line_supressed=false
-                echo "${indent}version: $component_version"
-            else
-                # Nothing special about this line, so echo it.
-                echo "$line"
-            fi
-        fi
-
-    done < $source_file > $target_file
-
-    # Copy the temp files back to where they belong...
-    cp $temp_dir/release.yaml ${BASEDIR}/release.yaml
-
-    success "OBR release.yaml updated OK."
-}
-
-
-function update_dependency_versions {
-    h1 "Updating the version in the dependencies so we pull in the correct managers, framework...etc."
-    temp_dir=$1
-
-    set -o pipefail
-
-    temp_file="$temp_dir/dependency-build.gradle"
-    source_file="${BASEDIR}/dependency-download/build.gradle"
-    info "Using temporary file $temp_file"
-    info "Updating file $source_file"
-
-    cat $source_file | sed "s/^version[ ]*=[ ]*\".*\"[ ]*$/version = \"$component_version\"/1" > $temp_file
-    rc=$?; if [[ "${rc}" != "0" ]]; then error "Failed to set version into dependency-download build.gradle file."; exit 1; fi
-    cp $temp_file ${source_file}
-    rc=$?; if [[ "${rc}" != "0" ]]; then error "Failed to overwrite new version of dependency-download build.gradle file."; exit 1; fi
-
-    success "Dependency versions updated OK."
-}
-
-temp_dir=$BASEDIR/temp/versions
-rm -fr $temp_dir
+temp_dir=$BASEDIR/temp/version_bump
 mkdir -p $temp_dir
 
-update_release_yaml ${BASEDIR}/release.yaml $temp_dir/release.yaml $temp_dir "^.*release[ ]*:[ ]*$" "  "
-update_release_yaml ${BASEDIR}/release.yaml $temp_dir/release.yaml $temp_dir "^.*artifact: dev.galasa.wrapping.com.auth0.jwt*$" "    "
-update_release_yaml ${BASEDIR}/release.yaml $temp_dir/release.yaml $temp_dir "^.*artifact: dev.galasa.wrapping.io.grpc.java*$" "    "
-
-update_dependency_versions $temp_dir
+# The galasa-parent/dev.galasa.framework/build.gradle file is where the 'master' version number 
+# of the framework component lives.
+# For example: version = "0.29.0"
+cat $BASEDIR/dev.galasa.platform/build.gradle | sed "s/^[ ]*version[ ]*=.*/            version = \"$component_version\"/1" > $temp_dir/platform-build.gradle
+cp $temp_dir/platform-build.gradle $BASEDIR/dev.galasa.platform/build.gradle
 

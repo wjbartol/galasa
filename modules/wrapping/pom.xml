@@ -12,6 +12,12 @@
 	<description>Wraps non-OSGi JARs into OSGi Bundles for use in the Galasa Ecosystem</description>
 	<url>https://galasa.dev</url>
 
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+		<maven.build.timestamp.format>yyyyMMddHHmm</maven.build.timestamp.format>
+	</properties>
+
 	<licenses>
 		<license>
 			<name>Eclipse Public License - v 2.0</name>
@@ -29,7 +35,7 @@
 	</developers>
 
 	<modules>
-		<module>com.auth0.jwt</module>
+		<module>dev.galasa.wrapping.com.auth0.jwt</module>
 		<module>com.jcraft.jsch</module>
 		<module>dev.galasa.wrapping.gson</module>
 		<module>dev.galasa.wrapping.io.grpc.java</module>
@@ -50,6 +56,18 @@
 		<system>GitHub</system>
 	</issueManagement>
 
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>dev.galasa</groupId>
+				<artifactId>dev.galasa.platform</artifactId>
+				<version>0.38.0</version>
+				<type>pom</type>
+          		<scope>import</scope>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
+
 	<distributionManagement>
 		<repository>
 			<id>galasa.release.repo</id>
@@ -60,15 +78,6 @@
 			<url>${galasa.snapshot.repo}</url>
 		</snapshotRepository>
 	</distributionManagement>
-
-	<properties>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-		<java.version>1.8</java.version>
-		<maven.compiler.source>1.8</maven.compiler.source>
-		<maven.compiler.target>1.8</maven.compiler.target>
-		<maven.build.timestamp.format>yyyyMMddHHmm</maven.build.timestamp.format>
-	</properties>
 
 	<build>
 		<pluginManagement>
@@ -83,14 +92,29 @@
 					<artifactId>maven-shade-plugin</artifactId>
 					<version>3.2.1</version>
 				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+    		        <artifactId>maven-compiler-plugin</artifactId>
+            		<version>3.13.0</version>
+				</plugin>
 			</plugins>
 		</pluginManagement>
+
+
 
 		<plugins>
 			<plugin>
 				<groupId>org.apache.felix</groupId>
 				<artifactId>maven-bundle-plugin</artifactId>
 				<extensions>true</extensions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<configuration>
+					<source>11</source>
+					<target>11</target>
+				</configuration>
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>

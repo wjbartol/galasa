@@ -85,11 +85,12 @@ jobs:
   pr-build-wrapping:
     name: Build the 'wrapping' module
     needs: [get-changed-modules, find-artifacts, pr-build-platform]
-    uses: ./.github/workflows/pr-wrapping.yaml
+    uses: ./.github/workflows/pr-wrapping.yaml 
     secrets: inherit
     with:
       changed: ${{ needs.get-changed-modules.outputs.wrapping_changed }}
-
+      platform-artifact-id: ${{ needs.find-artifacts.outputs.platform_artifacts_id }}
+      
   pr-build-gradle:
     name: Build the 'gradle' module
     needs: [get-changed-modules, find-artifacts, pr-build-platform]

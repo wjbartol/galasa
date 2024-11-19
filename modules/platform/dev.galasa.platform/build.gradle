@@ -3,14 +3,23 @@ plugins {
     id 'maven-publish'
 }
 
-version = '0.38.0'
+version = "0.38.0"
 
 javaPlatform {
     allowDependencies()
 }
 
+
+
+        
 dependencies {
     constraints {
+        api 'com.auth0:java-jwt:4.4.0' // used by wrapper.
+        
+        api 'com.fasterxml.jackson.core:jackson-annotations:2.16.0' // used by wrapper.
+        api 'com.fasterxml.jackson.core:jackson-core:2.16.0' // used by wrapper.
+        api 'com.fasterxml.jackson.core:jackson-databind:2.16.0' // used by wrapper.
+
         api 'com.github.docker-java:docker-java-core:3.2.14'
         api 'com.github.docker-java:docker-java-transport-httpclient5:3.2.14'
 
@@ -34,13 +43,13 @@ dependencies {
 
         api 'commons-logging:commons-logging:1.2'
 
-        api 'dev.galasa:com.auth0.jwt:4.4.1'
+        api 'dev.galasa:dev.galasa.wrapping.com.auth0.jwt:'+version
         api 'dev.galasa:com.jcraft.jsch:0.1.55'
         api 'dev.galasa:dev.galasa:0.34.0'
         api 'dev.galasa:dev.galasa.framework:0.38.0'
-        api 'dev.galasa:dev.galasa.wrapping.gson:0.38.0'
-        api 'dev.galasa:dev.galasa.wrapping.io.grpc.java:0.38.0'
-        api 'dev.galasa:dev.galasa.wrapping.io.kubernetes.client-java:0.38.0'
+        api 'dev.galasa:dev.galasa.wrapping.gson:'+version
+        api 'dev.galasa:dev.galasa.wrapping.io.grpc.java:'+version
+        api 'dev.galasa:dev.galasa.wrapping.io.kubernetes.client-java:'+version
         api 'dev.galasa:dev.galasa.wrapping.protobuf-java:0.38.0'
         api 'dev.galasa:galasa-testharness:0.18.0'
         api 'dev.galasa:jta:2.0.1'
@@ -139,7 +148,7 @@ publishing {
 
             groupId = 'dev.galasa'
             artifactId = 'dev.galasa.platform'
-            version = '0.38.0'
+            version = "0.38.0"
         }
 
         // mavenBom(MavenPublication) {

@@ -19,11 +19,7 @@
 BASEDIR=$(dirname "$0");pushd $BASEDIR 2>&1 >> /dev/null ;BASEDIR=$(pwd);popd 2>&1 >> /dev/null
 # echo "Running from directory ${BASEDIR}"
 export ORIGINAL_DIR=$(pwd)
-# cd "${BASEDIR}"
-
-cd "${BASEDIR}/.."
-WORKSPACE_DIR=$(pwd)
-
+cd "${BASEDIR}"
 
 #-----------------------------------------------------------------------------------------                   
 #
@@ -95,16 +91,22 @@ if [[ -z $component_version ]]; then
     exit 1
 fi
 
-#-------------------------------------------------------------------------------
-function update_release_yaml {
+# Change the version of the parent pom.xml and all sub-projects.
+mvn versions:set -DnewVersion=$component_version
 
-    h1 "Updating the release.yaml so the OBR version gets set."
+# Now remove the backup pom.xml which hangs around otherwse.
+mvn versions:commit
+
+#-------------------------------------------------------------------------------
+function update_pom_xml {
+
+    h1 "Updating the pom.xml versions"
 
     source_file=$1
     target_file=$2
     temp_dir=$3
     regex="$4"
-    indent="$5"
+    substitute_for="$5"
 
     # Read through the release yaml and set the version of the framework bundle explicitly.
     # It's on the line after the line containing 'release:'
@@ -112,7 +114,7 @@ function update_release_yaml {
     is_line_supressed=false
     while IFS= read -r line
     do
-        
+
         if [[ "$line" =~ $regex ]]; then
             # We found the marker, so the next line needs supressing.
             echo "$line"
@@ -121,48 +123,21 @@ function update_release_yaml {
             if [[ $is_line_supressed == true ]]; then
                 # Don't echo this line, but we only want to supress one line.
                 is_line_supressed=false
-                echo "${indent}version: $component_version"
+                echo "${substitute_for}"
             else
                 # Nothing special about this line, so echo it.
                 echo "$line"
             fi
         fi
 
-    done < $source_file > $target_file
+    done < $source_file > $temp_dir/temp.txt
 
-    # Copy the temp files back to where they belong...
-    cp $temp_dir/release.yaml ${BASEDIR}/release.yaml
+    cp $temp_dir/temp.txt ${target_file}
 
-    success "OBR release.yaml updated OK."
+    success "updated OK."
 }
 
-
-function update_dependency_versions {
-    h1 "Updating the version in the dependencies so we pull in the correct managers, framework...etc."
-    temp_dir=$1
-
-    set -o pipefail
-
-    temp_file="$temp_dir/dependency-build.gradle"
-    source_file="${BASEDIR}/dependency-download/build.gradle"
-    info "Using temporary file $temp_file"
-    info "Updating file $source_file"
-
-    cat $source_file | sed "s/^version[ ]*=[ ]*\".*\"[ ]*$/version = \"$component_version\"/1" > $temp_file
-    rc=$?; if [[ "${rc}" != "0" ]]; then error "Failed to set version into dependency-download build.gradle file."; exit 1; fi
-    cp $temp_file ${source_file}
-    rc=$?; if [[ "${rc}" != "0" ]]; then error "Failed to overwrite new version of dependency-download build.gradle file."; exit 1; fi
-
-    success "Dependency versions updated OK."
-}
-
-temp_dir=$BASEDIR/temp/versions
-rm -fr $temp_dir
+temp_dir="$BASEDIR/temp"
 mkdir -p $temp_dir
-
-update_release_yaml ${BASEDIR}/release.yaml $temp_dir/release.yaml $temp_dir "^.*release[ ]*:[ ]*$" "  "
-update_release_yaml ${BASEDIR}/release.yaml $temp_dir/release.yaml $temp_dir "^.*artifact: dev.galasa.wrapping.com.auth0.jwt*$" "    "
-update_release_yaml ${BASEDIR}/release.yaml $temp_dir/release.yaml $temp_dir "^.*artifact: dev.galasa.wrapping.io.grpc.java*$" "    "
-
-update_dependency_versions $temp_dir
+update_pom_xml ${BASEDIR}/pom.xml ${BASEDIR}/pom.xml $temp_dir "^.*artifactId.*dev[.]galasa[.]platform.*$" "				<version>$component_version</version>"
 

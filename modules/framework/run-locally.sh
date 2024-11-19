@@ -119,7 +119,7 @@ boot_jar_name=$(ls ${BOOT_FOLDER}/galasa-boot-*.jar | grep -v "sources" | grep -
 info "Boot jar is at ${BOOT_FOLDER}/${boot_jar_name}"
 
 # Work out where the locally-build-OBR is held...
-framework_version=$(cat $BASEDIR/galasa-parent/build.gradle | grep "version =" | cut -f2 -d'"' | xargs)
+framework_version=$(cat $BASEDIR/galasa-parent/build.gradle | grep "version =" | cut -f2 -d'"' | head -1 | xargs)
 OBR_VERSION=$framework_version
 info "Using OBR version $OBR_VERSION"
 

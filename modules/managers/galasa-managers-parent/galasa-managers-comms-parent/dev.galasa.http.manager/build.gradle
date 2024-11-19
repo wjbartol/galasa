@@ -15,7 +15,7 @@ dependencies {
     implementation  'commons-io:commons-io'
     implementation  'com.google.code.gson:gson'
     implementation  'jakarta.xml.bind:jakarta.xml.bind-api'
-    implementation  'commons-codec:commons-codec' // Platform uses 1.16.1, this uses 1.15
+    implementation  'commons-codec:commons-codec'
 }
 
 // Note: These values are consumed by the parent build process

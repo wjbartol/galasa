@@ -10,5 +10,5 @@ dependencies {
     
     implementation 'commons-logging:commons-logging'
     
-    implementation 'org.assertj:assertj-core' // Platform uses 3.16.1, this uses 3.11.1
+    implementation 'org.assertj:assertj-core'
 }

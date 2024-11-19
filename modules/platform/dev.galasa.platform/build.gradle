@@ -41,6 +41,7 @@ dependencies {
         api 'dev.galasa:dev.galasa.wrapping.gson:0.38.0'
         api 'dev.galasa:dev.galasa.wrapping.io.grpc.java:0.38.0'
         api 'dev.galasa:dev.galasa.wrapping.io.kubernetes.client-java:0.38.0'
+        api 'dev.galasa:dev.galasa.wrapping.protobuf-java:0.38.0'
         api 'dev.galasa:galasa-testharness:0.18.0'
         api 'dev.galasa:jta:2.0.1'
 

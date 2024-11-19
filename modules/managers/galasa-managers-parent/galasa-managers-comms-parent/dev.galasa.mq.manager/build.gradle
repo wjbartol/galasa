@@ -10,7 +10,7 @@ dependencies {
     implementation platform('dev.galasa:dev.galasa.platform:0.38.0')
     implementation 'javax.jms:javax.jms-api'
     implementation 'com.ibm.mq:com.ibm.mq.allclient'
-	implementation 'commons-codec:commons-codec' // Upgrading 1.11
+	implementation 'commons-codec:commons-codec:1.11' // Platform uses 1.16.1
   
 }
 

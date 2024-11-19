@@ -168,6 +168,3 @@ cp $temp_dir/release.yaml ${BASEDIR}/release.yaml
 
 cat ${BASEDIR}/test-api-locally.md | sed "s/^[ ]*export[ ]+GALASA_OBR_VERSION[ ]*=[ ]*.*$/export GALASA_OBR_VERSION=\"$component_version\"/1" > $temp_dir/test-api-locally.md 
 cp $temp_dir/test-api-locally.md  ${BASEDIR}/test-api-locally.md 
-
-cat ${BASEDIR}/run-locally.sh| sed "s/^OBR_VERSION[ ]*=[ ]*.*$/OBR_VERSION=\"0.31.0\"/1" > $temp_dir/run-locally.sh
-cp $temp_dir/run-locally.sh  ${BASEDIR}/run-locally.sh

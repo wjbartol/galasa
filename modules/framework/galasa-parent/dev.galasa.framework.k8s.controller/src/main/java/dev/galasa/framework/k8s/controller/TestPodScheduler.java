@@ -270,7 +270,7 @@ public class TestPodScheduler implements Runnable {
                 for(int i = 0; i < tolerationsList.length; i++){
                     String[] selection = nodePreferredAffinity.split("=");
                     if (selection.length == 2) {
-                        String[] operatorAndEffect = selection.split(":");
+                        String[] operatorAndEffect = selection[1].split(":");
 
                         if(operatorAndEffect.length == 2) {
                             V1Toleration toleration = new V1Toleration();

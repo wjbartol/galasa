@@ -294,7 +294,6 @@ public class TestPodScheduler implements Runnable {
             }
         }
 
-
         podSpec.setVolumes(createTestPodVolumes());
         podSpec.addContainersItem(createTestContainer(runName, engineName, isTraceEnabled));
         return newPod;

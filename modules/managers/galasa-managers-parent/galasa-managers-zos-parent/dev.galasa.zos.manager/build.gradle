@@ -8,7 +8,6 @@ version = '0.38.0'
 
 dependencies {
     api project     (':galasa-managers-comms-parent:dev.galasa.ipnetwork.manager')
-    implementation platform('dev.galasa:dev.galasa.platform:0.38.0')
     implementation  'io.prometheus:simpleclient'
     implementation  'org.apache.commons:commons-lang3'
 }

@@ -7,9 +7,8 @@ description = 'HTTP Manager'
 version = '0.38.0'
 
 dependencies {
-    implementation project (':galasa-managers-common-parent:dev.galasa.common')
-    implementation platform('dev.galasa:dev.galasa.platform:0.38.0')
     api             'org.apache.httpcomponents:httpclient-osgi'
+    implementation  project (':galasa-managers-common-parent:dev.galasa.common')
     implementation  'org.apache.httpcomponents:httpcore-osgi'
     implementation  'org.apache.httpcomponents:httpmime'
     implementation  'commons-io:commons-io'

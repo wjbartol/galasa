@@ -12,8 +12,6 @@ dependencies {
     implementation project (':galasa-managers-core-parent:dev.galasa.textscan.manager')
     implementation project (':galasa-managers-core-parent:dev.galasa.artifact.manager')
     implementation project (':galasa-managers-zos-parent:dev.galasa.zos3270.manager')
-
-    implementation platform('dev.galasa:dev.galasa.platform:0.38.0')
     implementation 'org.apache.commons:commons-lang3'
     implementation 'commons-io:commons-io'
 }

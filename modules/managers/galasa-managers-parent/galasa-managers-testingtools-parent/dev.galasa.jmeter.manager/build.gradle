@@ -8,7 +8,6 @@ version = '0.38.0'
 
 dependencies {
     implementation project(':galasa-managers-cloud-parent:dev.galasa.docker.manager')
-    implementation platform('dev.galasa:dev.galasa.platform:0.38.0')
     implementation 'org.apache.velocity:velocity-engine-core'
 }
 

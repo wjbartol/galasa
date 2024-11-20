@@ -11,8 +11,6 @@ dependencies {
 	implementation project(':galasa-managers-cloud-parent:dev.galasa.docker.manager')
 	implementation project(':galasa-managers-cloud-parent:dev.galasa.kubernetes.manager')
 	implementation project(':galasa-managers-core-parent:dev.galasa.artifact.manager')
-    
-    implementation platform('dev.galasa:dev.galasa.platform:0.38.0')
     implementation 'org.seleniumhq.selenium:selenium-java'
     implementation 'org.seleniumhq.selenium:selenium-api'
     implementation 'org.seleniumhq.selenium:selenium-support'

@@ -48,6 +48,7 @@ import io.kubernetes.client.openapi.models.V1PreferredSchedulingTerm;
 import io.kubernetes.client.openapi.models.V1ResourceRequirements;
 import io.kubernetes.client.openapi.models.V1SecretKeySelector;
 import io.kubernetes.client.openapi.models.V1SecretVolumeSource;
+import io.kubernetes.client.openapi.models.V1Toleration;
 import io.kubernetes.client.openapi.models.V1Volume;
 import io.kubernetes.client.openapi.models.V1VolumeMount;
 import io.prometheus.client.Counter;
@@ -260,6 +261,39 @@ public class TestPodScheduler implements Runnable {
                 requirement.addValuesItem(selection[1]);
             }
         }
+
+        String nodeTolerations = this.settings.getNodeTolerations();
+        if (!nodeTolerations.isEmpty()) {
+            String[] tolerationsList = nodeTolerations.split(",");
+
+            if(tolerationsList.length > 0) {
+                for(int i = 0; i < tolerationsList.length; i++){
+                    String[] selection = nodePreferredAffinity.split("=");
+                    if (selection.length == 2) {
+                        String[] operatorAndEffect = selection.split(":");
+
+                        if(operatorAndEffect.length == 2) {
+                            V1Toleration toleration = new V1Toleration();
+
+                            logger.info("Adding toleration: " + selection[0] + ", operator: " + operatorAndEffect[0] + ", effect: " + operatorAndEffect[1]);
+                            toleration.setKey(selection[0]);
+
+                            toleration.setOperator(operatorAndEffect[0]);
+                            toleration.setEffect(operatorAndEffect[1]);
+
+                            podSpec.addTolerationsItem(toleration);
+                        }
+                        else {
+                            logger.error("Failed to retrieve operator and effect for toleration condition :-\n" + selection[0]);
+                        }
+                    }
+                    else {
+                        logger.error("Badly formatted toleration");
+                    }
+                }
+            }
+        }
+
 
         podSpec.setVolumes(createTestPodVolumes());
         podSpec.addContainersItem(createTestContainer(runName, engineName, isTraceEnabled));

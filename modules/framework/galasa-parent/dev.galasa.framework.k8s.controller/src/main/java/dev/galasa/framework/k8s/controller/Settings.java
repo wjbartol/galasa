@@ -21,7 +21,7 @@ import io.kubernetes.client.openapi.models.V1ObjectMeta;
 public class Settings implements Runnable {
 
     private final Log         logger                      = LogFactory.getLog(getClass());
-    
+
     private final K8sController controller;
 
     private String            namespace;
@@ -35,6 +35,8 @@ public class Settings implements Runnable {
     private int               engineMemoryLimit           = 200;
     private String            nodeArch                    = "";
     private String            nodePreferredAffinity       = "";
+    private String            nodeTolerations             = "";
+
     private String            encryptionKeysSecretName;
 
     private HashSet<String>   requiredCapabilities        = new HashSet<>();
@@ -48,7 +50,7 @@ public class Settings implements Runnable {
 
     private final CoreV1Api   api;
     private String            oldConfigMapResourceVersion = "";
-    
+
     public Settings(K8sController controller, CoreV1Api api) throws K8sControllerException {
         this.api = api;
         this.controller = controller;
@@ -152,6 +154,8 @@ public class Settings implements Runnable {
         this.engineMemoryLimit = updateProperty(configMapData, "engine_memory_limit", engineMemory + 100, this.engineMemoryLimit);
         this.nodeArch = updateProperty(configMapData, "node_arch", "", this.nodeArch);
         this.nodePreferredAffinity = updateProperty(configMapData, "galasa_node_preferred_affinity", "", this.nodePreferredAffinity);
+        this.nodeTolerations = updateProperty(configMapData, "galasa_node_tolerations", "", this.nodeTolerations);
+
         this.encryptionKeysSecretName = updateProperty(configMapData, "encryption_keys_secret_name", "", this.encryptionKeysSecretName);
 
         int poll = getPropertyFromData(configMapData, "run_poll", 20);
@@ -174,7 +178,7 @@ public class Settings implements Runnable {
             for (String requestor : requestors) {
                 newRequestorsByScheduleid.add(requestor);
             }
-    
+
             if (!requestorsByScheduleID.equals(newRequestorsByScheduleid)) {
                 logger.info("Setting Requestors by Schedule from '" + requestorsByScheduleID + "' to '"
                         + newRequestorsByScheduleid + "'");
@@ -203,7 +207,7 @@ public class Settings implements Runnable {
                     }
                 }
             }
-    
+
             boolean changed = false;
             if (newRequiredCapabilties.size() != requiredCapabilities.size()
                     || newCapableCapabilties.size() != capableCapabilities.size()) {
@@ -222,7 +226,7 @@ public class Settings implements Runnable {
                     }
                 }
             }
-    
+
             if (changed) {
                 capableCapabilities.clear();
                 requiredCapabilities.clear();
@@ -230,7 +234,7 @@ public class Settings implements Runnable {
                 requiredCapabilities.addAll(newRequiredCapabilties);
                 logger.info("Engine set with Required Capabilities - " + requiredCapabilities);
                 logger.info("Engine set with Capabable Capabilities - " + capableCapabilities);
-    
+
                 StringBuilder report = new StringBuilder();
                 for (String cap : requiredCapabilities) {
                     if (report.length() > 0) {
@@ -301,6 +305,11 @@ public class Settings implements Runnable {
     public String getNodePreferredAffinity() {
         return this.nodePreferredAffinity;
     }
+
+    public String getNodeTolerations() {
+        return this.nodeTolerations;
+    }
+
 
     public String getEngineImage() {
         return this.engineImage;

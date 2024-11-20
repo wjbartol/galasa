@@ -200,8 +200,20 @@ function clean_up_m2 {
     success "Cleaned up ${TARGET_MAVEN_FOLDER} repository"
 }
 
+function check_if_script_invoked_directly() {
+    # Check if the script is being called directly or from another script
+    if [[ -z "${IN_CHAIN_MODE}" ]]; then
+        info "Script invoked directly, running detect-secrets.sh script"
+
+        # Run the detect-secrets.sh in root
+        cd "${WORKSPACE_DIR}/.."
+        TOOL_DIR=$(pwd)
+        $TOOL_DIR/tools/detect-secrets.sh
+    fi
+}
+
 clean_up_m2
 
 build_gradle_plugin
 
-check_secrets
+check_if_script_invoked_directly

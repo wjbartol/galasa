@@ -456,6 +456,18 @@ function check_secrets {
     success "secrets baseline timestamp content has been removed ok"
 }
 
+function check_if_script_invoked_directly() {
+    # Check if the script is being called directly or from another script
+    if [[ -z "${IN_CHAIN_MODE}" ]]; then
+        info "Script invoked directly, running detect-secrets.sh script"
+
+        # Run the detect-secrets.sh in root
+        cd "${WORKSPACE_DIR}/.."
+        TOOL_DIR=$(pwd)
+        $TOOL_DIR/tools/detect-secrets.sh
+    fi
+}
+
 # #------------------------------------------------------------------------------------
 # h2 "Packaging the javadoc into a docker file"
 # #------------------------------------------------------------------------------------
@@ -479,6 +491,6 @@ h1 "Building the javadoc using the OBR..."
 generate_javadoc_pom_xml
 build_javadoc_pom
 
-check_secrets
+check_if_script_invoked_directly
 
 success "Project ${project} built - OK - log is at ${log_file}"

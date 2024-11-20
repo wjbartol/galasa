@@ -173,7 +173,7 @@ function build_module() {
     if [[ "$module" == "buildutils" ]]; then
         h2 "Building $module"
         cd ${PROJECT_DIR}/modules/$module
-        ${PROJECT_DIR}/modules/$module/build-locally.sh
+        IN_CHAIN_MODE=true ${PROJECT_DIR}/modules/$module/build-locally.sh
         rc=$? ;  if [[ "${rc}" != "0" ]]; then error "Failed to build module $module. rc=$rc" ; exit 1 ; fi
         success "Built module $module OK"
         if [[ "$chain" == "true" ]]; then
@@ -185,7 +185,7 @@ function build_module() {
     if [[ "$module" == "wrapping" ]]; then
         h2 "Building $module"
         cd ${PROJECT_DIR}/modules/$module
-        ${PROJECT_DIR}/modules/$module/build-locally.sh
+        IN_CHAIN_MODE=true ${PROJECT_DIR}/modules/$module/build-locally.sh
         rc=$? ;  if [[ "${rc}" != "0" ]]; then error "Failed to build module $module. rc=$rc" ; exit 1 ; fi
         success "Built module $module OK"
         if [[ "$chain" == "true" ]]; then 
@@ -197,7 +197,7 @@ function build_module() {
     if [[ "$module" == "gradle" ]]; then
         h2 "Building $module"
         cd ${PROJECT_DIR}/modules/$module
-        ${PROJECT_DIR}/modules/$module/build-locally.sh
+        IN_CHAIN_MODE=true ${PROJECT_DIR}/modules/$module/build-locally.sh
         rc=$? ;  if [[ "${rc}" != "0" ]]; then error "Failed to build module $module. rc=$rc" ; exit 1 ; fi
         success "Built module $module OK"
         if [[ "$chain" == "true" ]]; then 
@@ -209,7 +209,7 @@ function build_module() {
     if [[ "$module" == "maven" ]]; then
         h2 "Building $module"
         cd ${PROJECT_DIR}/modules/$module
-        ${PROJECT_DIR}/modules/$module/build-locally.sh
+        IN_CHAIN_MODE=true ${PROJECT_DIR}/modules/$module/build-locally.sh
         rc=$? ;  if [[ "${rc}" != "0" ]]; then error "Failed to build module $module. rc=$rc" ; exit 1 ; fi
         success "Built module $module OK"
         if [[ "$chain" == "true" ]]; then 
@@ -221,7 +221,7 @@ function build_module() {
     if [[ "$module" == "framework" ]]; then
         h2 "Building $module"
         cd ${PROJECT_DIR}/modules/$module
-        ${PROJECT_DIR}/modules/$module/build-locally.sh --clean
+        IN_CHAIN_MODE=true ${PROJECT_DIR}/modules/$module/build-locally.sh --clean
         rc=$? ;  if [[ "${rc}" != "0" ]]; then error "Failed to build module $module. rc=$rc" ; exit 1 ; fi
         success "Built module $module OK"
         if [[ "$chain" == "true" ]]; then 
@@ -233,7 +233,7 @@ function build_module() {
     if [[ "$module" == "extensions" ]]; then
         h2 "Building $module"
         cd ${PROJECT_DIR}/modules/$module
-        ${PROJECT_DIR}/modules/$module/build-locally.sh --clean
+        IN_CHAIN_MODE=true ${PROJECT_DIR}/modules/$module/build-locally.sh --clean
         rc=$? ;  if [[ "${rc}" != "0" ]]; then error "Failed to build module $module. rc=$rc" ; exit 1 ; fi
         success "Built module $module OK"
         if [[ "$chain" == "true" ]]; then 
@@ -245,7 +245,7 @@ function build_module() {
     if [[ "$module" == "managers" ]]; then
         h2 "Building $module"
         cd ${PROJECT_DIR}/modules/$module
-        ${PROJECT_DIR}/modules/$module/build-locally.sh --clean
+        IN_CHAIN_MODE=true ${PROJECT_DIR}/modules/$module/build-locally.sh --clean
         rc=$? ;  if [[ "${rc}" != "0" ]]; then error "Failed to build module $module. rc=$rc" ; exit 1 ; fi
         success "Built module $module OK"
         if [[ "$chain" == "true" ]]; then 
@@ -257,7 +257,7 @@ function build_module() {
     if [[ "$module" == "obr" ]]; then
         h2 "Building $module"
         cd ${PROJECT_DIR}/modules/$module
-        ${PROJECT_DIR}/modules/$module/build-locally.sh
+        IN_CHAIN_MODE=true ${PROJECT_DIR}/modules/$module/build-locally.sh
         rc=$? ;  if [[ "${rc}" != "0" ]]; then error "Failed to build module $module. rc=$rc" ; exit 1 ; fi
         success "Built module $module OK"
     fi
@@ -266,3 +266,5 @@ function build_module() {
 
 clean_local_m2
 build_module $module_input $chain
+
+${BASEDIR}/detect-secrets.sh

@@ -95,6 +95,18 @@ function check_secrets {
     success "secrets audit complete"
 }
 
+function check_if_script_invoked_directly() {
+    # Check if the script is being called directly or from another script
+    if [[ -z "${IN_CHAIN_MODE}" ]]; then
+        info "Script invoked directly, running detect-secrets.sh script"
+
+        # Run the detect-secrets.sh in root
+        cd "${WORKSPACE_DIR}/.."
+        TOOL_DIR=$(pwd)
+        $TOOL_DIR/tools/detect-secrets.sh
+    fi
+}
+
 #-----------------------------------------------------------------------------------------                   
 # Process parameters
 #-----------------------------------------------------------------------------------------                   
@@ -161,4 +173,4 @@ build_openapi2beans
 
 $BASEDIR/test-locally.sh
 rc=$? ; check_exit_code $rc "Failed to test galasabld" 
-check_secrets
+check_if_script_invoked_directly

@@ -261,11 +261,23 @@ function update_release_yaml {
     fi
 }
 
+function check_if_script_invoked_directly() {
+    # Check if the script is being called directly or from another script
+    if [[ -z "${IN_CHAIN_MODE}" ]]; then
+        info "Script invoked directly, running detect-secrets.sh script"
+
+        # Run the detect-secrets.sh in root
+        cd "${WORKSPACE_DIR}/.."
+        TOOL_DIR=$(pwd)
+        $TOOL_DIR/tools/detect-secrets.sh
+    fi
+}
+
 clean_maven_repo
 build_with_gradle
 update_release_yaml
 displayCouchDbCodeCoverage
 displayKafkaCodeCoverage
-check_secrets
+check_if_script_invoked_directly
 
 success "Project ${project} built - OK - log is at ${log_file}"

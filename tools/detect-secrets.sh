@@ -23,7 +23,7 @@ export ORIGINAL_DIR=$(pwd)
 # cd "${BASEDIR}"
 
 cd "${BASEDIR}/.."
-PROJECT_DIR=$(pwd)
+REPO_ROOT=$(pwd)
 
 #-----------------------------------------------------------------------------------------
 #
@@ -134,8 +134,8 @@ function remove_timestamp_from_secrets_baseline() {
 
 function check_secrets {
     h2 "updating secrets baseline"
-
-    baseline_file="${PROJECT_DIR}/.secrets.baseline"
+    cd $REPO_ROOT
+    baseline_file=".secrets.baseline"
 
     cmd="detect-secrets scan --update ${baseline_file}"
     info "Running command $cmd"

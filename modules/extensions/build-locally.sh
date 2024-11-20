@@ -20,10 +20,14 @@
 BASEDIR=$(dirname "$0");pushd $BASEDIR 2>&1 >> /dev/null ;BASEDIR=$(pwd);popd 2>&1 >> /dev/null
 # echo "Running from directory ${BASEDIR}"
 export ORIGINAL_DIR=$(pwd)
-cd "${BASEDIR}"
+
 
 cd "${BASEDIR}/.."
 WORKSPACE_DIR=$(pwd)
+
+cd "${BASEDIR}/../.."
+REPO_ROOT=$(pwd)
+
 cd "${BASEDIR}"
 
 #-----------------------------------------------------------------------------------------                   
@@ -65,6 +69,7 @@ function usage {
 Options are:
 -c | --clean : Do a clean build. One of the --clean or --delta flags are mandatory.
 -d | --delta : Do a delta build. One of the --clean or --delta flags are mandatory.
+-s | --detectsecrets true|false : Do we want to detect secrets in the entire repo codebase ? Default is 'true'. Valid values are 'true' or 'false'
 
 Environment variables used:
 DEBUG - Optional. Valid values "1" (on) or "0" (off). Defaults to "0" (off).
@@ -88,13 +93,17 @@ function check_exit_code () {
 # Process parameters
 #-----------------------------------------------------------------------------------------                   
 build_type=""
-
+detectsecrets="true"
 while [ "$1" != "" ]; do
     case $1 in
         -c | --clean )          build_type="clean"
                                 ;;
         -d | --delta )          build_type="delta"
                                 ;;
+        -s | --detectsecrets )  detectsecrets="$2"
+                                shift
+                                ;;
+
         -h | --help )           usage
                                 exit
                                 ;;
@@ -109,6 +118,11 @@ if [[ "${build_type}" == "" ]]; then
     error "Need to use either the --clean or --delta parameter."
     usage
     exit 1  
+fi
+
+if [[ "${detectsecrets}" != "true" ]] && [[ "${detectsecrets}" != "false" ]]; then
+    error "--detectsecrets flag must be 'true' or 'false'. Was $detectesecrets"
+    exit 1
 fi
 
 #-----------------------------------------------------------------------------------------                   
@@ -261,23 +275,16 @@ function update_release_yaml {
     fi
 }
 
-function check_if_script_invoked_directly() {
-    # Check if the script is being called directly or from another script
-    if [[ -z "${IN_CHAIN_MODE}" ]]; then
-        info "Script invoked directly, running detect-secrets.sh script"
-
-        # Run the detect-secrets.sh in root
-        cd "${WORKSPACE_DIR}/.."
-        TOOL_DIR=$(pwd)
-        $TOOL_DIR/tools/detect-secrets.sh
-    fi
-}
 
 clean_maven_repo
 build_with_gradle
 update_release_yaml
 displayCouchDbCodeCoverage
 displayKafkaCodeCoverage
-check_if_script_invoked_directly
+
+if [[ "$detectsecrets" == "true" ]]; then
+    $REPO_ROOT/tools/detect-secrets.sh 
+    check_exit_code $? "Failed to detect secrets"
+fi
 
 success "Project ${project} built - OK - log is at ${log_file}"

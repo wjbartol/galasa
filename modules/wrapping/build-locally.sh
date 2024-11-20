@@ -19,6 +19,10 @@ export ORIGINAL_DIR=$(pwd)
 
 cd "${BASEDIR}/.."
 WORKSPACE_DIR=$(pwd)
+
+cd "${BASEDIR}/../.."
+REPO_ROOT=$(pwd)
+
 cd $BASEDIR
 
 
@@ -66,6 +70,7 @@ Options are:
     The passphrase will default to the value of the GPG_PASSPHRASE environment variable
     if available, otherwise the command will fail until some sort of passphrase is 
     supplied.
+-s | --detectsecrets true|false : Do we want to detect secrets in the entire repo codebase ? Default is 'true'. Valid values are 'true' or 'false'
 -h | --help - See this help.
 
 Environment variables
@@ -119,7 +124,7 @@ function check_secrets {
     success "secrets baseline timestamp content has been removed ok"
 }
 
-function check_if_script_invoked_directly() {
+function check_secrets_unless_supressed() {
     # Check if the script is being called directly or from another script
     if [[ -z "${IN_CHAIN_MODE}" ]]; then
         info "Script invoked directly, running detect-secrets.sh script"
@@ -137,12 +142,15 @@ function check_if_script_invoked_directly() {
 build_type=""
 
 gpg_passphrase=""
-
+detectsecrets="true"
 while [ "$1" != "" ]; do
     case $1 in
         -p | --passphrase )
                                 shift
                                 export gpg_passphrase="$1"
+                                ;;
+        -s | --detectsecrets )  detectsecrets="$2"
+                                shift
                                 ;;
         -h | --help )           usage
                                 exit
@@ -168,6 +176,10 @@ fi
 
 info "gpg passphrase is $gpg_passphrase"
 
+if [[ "${detectsecrets}" != "true" ]] && [[ "${detectsecrets}" != "false" ]]; then
+    error "--detectsecrets flag must be 'true' or 'false'. Was $detectesecrets"
+    exit 1
+fi
 
 #-----------------------------------------------------------------------------------------                   
 # Main logic.
@@ -215,6 +227,9 @@ mvn dependency:tree > $BASEDIR/temp/dependencies.txt
 rc=$? ; if [[ "${rc}" != "0" ]]; then error "Failed to list dependencies ${project}" ; info "See log file at ${log_file}" ; exit 1 ; fi
 success "Dependencies listed here: $BASEDIR/temp/dependencies.txt"
 
-check_if_script_invoked_directly
+if [[ "$detectsecrets" == "true" ]]; then
+    $REPO_ROOT/tools/detect-secrets.sh 
+    check_exit_code $? "Failed to detect secrets"
+fi
 
 success "Project ${project} built - OK - log is at ${log_file}"

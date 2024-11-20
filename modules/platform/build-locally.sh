@@ -15,6 +15,10 @@
 BASEDIR=$(dirname "$0");pushd $BASEDIR 2>&1 >> /dev/null ;BASEDIR=$(pwd);popd 2>&1 >> /dev/null
 # echo "Running from directory ${BASEDIR}"
 export ORIGINAL_DIR=$(pwd)
+
+cd "${BASEDIR}/../.."
+REPO_ROOT=$(pwd)
+
 cd "${BASEDIR}"
 
 #-----------------------------------------------------------------------------------------
@@ -58,7 +62,46 @@ function check_exit_code () {
     fi
 }
 
+function usage {
+    info "Syntax: build-locally.sh [OPTIONS]"
+    cat << EOF
+Options are:
+-s | --detectsecrets true|false : Do we want to detect secrets in the entire repo codebase ? Default is 'true'. Valid values are 'true' or 'false'
 
+Environment variables used:
+n/a
+EOF
+}
+
+#-----------------------------------------------------------------------------------------                   
+# Process parameters
+#-----------------------------------------------------------------------------------------                   
+
+detectsecrets="true"
+while [ "$1" != "" ]; do
+    case $1 in
+        -s | --detectsecrets )  detectsecrets="$2"
+                                shift
+                                ;;
+
+        -h | --help )           usage
+                                exit
+                                ;;
+        * )                     error "Unexpected argument $1"
+                                usage
+                                exit 1
+    esac
+    shift
+done
+
+if [[ "${detectsecrets}" != "true" ]] && [[ "${detectsecrets}" != "false" ]]; then
+    error "--detectsecrets flag must be 'true' or 'false'. Was $detectesecrets"
+    exit 1
+fi
+
+#-----------------------------------------------------------------------------------------                   
+# Main logic.
+#-----------------------------------------------------------------------------------------                   
 h1 "Building the platform module"
 
 function build_platform() {
@@ -81,3 +124,8 @@ function clean_platform() {
 
 clean_platform
 build_platform
+
+if [[ "$detectsecrets" == "true" ]]; then
+    $REPO_ROOT/tools/detect-secrets.sh 
+    check_exit_code $? "Failed to detect secrets"
+fi

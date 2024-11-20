@@ -268,8 +268,10 @@ public class TestPodScheduler implements Runnable {
 
             if(tolerationsList.length > 0) {
                 for(int i = 0; i < tolerationsList.length; i++){
-                    String[] selection = nodePreferredAffinity.split("=");
+                    String[] selection = tolerationsList[i].split("=");
+
                     if (selection.length == 2) {
+
                         String[] operatorAndEffect = selection[1].split(":");
 
                         if(operatorAndEffect.length == 2) {

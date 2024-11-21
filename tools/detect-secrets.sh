@@ -91,22 +91,62 @@ function check_if_python3_is_installed() {
     fi
 }
 
-function check_if_detect_secrets_is_installed() {
+# Function to check if pip3 is installed
+check_pip3_installed() {
 
+    h2 "Checking if pip3 is installed"
+
+    if ! command -v pip3 &> /dev/null; then
+        error "pip3 is not installed. Please install it to proceed."
+        exit 1
+    else
+        success "pip3 is installed."
+    fi
+}
+
+function check_if_detect_secrets_is_installed() {
     h2 "Checking if detect-secrets is installed"
 
-    if pipx list | grep -q detect-secrets; then
+    # Check if detect-secrets is installed in the virtual environment
+    if command -v detect-secrets &> /dev/null; then
         info "detect-secrets is already installed."
     else
         info "detect-secrets is not installed. Installing now..."
 
         # Install detect-secrets from IBM GitHub repository
-        pipx install "git+https://github.com/ibm/detect-secrets.git@master#egg=detect-secrets"
+        pip3 install --upgrade "git+https://github.com/ibm/detect-secrets.git@master#egg=detect-secrets"
 
-        if pipx list | grep -q detect-secrets; then
+        # Verify if the installation was successful
+        if command -v detect-secrets &> /dev/null; then
             info "detect-secrets was installed correctly"
         else
             error "Failed to install detect-secrets"
+            deactivate
+            exit 1
+        fi
+    fi
+
+    success "OK"
+}
+
+function check_if_pre_commit_hook_is_installed() {
+
+    h2 "Checking if pre-commit hook is installed"
+
+    if  command -v pre-commit &> /dev/null; then
+        info "pre-commit hook is already installed."
+    else
+        info "pre-commit hook is not installed. Installing now..."
+
+        # Install pre-commit hook
+        pip3 install pre-commit
+
+        if command -v pre-commit &> /dev/null; then
+            info "pre-commit hook was installed correctly"
+            info "Activating pre commit hook"
+            pre-commit install
+        else
+            error "Failed to install pre-commit hook"
             exit 1
         fi
     fi
@@ -191,6 +231,8 @@ done
 
 h1 "Starting search in repos to detect secrets"
 check_if_python3_is_installed
+check_pip3_installed
 check_if_detect_secrets_is_installed
+check_if_pre_commit_hook_is_installed
 
 check_secrets

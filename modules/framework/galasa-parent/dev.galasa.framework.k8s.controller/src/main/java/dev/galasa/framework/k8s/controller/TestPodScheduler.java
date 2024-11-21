@@ -181,7 +181,7 @@ public class TestPodScheduler implements Runnable {
             while (!successful) {
                 try {
                     // System.out.println(newPod.toString());
-                    api.createNamespacedPod(namespace, newPod, "true", null, null, null);
+                    api.createNamespacedPod(namespace, newPod).pretty("true").execute();
 
                     logger.info("Engine Pod " + newPod.getMetadata().getName() + " started");
                     successful = true;
@@ -226,12 +226,13 @@ public class TestPodScheduler implements Runnable {
 
         V1PodSpec podSpec = new V1PodSpec();
         newPod.setSpec(podSpec);
+        podSpec.setOverhead(null);
         podSpec.setRestartPolicy("Never");
 
         String nodeArch = this.settings.getNodeArch();
         if (!nodeArch.isEmpty()) {
             HashMap<String, String> nodeSelector = new HashMap<>();
-            nodeSelector.put("beta.kubernetes.io/arch", nodeArch);
+            nodeSelector.put("kubernetes.io/arch", nodeArch);
             podSpec.setNodeSelector(nodeSelector);
         }
 
@@ -398,8 +399,10 @@ public class TestPodScheduler implements Runnable {
         LinkedList<V1Pod> pods = new LinkedList<>();
 
         try {
-            V1PodList list = api.listNamespacedPod(settings.getNamespace(), null, null, null, null,
-                    "galasa-engine-controller=" + settings.getEngineLabel(), null, null, null, null, null);
+            V1PodList list = api.listNamespacedPod(settings.getNamespace())
+                .labelSelector("galasa-engine-controller=" + settings.getEngineLabel())
+                .execute();
+
             for (V1Pod pod : list.getItems()) {
                 pods.add(pod);
             }

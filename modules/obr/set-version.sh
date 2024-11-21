@@ -103,6 +103,8 @@ function update_release_yaml {
     source_file=$1
     target_file=$2
     temp_dir=$3
+    regex="$4"
+    indent="$5"
 
     # Read through the release yaml and set the version of the framework bundle explicitly.
     # It's on the line after the line containing 'release:'
@@ -110,7 +112,7 @@ function update_release_yaml {
     is_line_supressed=false
     while IFS= read -r line
     do
-        regex="^.*release[ ]*:[ ]*$"
+        
         if [[ "$line" =~ $regex ]]; then
             # We found the marker, so the next line needs supressing.
             echo "$line"
@@ -119,7 +121,7 @@ function update_release_yaml {
             if [[ $is_line_supressed == true ]]; then
                 # Don't echo this line, but we only want to supress one line.
                 is_line_supressed=false
-                echo "  version: $component_version"
+                echo "${indent}version: $component_version"
             else
                 # Nothing special about this line, so echo it.
                 echo "$line"
@@ -158,7 +160,9 @@ temp_dir=$BASEDIR/temp/versions
 rm -fr $temp_dir
 mkdir -p $temp_dir
 
-update_release_yaml ${BASEDIR}/release.yaml $temp_dir/release.yaml $temp_dir
+update_release_yaml ${BASEDIR}/release.yaml $temp_dir/release.yaml $temp_dir "^.*release[ ]*:[ ]*$" "  "
+update_release_yaml ${BASEDIR}/release.yaml $temp_dir/release.yaml $temp_dir "^.*artifact: dev.galasa.wrapping.com.auth0.jwt*$" "    "
+update_release_yaml ${BASEDIR}/release.yaml $temp_dir/release.yaml $temp_dir "^.*artifact: dev.galasa.wrapping.io.grpc.java*$" "    "
 
 update_dependency_versions $temp_dir
 

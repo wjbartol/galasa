@@ -40,7 +40,7 @@ external:
 
   - group: commons-codec
     artifact: commons-codec
-    version: 1.15
+    version: 1.16.1
     obr: true
     bom: true
     mvp: true
@@ -84,8 +84,37 @@ external:
     isolated: true
 
   - group: dev.galasa
-    artifact: com.auth0.jwt
-    version: 4.4.1
+    artifact: dev.galasa.wrapping.com.auth0.jwt
+    version: 0.38.0
+    obr: true
+    mvp: true
+    isolated: true
+
+  - group: dev.galasa
+    artifact: dev.galasa.wrapping.gson
+    version: 0.38.0
+    obr: true
+    bom: true
+    mvp: true
+    isolated: true
+
+  - group: dev.galasa
+    artifact: dev.galasa.wrapping.io.grpc.java
+    version: 0.38.0
+    obr: true
+    mvp: true
+    isolated: true
+
+  - group: dev.galasa
+    artifact: dev.galasa.wrapping.io.kubernetes.client-java
+    version: 0.38.0
+    obr: true
+    mvp: true
+    isolated: true
+
+  - group: dev.galasa
+    artifact: dev.galasa.wrapping.protobuf-java
+    version: 0.38.0
     obr: true
     mvp: true
     isolated: true
@@ -93,13 +122,6 @@ external:
   - group: dev.galasa
     artifact: jta
     version: 2.0.1
-    obr: true
-    mvp: true
-    isolated: true
-
-  - group: dev.galasa
-    artifact: dev.galasa.wrapping.io.grpc.java
-    version: 0.38.0
     obr: true
     mvp: true
     isolated: true
@@ -113,27 +135,48 @@ external:
 
   - group: io.prometheus
     artifact: simpleclient
-    version: 0.6.0
+    version: 0.16.0
     obr: true
     mvp: true
     isolated: true
 
   - group: io.prometheus
     artifact: simpleclient_common
-    version: 0.6.0
-    obr: true
-    isolated: true
-
-  - group: io.prometheus
-    artifact: simpleclient_httpserver
-    version: 0.6.0
+    version: 0.16.0
     obr: true
     isolated: true
 
   - group: io.prometheus
     artifact: simpleclient_hotspot
-    version: 0.6.0
+    version: 0.16.0
     obr: true
+    isolated: true
+
+  - group: io.prometheus
+    artifact: simpleclient_httpserver
+    version: 0.16.0
+    obr: true
+    isolated: true
+
+  - group: io.prometheus
+    artifact: simpleclient_tracer_common
+    version: 0.16.0
+    obr: true
+    mvp: true
+    isolated: true
+
+  - group: io.prometheus
+    artifact: simpleclient_tracer_otel
+    version: 0.16.0
+    obr: true
+    mvp: true
+    isolated: true
+
+  - group: io.prometheus
+    artifact: simpleclient_tracer_otel_agent
+    version: 0.16.0
+    obr: true
+    mvp: true
     isolated: true
 
   - group: jakarta.xml.bind
@@ -193,6 +236,12 @@ external:
     isolated: true
 
   - group: org.apache.felix
+    artifact: org.apache.felix.fileinstall
+    version: 3.6.4
+    obr: true
+    isolated: true
+
+  - group: org.apache.felix
     artifact: org.apache.felix.gogo.command
     version: 1.1.0
     obr: true
@@ -214,22 +263,16 @@ external:
     isolated: true
 
   - group: org.apache.felix
-    artifact: org.apache.felix.http.servlet-api
-    version: 2.1.0
-    obr: true
-    mvp: true
-    isolated: true
-
-  - group: org.apache.felix
     artifact: org.apache.felix.http.jetty
     version: 5.0.0
     obr: true
     isolated: true
 
   - group: org.apache.felix
-    artifact: org.apache.felix.fileinstall
-    version: 3.6.4
+    artifact: org.apache.felix.http.servlet-api
+    version: 2.1.0
     obr: true
+    mvp: true
     isolated: true
 
   - group: org.apache.httpcomponents
@@ -247,55 +290,6 @@ external:
     bom: true
     isolated: true
     mvp: true
-
-  - group: org.apache.velocity
-    artifact: velocity-engine-core
-    version: 2.3
-    obr: true
-    mvp: true
-    isolated: true
-
-  - group: org.assertj
-    artifact: assertj-core
-    version: 3.11.1
-    obr: true
-    bom: true
-    mvp: true
-    isolated: true
-
-  - group: org.osgi
-    artifact: org.osgi.service.component.annotations
-    version: 1.3.0
-    bom: true
-
-  - group: org.yaml
-    artifact: snakeyaml
-    version: 2.0
-    obr: true
-    isolated: true
-    mvp: true
-
-  - group: org.bouncycastle
-    artifact: bcpkix-jdk18on
-    version: 1.79
-    obr: true
-
-  - group: org.bouncycastle
-    artifact: bcprov-jdk18on
-    version: 1.79
-    obr: true
-
-  - group: org.bouncycastle
-    artifact: bcutil-jdk18on
-    version: 1.79
-    obr: true
-
-  - group: org.slf4j
-    artifact: slf4j-api
-    version: 1.7.30
-    obr: true
-    mvp: true
-    isolated: true
 
   - group: org.apache.logging.log4j
     artifact: log4j-api
@@ -317,3 +311,52 @@ external:
     obr: true
     mvp: true
     isolated: true
+
+  - group: org.apache.velocity
+    artifact: velocity-engine-core
+    version: 2.3
+    obr: true
+    mvp: true
+    isolated: true
+
+  - group: org.assertj
+    artifact: assertj-core
+    version: 3.11.1
+    obr: true
+    bom: true
+    mvp: true
+    isolated: true
+
+  - group: org.bouncycastle
+    artifact: bcpkix-jdk18on
+    version: 1.79
+    obr: true
+
+  - group: org.bouncycastle
+    artifact: bcprov-jdk18on
+    version: 1.79
+    obr: true
+
+  - group: org.bouncycastle
+    artifact: bcutil-jdk18on
+    version: 1.79
+    obr: true
+
+  - group: org.osgi
+    artifact: org.osgi.service.component.annotations
+    version: 1.3.0
+    bom: true
+
+  - group: org.slf4j
+    artifact: slf4j-api
+    version: 1.7.30
+    obr: true
+    mvp: true
+    isolated: true
+
+  - group: org.yaml
+    artifact: snakeyaml
+    version: 2.0
+    obr: true
+    isolated: true
+    mvp: true

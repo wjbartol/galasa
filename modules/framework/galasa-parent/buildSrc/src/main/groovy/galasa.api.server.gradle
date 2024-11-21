@@ -11,11 +11,11 @@ dependencies {
     implementation 'org.osgi:org.osgi.service.component.annotations'
     implementation 'javax.validation:validation-api'
     implementation 'commons-logging:commons-logging'
-    implementation 'com.google.code.gson:gson'
+    implementation 'dev.galasa:dev.galasa.wrapping.gson'
     implementation 'io.prometheus:simpleclient'
 
     testImplementation 'junit:junit'
     testImplementation 'org.mockito:mockito-core'
     testImplementation 'org.awaitility:awaitility'
-    testImplementation 'org.assertj:assertj-core'
+    testImplementation 'org.assertj:assertj-core:3.16.1'
 }

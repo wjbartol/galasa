@@ -14,13 +14,13 @@ dependencies {
     implementation project(':dev.galasa.framework.api.beans')
     implementation platform('dev.galasa:dev.galasa.platform:0.38.0')
 
-    implementation 'dev.galasa:com.auth0.jwt'
+    implementation 'dev.galasa:dev.galasa.wrapping.com.auth0.jwt'
 
     testFixturesImplementation platform('dev.galasa:dev.galasa.platform:0.38.0')
 
     testFixturesImplementation 'javax.servlet:javax.servlet-api'
-    testFixturesImplementation 'org.assertj:assertj-core'
-    testFixturesImplementation 'com.google.code.gson:gson'
+    testFixturesImplementation 'org.assertj:assertj-core:3.16.1'
+    testFixturesImplementation 'dev.galasa:dev.galasa.wrapping.gson'
     testFixturesImplementation(project(':dev.galasa.framework'))
     testFixturesImplementation(project(':dev.galasa.framework.api.beans'))
     testFixturesImplementation 'javax.validation:validation-api'

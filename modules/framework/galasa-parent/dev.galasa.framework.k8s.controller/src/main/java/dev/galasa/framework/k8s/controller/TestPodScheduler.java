@@ -259,46 +259,54 @@ public class TestPodScheduler implements Runnable {
                 requirement.setKey(selection[0]);
                 requirement.setOperator("In");
                 requirement.addValuesItem(selection[1]);
+
+
             }
         }
 
         String nodeTolerations = this.settings.getNodeTolerations();
-        if (!nodeTolerations.isEmpty()) {
-            String[] tolerationsList = nodeTolerations.split(",");
-
-            if(tolerationsList.length > 0) {
-                for(int i = 0; i < tolerationsList.length; i++){
-                    String[] selection = tolerationsList[i].split("=");
-
-                    if (selection.length == 2) {
-
-                        String[] operatorAndEffect = selection[1].split(":");
-
-                        if(operatorAndEffect.length == 2) {
-                            V1Toleration toleration = new V1Toleration();
-
-                            logger.info("Adding toleration: " + selection[0] + ", operator: " + operatorAndEffect[0] + ", effect: " + operatorAndEffect[1]);
-                            toleration.setKey(selection[0]);
-
-                            toleration.setOperator(operatorAndEffect[0]);
-                            toleration.setEffect(operatorAndEffect[1]);
-
-                            podSpec.addTolerationsItem(toleration);
-                        }
-                        else {
-                            logger.error("Failed to retrieve operator and effect for toleration condition :-\n" + selection[0]);
-                        }
-                    }
-                    else {
-                        logger.error("Badly formatted toleration");
-                    }
-                }
+        if(!nodeTolerations.isEmpty()) {
+            List<V1Toleration> tolerationsList = createNodeTolerations(nodeTolerations);
+            for(V1Toleration thisToleration : tolerationsList) {
+                podSpec.addTolerationsItem(thisToleration);
             }
         }
 
         podSpec.setVolumes(createTestPodVolumes());
         podSpec.addContainersItem(createTestContainer(runName, engineName, isTraceEnabled));
         return newPod;
+    }
+
+    private List<V1Toleration> createNodeTolerations(String nodeTolerations) {
+        List<V1Toleration> tolerationsList = new ArrayList<>();
+
+        String[] tolerationStringSplit = nodeTolerations.split(",");
+
+        if(tolerationStringSplit.length > 0) {
+            for(int i = 0; i < tolerationStringSplit.length; i++){
+                String[] selection = tolerationStringSplit[i].split("=");
+
+                if (selection.length == 2) {
+                    String[] operatorAndEffect = selection[1].split(":");
+
+                    if(operatorAndEffect.length == 2) {
+                        V1Toleration toleration = new V1Toleration();
+                        logger.info("Adding toleration: " + selection[0] + ", operator: " + operatorAndEffect[0] + ", effect: " + operatorAndEffect[1]);
+                        toleration.setKey(selection[0]);
+                        toleration.setOperator(operatorAndEffect[0]);
+                        toleration.setEffect(operatorAndEffect[1]);
+                        tolerationsList.add(toleration);
+                    }
+                    else {
+                        logger.error("Failed to retrieve operator and effect for toleration condition :-\n" + selection[0]);
+                    }
+                }
+                else {
+                    logger.error("Badly formatted toleration");
+                }
+            }
+        }
+        return tolerationsList;
     }
 
     private V1Container createTestContainer(String runName, String engineName, boolean isTraceEnabled) {

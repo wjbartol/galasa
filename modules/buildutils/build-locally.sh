@@ -20,6 +20,9 @@ export ORIGINAL_DIR=$(pwd)
 cd "${BASEDIR}/.."
 WORKSPACE_DIR=$(pwd)
 
+cd "${BASEDIR}/../.."
+REPO_ROOT=$(pwd)
+
 #-----------------------------------------------------------------------------------------                   
 #
 # Set Colors
@@ -58,6 +61,8 @@ function usage {
     cat << EOF
 Options are:
 -h | --help : Display this help text
+-s | --detectsecrets true|false : Do we want to detect secrets in the entire repo codebase ? Default is 'true'. Valid values are 'true' or 'false'
+
 EOF
 }
 
@@ -95,15 +100,30 @@ function check_secrets {
     success "secrets audit complete"
 }
 
+function check_secrets_unless_supressed() {
+    # Check if the script is being called directly or from another script
+    if [[ -z "${IN_CHAIN_MODE}" ]]; then
+        info "Script invoked directly, running detect-secrets.sh script"
+
+        # Run the detect-secrets.sh in root
+        cd "${WORKSPACE_DIR}/.."
+        TOOL_DIR=$(pwd)
+        $TOOL_DIR/tools/detect-secrets.sh
+    fi
+}
+
 #-----------------------------------------------------------------------------------------                   
 # Process parameters
 #-----------------------------------------------------------------------------------------                   
 exportbuild_type=""
-
+detectsecrets="true"
 while [ "$1" != "" ]; do
     case $1 in
         -h | --help )           usage
                                 exit
+                                ;;
+        -s | --detectsecrets )  detectsecrets="$2"
+                                shift
                                 ;;
         * )                     error "Unexpected argument $1"
                                 usage
@@ -111,6 +131,11 @@ while [ "$1" != "" ]; do
     esac
     shift
 done
+
+if [[ "${detectsecrets}" != "true" ]] && [[ "${detectsecrets}" != "false" ]]; then
+    error "--detectsecrets flag must be 'true' or 'false'. Was $detectesecrets"
+    exit 1
+fi
 
 #-----------------------------------------------------------------------------------------                   
 # Main logic.
@@ -161,4 +186,8 @@ build_openapi2beans
 
 $BASEDIR/test-locally.sh
 rc=$? ; check_exit_code $rc "Failed to test galasabld" 
-check_secrets
+
+if [[ "$detectsecrets" == "true" ]]; then
+    $REPO_ROOT/tools/detect-secrets.sh 
+    check_exit_code $? "Failed to detect secrets"
+fi

@@ -25,6 +25,8 @@ export ORIGINAL_DIR=$(pwd)
 cd "${BASEDIR}/.."
 WORKSPACE_DIR=$(pwd)
 
+cd "${BASEDIR}/../.."
+REPO_ROOT=$(pwd)
 
 #-----------------------------------------------------------------------------------------                   
 #
@@ -45,26 +47,66 @@ blue=$(tput setaf 25)
 # Headers and Logging
 #
 #-----------------------------------------------------------------------------------------                   
-underline() { printf "${underline}${bold}%s${reset}\n" "$@"
+underline() { printf "${underline}${bold}%s${reset}\n" "$@" ;}
+h1() { printf "\n${underline}${bold}${blue}%s${reset}\n" "$@" ;}
+h2() { printf "\n${underline}${bold}${white}%s${reset}\n" "$@" ;}
+debug() { printf "${white}%s${reset}\n" "$@" ;}
+info() { printf "${white}➜ %s${reset}\n" "$@" ;}
+success() { printf "${green}✔ %s${reset}\n" "$@" ;}
+error() { printf "${red}✖ %s${reset}\n" "$@" ;}
+warn() { printf "${tan}➜ %s${reset}\n" "$@" ;}
+bold() { printf "${bold}%s${reset}\n" "$@" ;}
+note() { printf "\n${underline}${bold}${blue}Note:${reset} ${blue}%s${reset}\n" "$@" ;}
+
+#-----------------------------------------------------------------------------------------                   
+# Functions
+#-----------------------------------------------------------------------------------------                   
+function usage {
+    info "Syntax: build-locally.sh [OPTIONS]"
+    cat << EOF
+Options are:
+-s | --detectsecrets true|false : Do we want to detect secrets in the entire repo codebase ? Default is 'true'. Valid values are 'true' or 'false'
+
+Environment variables used:
+n/a
+EOF
 }
-h1() { printf "\n${underline}${bold}${blue}%s${reset}\n" "$@"
+
+function check_exit_code () {
+    # This function takes 3 parameters in the form:
+    # $1 an integer value of the expected exit code
+    # $2 an error message to display if $1 is not equal to 0
+    if [[ "$1" != "0" ]]; then 
+        error "$2" 
+        exit 1  
+    fi
 }
-h2() { printf "\n${underline}${bold}${white}%s${reset}\n" "$@"
-}
-debug() { printf "${white}%s${reset}\n" "$@"
-}
-info() { printf "${white}➜ %s${reset}\n" "$@"
-}
-success() { printf "${green}✔ %s${reset}\n" "$@"
-}
-error() { printf "${red}✖ %s${reset}\n" "$@"
-}
-warn() { printf "${tan}➜ %s${reset}\n" "$@"
-}
-bold() { printf "${bold}%s${reset}\n" "$@"
-}
-note() { printf "\n${underline}${bold}${blue}Note:${reset} ${blue}%s${reset}\n" "$@"
-}
+
+#-----------------------------------------------------------------------------------------                   
+# Process parameters
+#-----------------------------------------------------------------------------------------                   
+detectsecrets="true"
+while [ "$1" != "" ]; do
+    case $1 in
+
+        -s | --detectsecrets )  detectsecrets="$2"
+                                shift
+                                ;;
+
+        -h | --help )           usage
+                                exit
+                                ;;
+        * )                     error "Unexpected argument $1"
+                                usage
+                                exit 1
+    esac
+    shift
+done
+
+if [[ "${detectsecrets}" != "true" ]] && [[ "${detectsecrets}" != "false" ]]; then
+    error "--detectsecrets flag must be 'true' or 'false'. Was $detectesecrets"
+    exit 1
+fi
 
 #-----------------------------------------------------------------------------------------                   
 # Main logic.
@@ -200,8 +242,23 @@ function clean_up_m2 {
     success "Cleaned up ${TARGET_MAVEN_FOLDER} repository"
 }
 
+function check_secrets_unless_supressed() {
+    # Check if the script is being called directly or from another script
+    if [[ -z "${IN_CHAIN_MODE}" ]]; then
+        info "Script invoked directly, running detect-secrets.sh script"
+
+        # Run the detect-secrets.sh in root
+        cd "${WORKSPACE_DIR}/.."
+        TOOL_DIR=$(pwd)
+        $TOOL_DIR/tools/detect-secrets.sh
+    fi
+}
+
 clean_up_m2
 
 build_gradle_plugin
 
-check_secrets
+if [[ "$detectsecrets" == "true" ]]; then
+    $REPO_ROOT/tools/detect-secrets.sh 
+    check_exit_code $? "Failed to detect secrets"
+fi

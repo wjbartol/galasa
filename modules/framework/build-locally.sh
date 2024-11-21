@@ -27,6 +27,9 @@ export ORIGINAL_DIR=$(pwd)
 cd "${BASEDIR}/.."
 WORKSPACE_DIR=$(pwd)
 
+cd "${BASEDIR}/../.."
+REPO_ROOT=$(pwd)
+
 OPENAPI2BEANS="${BASEDIR}/galasa-parent/build/openapi2beans"
 
 #-----------------------------------------------------------------------------------------
@@ -68,6 +71,13 @@ function usage {
 Options are:
 -c | --clean : Do a clean build. One of the --clean or --delta flags are mandatory.
 -d | --delta : Do a delta build. One of the --clean or --delta flags are mandatory.
+-s | --detectsecrets true|false : Do we want to detect secrets in the entire repo codebase ? Default is 'true'. Valid values are 'true' or 'false'
+
+Environment variables used:
+DEBUG - Optional. Valid values "1" (on) or "0" (off). Defaults to "0" (off).
+SOURCE_MAVEN - Optional. Where maven/gradle can look for pre-built development levels of things.
+    Defaults to https://development.galasa.dev/main/maven-repo/obr/
+
 EOF
 }
 
@@ -335,17 +345,22 @@ function update_release_yaml {
     fi
 }
 
+
 #-----------------------------------------------------------------------------------------
 # Process parameters
 #-----------------------------------------------------------------------------------------
 build_type=""
-
+detectsecrets="true"
 while [ "$1" != "" ]; do
     case $1 in
         -c | --clean )          build_type="clean"
                                 ;;
         -d | --delta )          build_type="delta"
                                 ;;
+        -s | --detectsecrets )  detectsecrets="$2"
+                                shift
+                                ;;
+
         -h | --help )           usage
                                 exit
                                 ;;
@@ -362,6 +377,10 @@ if [[ "${build_type}" == "" ]]; then
     exit 1
 fi
 
+if [[ "${detectsecrets}" != "true" ]] && [[ "${detectsecrets}" != "false" ]]; then
+    error "--detectsecrets flag must be 'true' or 'false'. Was $detectesecrets"
+    exit 1
+fi
 
 
 #-----------------------------------------------------------------------------------------
@@ -438,6 +457,9 @@ fi
 
 generate_rest_docs
 
-check_secrets
+if [[ "$detectsecrets" == "true" ]]; then
+    $REPO_ROOT/tools/detect-secrets.sh 
+    check_exit_code $? "Failed to detect secrets"
+fi
 
 success "Project ${project} built - OK - log is at ${log_file}"

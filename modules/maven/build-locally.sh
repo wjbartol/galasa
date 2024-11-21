@@ -26,6 +26,8 @@ export ORIGINAL_DIR=$(pwd)
 cd "${BASEDIR}/.."
 WORKSPACE_DIR=$(pwd)
 
+cd "${BASEDIR}/../.."
+REPO_ROOT=$(pwd)
 
 #-----------------------------------------------------------------------------------------                   
 #
@@ -70,40 +72,40 @@ function check_exit_code () {
     fi
 }
 
-function check_secrets {
-    h2 "updating secrets baseline"
-    cd ${BASEDIR}
-    detect-secrets scan --update .secrets.baseline
-    rc=$? 
-    check_exit_code $rc "Failed to run detect-secrets. Please check it is installed properly" 
-    success "updated secrets file"
+function usage {
+    info "Syntax: build-locally.sh [OPTIONS]"
+    cat << EOF
+Options are:
+-s | --detectsecrets true|false : Do we want to detect secrets in the entire repo codebase ? Default is 'true'. Valid values are 'true' or 'false'
 
-    h2 "running audit for secrets"
-    detect-secrets audit .secrets.baseline
-    rc=$? 
-    check_exit_code $rc "Failed to audit detect-secrets."
-    
-    #Check all secrets have been audited
-    secrets=$(grep -c hashed_secret .secrets.baseline)
-    audits=$(grep -c is_secret .secrets.baseline)
-    if [[ "$secrets" != "$audits" ]]; then 
-        error "Not all secrets found have been audited"
-        exit 1  
-    fi
-    success "secrets audit complete"
-
-    h2 "Removing the timestamp from the secrets baseline file so it doesn't always cause a git change."
-    mkdir -p temp
-    rc=$? 
-    check_exit_code $rc "Failed to create a temporary folder"
-    cat .secrets.baseline | grep -v "generated_at" > temp/.secrets.baseline.temp
-    rc=$? 
-    check_exit_code $rc "Failed to create a temporary file with no timestamp inside"
-    mv temp/.secrets.baseline.temp .secrets.baseline
-    rc=$? 
-    check_exit_code $rc "Failed to overwrite the secrets baseline with one containing no timestamp inside."
-    success "secrets baseline timestamp content has been removed ok"
+Environment variables used:
+EOF
 }
+
+#-----------------------------------------------------------------------------------------                   
+# Process parameters
+#-----------------------------------------------------------------------------------------                   
+detectsecrets="true"
+while [ "$1" != "" ]; do
+    case $1 in
+        -s | --detectsecrets )  detectsecrets="$2"
+                                shift
+                                ;;
+
+        -h | --help )           usage
+                                exit
+                                ;;
+        * )                     error "Unexpected argument $1"
+                                usage
+                                exit 1
+    esac
+    shift
+done
+
+if [[ "${detectsecrets}" != "true" ]] && [[ "${detectsecrets}" != "false" ]]; then
+    error "--detectsecrets flag must be 'true' or 'false'. Was $detectesecrets"
+    exit 1
+fi
 
 #-----------------------------------------------------------------------------------------                   
 # Main logic.
@@ -160,9 +162,13 @@ fi
 mvn clean install ${MVN_FLAGS} 2>&1 > ${LOG_FILE}
 rc=$? ; if [[ "${rc}" != "0" ]]; then cat ${LOG_FILE} ; error "Failed to build ${project}" ; exit 1 ; fi
 
-check_secrets
-
 cat ${LOG_FILE} | grep --ignore-case "warning"
 cat ${LOG_FILE} | grep --ignore-case "error"
 cat ${LOG_FILE} | grep --ignore-case "fail"
+
+if [[ "$detectsecrets" == "true" ]]; then
+    $REPO_ROOT/tools/detect-secrets.sh 
+    check_exit_code $? "Failed to detect secrets"
+fi
+
 success "Project ${project} built - OK - log is at ${LOG_FILE}"

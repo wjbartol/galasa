@@ -21,6 +21,8 @@ import dev.galasa.framework.spi.creds.FrameworkEncryptionService;
 import io.kubernetes.client.openapi.apis.CoreV1Api;
 import io.kubernetes.client.openapi.models.V1ConfigMap;
 import io.kubernetes.client.openapi.models.V1Container;
+import io.kubernetes.client.openapi.models.V1NodeSelectorRequirement;
+import io.kubernetes.client.openapi.models.V1NodeSelectorTerm;
 import io.kubernetes.client.openapi.models.V1ObjectMeta;
 import io.kubernetes.client.openapi.models.V1Pod;
 import io.kubernetes.client.openapi.models.V1PodSpec;
@@ -102,6 +104,25 @@ public class TestPodSchedulerTest {
         assertThat(actualMetadata.getName()).isEqualTo(expectedPodName);
     }
 
+    private V1PreferredSchedulingTerm createSchedulingTerm(String nodePreferredAffinity) {
+
+        String[] nodePreferredAffinitySplit = nodePreferredAffinity.split("=");
+
+        V1PreferredSchedulingTerm preferred = new V1PreferredSchedulingTerm();
+        preferred.setWeight(1);
+
+        V1NodeSelectorTerm selectorTerm = new V1NodeSelectorTerm();
+        preferred.setPreference(selectorTerm);
+
+        V1NodeSelectorRequirement requirement = new V1NodeSelectorRequirement();
+        selectorTerm.addMatchExpressionsItem(requirement);
+        requirement.setKey(nodePreferredAffinitySplit[0]);
+        requirement.setOperator("In");
+        requirement.addValuesItem(nodePreferredAffinitySplit[1]);
+
+        return preferred;
+    }
+
     @SuppressWarnings("null")
     private void checkPodSpec(V1Pod pod, Settings settings) {
 
@@ -109,6 +130,13 @@ public class TestPodSchedulerTest {
         V1PodSpec podSpec = pod.getSpec();
         assertThat(podSpec).isNotNull();
 
+        // Check the podspec's node affinity is as expected
+        V1PreferredSchedulingTerm preferredSchedulingTerm = createSchedulingTerm(settings.getNodePreferredAffinity());
+        List<V1PreferredSchedulingTerm> terms = podSpec.getAffinity().getNodeAffinity().getPreferredDuringSchedulingIgnoredDuringExecution();
+
+        assertThat(terms.contains(preferredSchedulingTerm));
+
+        // Check the podspec's node tolerances are as expected
         String[] nodeTolerationsStringList = settings.getNodeTolerations().split(",");
 
         for(String nodeTolerationsString : nodeTolerationsStringList) {

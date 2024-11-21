@@ -15,12 +15,10 @@ dependencies {
     implementation project(':dev.galasa.framework.api.common')
     implementation project(':dev.galasa.framework.api.users')
     implementation project(':dev.galasa.framework.auth.spi')
-    implementation platform('dev.galasa:dev.galasa.platform:0.38.0')
-
-    implementation 'org.apache.commons:commons-lang3'
     implementation 'dev.galasa:dev.galasa.wrapping.com.auth0.jwt'
-
     implementation 'dev.galasa:dev.galasa.wrapping.io.grpc.java'
+    implementation 'org.apache.commons:commons-lang3'
+
     compileOnly 'org.apache.tomcat:annotations-api'
 
     testImplementation(testFixtures(project(':dev.galasa.framework.api.common')))

@@ -9,8 +9,6 @@ version = '0.38.0'
 
 dependencies {
     compileOnly project(':dev.galasa.framework.maven.repository.spi')
-    implementation platform('dev.galasa:dev.galasa.platform:0.38.0')
-
     implementation 'org.apache.maven:maven-repository-metadata'
     implementation 'org.codehaus.plexus:plexus-utils'
 }

@@ -10,24 +10,20 @@ description = 'Galasa Framework'
 version = "0.38.0"
 
 dependencies {
-
     api project (':dev.galasa')
-    implementation project (':dev.galasa.framework.maven.repository.spi')
-    implementation platform('dev.galasa:dev.galasa.platform:0.38.0')
 
+    implementation project (':dev.galasa.framework.maven.repository.spi')
+    implementation 'commons-io:commons-io'
+    implementation 'dev.galasa:dev.galasa.wrapping.gson'
+    implementation 'org.apache.bcel:bcel'
+    implementation 'org.apache.commons:commons-lang3'
+    implementation 'org.apache.felix:org.apache.felix.bundlerepository'
     implementation 'org.apache.logging.log4j:log4j-api'
     implementation 'org.apache.logging.log4j:log4j-core'
     implementation 'org.apache.logging.log4j:log4j-slf4j-impl'
-    implementation 'org.apache.commons:commons-lang3'
-    implementation 'org.apache.felix:org.apache.felix.bundlerepository'
-
-    implementation 'org.apache.bcel:bcel'
-    implementation 'commons-io:commons-io'
-    implementation 'dev.galasa:dev.galasa.wrapping.gson'
     implementation 'org.yaml:snakeyaml'
 
     testImplementation project (':dev.galasa')
-
 }
 
 // Note: These values are consumed by the parent build process

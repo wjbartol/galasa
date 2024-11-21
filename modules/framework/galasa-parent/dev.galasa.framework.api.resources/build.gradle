@@ -15,11 +15,7 @@ dependencies {
     implementation project(':dev.galasa.framework.api.beans')
     implementation project(':dev.galasa.framework.api.common')
     implementation project(':dev.galasa.framework.api.cps')
-    implementation platform('dev.galasa:dev.galasa.platform:0.38.0')
-
     implementation 'org.apache.commons:commons-collections4'
-
-    testImplementation platform('dev.galasa:dev.galasa.platform:0.38.0')
 
     testImplementation 'org.apache.commons:commons-lang3'
     testImplementation project(':dev.galasa.framework').sourceSets.test.output

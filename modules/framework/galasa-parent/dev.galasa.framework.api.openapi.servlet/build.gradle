@@ -15,7 +15,6 @@ configurations {
 dependencies {
     implementation project(':dev.galasa.framework')
     implementation project(':dev.galasa.framework.api.common')
-    implementation platform('dev.galasa:dev.galasa.platform:0.38.0')
     implementation 'org.yaml:snakeyaml'
 
     openApiSpec project(':dev.galasa.framework.api.openapi')

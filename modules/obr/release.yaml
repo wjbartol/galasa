@@ -77,8 +77,8 @@ external:
     isolated: true
 
   - group: dev.galasa
-    artifact: com.jcraft.jsch
-    version: 0.1.55
+    artifact: dev.galasa.wrapping.com.jcraft.jsch
+    version: 0.38.0
     obr: true
     mvp: true
     isolated: true

@@ -9,8 +9,8 @@
 		<version>0.38.0</version>
 	</parent>
 
-	<artifactId>com.jcraft.jsch</artifactId>
-	<version>0.1.55</version>
+	<artifactId>dev.galasa.wrapping.com.jcraft.jsch</artifactId>
+	<version>0.38.0</version>
 	<packaging>bundle</packaging>
 
 	<name>galasa wrapped version of JSCH</name>
@@ -37,7 +37,7 @@
 				<configuration>
 					<supportedProjectTypes>bundle</supportedProjectTypes>
 					<instructions>
-						<Bundle-SymbolicName>com.jcraft.jsch</Bundle-SymbolicName>
+						<Bundle-SymbolicName>dev.galasa.wrapping.com.jcraft.jsch</Bundle-SymbolicName>
 						<Embed-Dependency>*;scope=compile</Embed-Dependency>
 						<Export-Package>com.jcraft.jsch,
 							com.jcraft.jsch.jce,

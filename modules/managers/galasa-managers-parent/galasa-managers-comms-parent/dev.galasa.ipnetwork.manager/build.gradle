@@ -7,7 +7,7 @@ description = 'IP Network Manager'
 version = '0.38.0'
 
 dependencies {
-    implementation 'dev.galasa:com.jcraft.jsch'
+    implementation 'dev.galasa:dev.galasa.wrapping.com.jcraft.jsch'
     implementation 'commons-codec:commons-codec'
 }
 

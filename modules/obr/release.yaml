@@ -144,8 +144,8 @@ external:
     isolated: true
 
   - group: dev.galasa
-    artifact: kafka.clients
-    version: 3.7.0
+    artifact: dev.galasa.wrapping.kafka.clients
+    version: 0.38.0
     obr: true
     mvp: true
     isolated: true

@@ -9,8 +9,8 @@
 		<version>0.38.0</version>
 	</parent>
 
-	<artifactId>kafka.clients</artifactId>
-	<version>3.7.0</version>
+	<artifactId>dev.galasa.wrapping.kafka.clients</artifactId>
+	<version>0.38.0</version>
 	<packaging>bundle</packaging>
 
 	<name>Galasa wrapped version of the kafka-client package</name>
@@ -19,12 +19,12 @@
 		<dependency>
 			<groupId>org.apache.kafka</groupId>
 			<artifactId>kafka-clients</artifactId>
-			<version>3.7.0</version>
+			<version>3.7.1</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.kafka</groupId>
 			<artifactId>kafka-server-common</artifactId>
-			<version>3.7.0</version>
+			<version>3.7.1</version>
 		</dependency>
 		<dependency>
 			<groupId>org.slf4j</groupId>
@@ -42,7 +42,7 @@
 				<configuration>
 					<supportedProjectTypes>bundle</supportedProjectTypes>
 					<instructions>
-						<Bundle-SymbolicName>kafka.clients</Bundle-SymbolicName>
+						<Bundle-SymbolicName>dev.galasa.wrapping.kafka.clients</Bundle-SymbolicName>
 						<Embed-Dependency>*;scope=compile</Embed-Dependency>
 						<Import-Package>
 						    org.ietf.jgss,

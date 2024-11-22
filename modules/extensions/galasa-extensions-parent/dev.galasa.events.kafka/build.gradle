@@ -8,7 +8,7 @@ description = 'Galasa Events Plug-In - Kafka'
 version = '0.38.0'
 
 dependencies {
-    implementation 'dev.galasa:kafka.clients:3.7.0'
+    implementation 'dev.galasa:dev.galasa.wrapping.kafka.clients:0.38.0'
 
     testImplementation(testFixtures(project(':dev.galasa.extensions.common')))
 }

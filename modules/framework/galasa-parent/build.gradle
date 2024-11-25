@@ -1,7 +1,7 @@
 plugins {
     id 'java'
     id 'biz.aQute.bnd.builder' version '5.3.0' apply false
-    id 'dev.galasa.githash' version '0.15.0' apply false
+    id 'dev.galasa.githash' version "0.38.0" apply false
     id 'jacoco'
     id 'maven-publish'
     id 'signing'
@@ -10,6 +10,11 @@ plugins {
 // Note: The following line is changed by the set-version.sh script.
 // It is also read by other build scrips as required.
 version = "0.38.0"
+
+allprojects {
+    group = 'dev.galasa'
+    version = "0.38.0"
+}
 
 signing {
     def signingKeyId = findProperty("signingKeyId")

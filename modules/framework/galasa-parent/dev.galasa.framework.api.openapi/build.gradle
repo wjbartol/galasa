@@ -7,8 +7,6 @@ plugins {
 
 description = 'Galasa Open API specification'
 
-version = "0.38.0"
-
 repositories {
     maven {
         url "$sourceMaven"

@@ -72,7 +72,7 @@ jobs:
     
       - name: Run the detect secrets script
         working-directory: ./tools
-        run: detect-secrets.sh
+        run: ./detect-secrets.sh
 
   pr-build-platform:
     name: Build the 'platform' module

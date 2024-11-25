@@ -65,6 +65,14 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           ./tools/get-last-successful-workflow-run-for-artifacts.sh --repo ${{ github.repository }}
+          
+      - name: Turn script into an executable
+        working-directory: ./tools
+        run: chmod +x detect-secrets.sh
+    
+      - name: Run the detect secrets script
+        working-directory: ./tools
+        run: detect-secrets.sh
 
   pr-build-platform:
     name: Build the 'platform' module

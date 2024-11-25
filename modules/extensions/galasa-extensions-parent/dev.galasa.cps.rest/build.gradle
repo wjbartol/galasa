@@ -5,8 +5,6 @@ plugins {
 
 description = 'Galasa CPS access over http - Provides the CPS stores via the public REST interface over http'
 
-version = '0.38.0'
-
 dependencies {
 
     // Not required for compile,  but required to force the download of the jars to embed by bnd

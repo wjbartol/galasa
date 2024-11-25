@@ -248,13 +248,14 @@ function check_dependencies_present {
 
     export framework_manifest_path=${BASEDIR}/dependency-download/build/dependencies/dev.galasa.framework.manifest.yaml
     export managers_manifest_path=${BASEDIR}/dependency-download/build/dependencies/dev.galasa.managers.manifest.yaml
+    export extensions_manifest_path=${BASEDIR}/dependency-download/build/dependencies/dev.galasa.extensions.manifest.yaml
     # export framework_manifest_path=${WORKSPACE_DIR}/framework/release.yaml
     # export managers_manifest_path=${WORKSPACE_DIR}/managers/release.yaml
 
     declare -a required_files=(
     ${WORKSPACE_DIR}/${project}/dev.galasa.uber.obr/pom.template
     ${framework_manifest_path}
-    ${WORKSPACE_DIR}/extensions/release.yaml
+    ${extensions_manifest_path}
     ${managers_manifest_path}
     ${WORKSPACE_DIR}/obr/release.yaml
     )
@@ -283,7 +284,7 @@ function construct_bom_pom_xml {
 
     cmd="${GALASA_BUILD_TOOL_PATH} template \
     --releaseMetadata ${framework_manifest_path} \
-    --releaseMetadata ${WORKSPACE_DIR}/extensions/release.yaml \
+    --releaseMetadata ${extensions_manifest_path} \
     --releaseMetadata ${managers_manifest_path} \
     --releaseMetadata ${WORKSPACE_DIR}/obr/release.yaml \
     --template pom.template \
@@ -313,7 +314,7 @@ function construct_uber_obr_pom_xml {
 
     cmd="${GALASA_BUILD_TOOL_PATH} template \
     --releaseMetadata ${framework_manifest_path} \
-    --releaseMetadata ${WORKSPACE_DIR}/extensions/release.yaml \
+    --releaseMetadata ${extensions_manifest_path} \
     --releaseMetadata ${managers_manifest_path} \
     --releaseMetadata ${WORKSPACE_DIR}/obr/release.yaml \
     --template pom.template \
@@ -390,9 +391,9 @@ function generate_javadoc_pom_xml {
     cd ${WORKSPACE_DIR}/obr/javadocs
 
     ${GALASA_BUILD_TOOL_PATH} template \
-    --releaseMetadata ${WORKSPACE_DIR}/framework/release.yaml \
-    --releaseMetadata ${WORKSPACE_DIR}/extensions/release.yaml \
-    --releaseMetadata ${WORKSPACE_DIR}/managers/release.yaml \
+    --releaseMetadata ${framework_manifest_path} \
+    --releaseMetadata ${extensions_manifest_path} \
+    --releaseMetadata ${managers_manifest_path} \
     --releaseMetadata ${WORKSPACE_DIR}/obr/release.yaml \
     --template pom.template \
     --output pom.xml \

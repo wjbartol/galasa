@@ -22,6 +22,7 @@ repositories {
 dependencies {
     runtimeOnly group: 'dev.galasa', name: 'dev.galasa.managers.manifest', version: version, ext: "yaml"
     runtimeOnly group: 'dev.galasa', name: 'dev.galasa.framework.manifest', version: version, ext: "yaml"
+    runtimeOnly group: 'dev.galasa', name: 'dev.galasa.extensions.manifest', version: version, ext: "yaml"
 }
 
 // Download all the files we depend upon.
@@ -46,6 +47,14 @@ task getFrameworkDependency {
     }
 }
 
+// Gets the framework dependency and renames it to remove the version number.
+task getExtensionsDependency {
+    dependsOn downloadAllDependencies
+    doFirst {
+        copyDependency("dev.galasa.extensions.manifest-${version}.yaml", "dev.galasa.extensions.manifest.yaml")
+    }
+}
+
 // Creates a copy of a dependency matching the given pattern and renames it with the given name
 def copyDependency(dependencyPattern, desiredFileName) {
     copy {
@@ -61,6 +70,7 @@ task getDeps(type: Copy) {
     dependsOn downloadAllDependencies
     dependsOn getManagerDependency
     dependsOn getFrameworkDependency
+    dependsOn getExtensionsDependency
 
 }
 

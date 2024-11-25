@@ -55,6 +55,8 @@ dependencies {
         api 'dev.galasa:dev.galasa.wrapping.protobuf-java:'+version
         api 'dev.galasa:galasa-testharness:0.18.0'
         api 'dev.galasa:dev.galasa.wrapping.jta:'+version
+        api 'dev.galasa:dev.galasa.wrapping.velocity-engine-core:'+version
+        api 'dev.galasa:dev.galasa.wrapping.protobuf-java:'+version
 
         // Most bundles before implementing the Platform used 0.6.0 other than dev.galasa.framework.k8s.controller.
         // Upgrading all to 0.16.0 by using the Platform.

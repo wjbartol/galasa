@@ -47,7 +47,7 @@ task getFrameworkDependency {
     }
 }
 
-// Gets the framework dependency and renames it to remove the version number.
+// Gets the extension dependency and renames it to remove the version number.
 task getExtensionsDependency {
     dependsOn downloadAllDependencies
     doFirst {

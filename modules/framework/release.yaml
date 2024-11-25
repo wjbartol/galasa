@@ -24,7 +24,7 @@ framework:
 
 
   - artifact: dev.galasa
-    version: 0.34.0
+    version: 0.38.0
     obr:          true
     mvp:          true
     bom:          true

@@ -11,8 +11,24 @@ on:
 
 jobs:
 
+  detect-secrets:
+    runs-on: ubuntu-latest 
+    steps:
+
+      - name: Checkout code
+        uses: actions/checkout@v4 
+
+      - name: Turn script into an executable
+        working-directory: ./tools
+        run: chmod +x detect-secrets.sh
+      
+      - name: Run the detect secrets script
+        working-directory: ./tools
+        run: ./detect-secrets.sh
+  
   # Get modules that were changed as part of this Pull Request,
   # set that as an output of this job to be passed to the next job. 
+
   get-changed-modules:
     name: Get the modules changed in this Pull Request
     runs-on: ubuntu-latest
@@ -65,14 +81,6 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           ./tools/get-last-successful-workflow-run-for-artifacts.sh --repo ${{ github.repository }}
-          
-      - name: Turn script into an executable
-        working-directory: ./tools
-        run: chmod +x detect-secrets.sh
-    
-      - name: Run the detect secrets script
-        working-directory: ./tools
-        run: ./detect-secrets.sh
 
   pr-build-platform:
     name: Build the 'platform' module
@@ -176,7 +184,7 @@ jobs:
   # This job is set in the branch protection rules as required to merge a Pull Request.
   end-pull-request-build:
     name: Pull Request build was successful
-    needs: [pr-build-obr]
+    needs: [pr-build-obr, detect-secrets]
     runs-on: ubuntu-latest
 
     steps:

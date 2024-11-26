@@ -121,6 +121,9 @@ dependencies {
         api 'org.apache.httpcomponents:httpcore-osgi:4.4.14'
         api 'org.apache.httpcomponents:httpmime:4.5.14'
 
+        api 'org.apache.kafka:kafka-clients:3.9.0'
+        api 'org.apache.kafka:kafka-server-common:3.9.0'
+
         api 'org.apache.logging.log4j:log4j-api:2.24.1' // If updating, also update in galasa-boot build.gradle.
         api 'org.apache.logging.log4j:log4j-core:2.24.1' // If updating, also update in galasa-boot build.gradle.
         api 'org.apache.logging.log4j:log4j-slf4j-impl:2.24.1'

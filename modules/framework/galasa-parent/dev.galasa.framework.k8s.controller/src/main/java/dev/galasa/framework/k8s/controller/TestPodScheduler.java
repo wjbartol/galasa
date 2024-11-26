@@ -277,6 +277,16 @@ public class TestPodScheduler implements Runnable {
         return newPod;
     }
 
+
+    /*
+    * Tolerations are supplied as a string in the form:
+    * "node-label1=Operator1:Condition1,node-label2=Operator2:Condition2"
+    *
+    * For example: "galasa-engines=Exists:NoSchedule"
+    *
+    * The following method parses the String comma separated list of node
+    * tolerations and returns a list of K8s V1Tolerations.
+    */
     private List<V1Toleration> createNodeTolerations(String nodeTolerations) {
         List<V1Toleration> tolerationsList = new ArrayList<>();
 

@@ -71,12 +71,6 @@ external:
     isolated: true
 
   - group: dev.galasa
-    artifact: dev.galasa.platform
-    obr: false
-    mvp: true
-    isolated: true
-
-  - group: dev.galasa
     artifact: dev.galasa.wrapping.com.jcraft.jsch
     obr: true
     mvp: true

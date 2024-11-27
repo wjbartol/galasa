@@ -48,6 +48,7 @@ import io.kubernetes.client.openapi.models.V1PreferredSchedulingTerm;
 import io.kubernetes.client.openapi.models.V1ResourceRequirements;
 import io.kubernetes.client.openapi.models.V1SecretKeySelector;
 import io.kubernetes.client.openapi.models.V1SecretVolumeSource;
+import io.kubernetes.client.openapi.models.V1Toleration;
 import io.kubernetes.client.openapi.models.V1Volume;
 import io.kubernetes.client.openapi.models.V1VolumeMount;
 import io.prometheus.client.Counter;
@@ -258,12 +259,64 @@ public class TestPodScheduler implements Runnable {
                 requirement.setKey(selection[0]);
                 requirement.setOperator("In");
                 requirement.addValuesItem(selection[1]);
+
+
+            }
+        }
+
+        String nodeTolerations = this.settings.getNodeTolerations();
+        if(!nodeTolerations.isEmpty()) {
+            List<V1Toleration> tolerationsList = createNodeTolerations(nodeTolerations);
+            for(V1Toleration thisToleration : tolerationsList) {
+                podSpec.addTolerationsItem(thisToleration);
             }
         }
 
         podSpec.setVolumes(createTestPodVolumes());
         podSpec.addContainersItem(createTestContainer(runName, engineName, isTraceEnabled));
         return newPod;
+    }
+
+
+    /*
+    * Tolerations are supplied as a string in the form:
+    * "node-label1=Operator1:Condition1,node-label2=Operator2:Condition2"
+    *
+    * For example: "galasa-engines=Exists:NoSchedule"
+    *
+    * The following method parses the String comma separated list of node
+    * tolerations and returns a list of K8s V1Tolerations.
+    */
+    private List<V1Toleration> createNodeTolerations(String nodeTolerations) {
+        List<V1Toleration> tolerationsList = new ArrayList<>();
+
+        String[] tolerationStringSplit = nodeTolerations.split(",");
+
+        if(tolerationStringSplit.length > 0) {
+            for(int i = 0; i < tolerationStringSplit.length; i++){
+                String[] selection = tolerationStringSplit[i].split("=");
+
+                if (selection.length == 2) {
+                    String[] operatorAndEffect = selection[1].split(":");
+
+                    if(operatorAndEffect.length == 2) {
+                        V1Toleration toleration = new V1Toleration();
+                        logger.info("Adding toleration: " + selection[0] + ", operator: " + operatorAndEffect[0] + ", effect: " + operatorAndEffect[1]);
+                        toleration.setKey(selection[0]);
+                        toleration.setOperator(operatorAndEffect[0]);
+                        toleration.setEffect(operatorAndEffect[1]);
+                        tolerationsList.add(toleration);
+                    }
+                    else {
+                        logger.error("Failed to retrieve operator and effect for toleration condition :-\n" + selection[0]);
+                    }
+                }
+                else {
+                    logger.error("Badly formatted toleration");
+                }
+            }
+        }
+        return tolerationsList;
     }
 
     private V1Container createTestContainer(String runName, String engineName, boolean isTraceEnabled) {

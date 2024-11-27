@@ -108,6 +108,7 @@ jobs:
     with:
       changed: ${{ needs.get-changed-modules.outputs.maven_changed }}
       gradle-artifact-id: ${{ needs.find-artifacts.outputs.gradle_artifacts_id }}
+      platform-artifact-id: ${{ needs.find-artifacts.outputs.platform_artifacts_id }}
 
   pr-build-framework:
     name: Build the 'framework' module

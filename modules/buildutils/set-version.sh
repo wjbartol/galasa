@@ -96,12 +96,12 @@ if [[ -z $component_version ]]; then
     exit 1
 fi
 
+
 temp_dir=$BASEDIR/temp/version_bump
 mkdir -p $temp_dir
 
-# The galasa-parent/dev.galasa.framework/build.gradle file is where the 'master' version number 
-# of the framework component lives.
-# For example: version = "0.29.0"
-cat $BASEDIR/dev.galasa.platform/build.gradle | sed "s/^[ ]*version[ ]*=.*/version = \"$component_version\"/1" > $temp_dir/platform-build.gradle
-cp $temp_dir/platform-build.gradle $BASEDIR/dev.galasa.platform/build.gradle
+# The root command of the galasabld tool has a version inside the cobra command.
+cat $BASEDIR/pkg/cmd/root.go | sed "s/^.*Version[:].*$/	Version: \"$component_version\",/1" > $temp_dir/root.go.txt
+cp $temp_dir/root.go.txt $BASEDIR/pkg/cmd/root.go
+
 

@@ -15,8 +15,6 @@ configurations {
 
 }
 
-version = '0.38.0'
-
 jar {
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
     manifest {

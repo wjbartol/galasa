@@ -5,7 +5,6 @@
 #
 # SPDX-License-Identifier: EPL-2.0
 #
-
 #-----------------------------------------------------------------------------------------                   
 #
 # Objectives: Sets the version number of this component.
@@ -23,6 +22,8 @@ export ORIGINAL_DIR=$(pwd)
 
 cd "${BASEDIR}/.."
 WORKSPACE_DIR=$(pwd)
+
+set -o pipefail
 
 
 #-----------------------------------------------------------------------------------------                   
@@ -54,7 +55,6 @@ error() { printf "${red}✖ %s${reset}\n" "$@" ;}
 warn() { printf "${tan}➜ %s${reset}\n" "$@" ;}
 bold() { printf "${bold}%s${reset}\n" "$@" ;}
 note() { printf "\n${underline}${bold}${blue}Note:${reset} ${blue}%s${reset}\n" "$@" ;}
-
 
 #-----------------------------------------------------------------------------------------                   
 # Functions
@@ -96,12 +96,69 @@ if [[ -z $component_version ]]; then
     exit 1
 fi
 
+
 temp_dir=$BASEDIR/temp/version_bump
 mkdir -p $temp_dir
 
-# The galasa-parent/dev.galasa.framework/build.gradle file is where the 'master' version number 
-# of the framework component lives.
-# For example: version = "0.29.0"
-cat $BASEDIR/dev.galasa.platform/build.gradle | sed "s/^[ ]*version[ ]*=.*/version = \"$component_version\"/1" > $temp_dir/platform-build.gradle
-cp $temp_dir/platform-build.gradle $BASEDIR/dev.galasa.platform/build.gradle
+
+#-------------------------------------------------------------------------------
+function replace_line_following {
+
+    source_file=$1
+    target_file=$2
+    temp_dir=$3
+    regex_line_before="$4"
+    regex_line_replaced="$5"
+    substitute_for="$6"
+
+    h2 "Updating the line in file $source_file which satisfies the regex $regex_line_before on the line before, and has $regex_line_replaced on the line being replaced."
+
+    # Read through the release yaml and set the version of the framework bundle explicitly.
+    # It's on the line after the line containing 'release:'
+    # The line we need to change looks like this: version: 0.29.0
+    is_line_supressed=false
+    while IFS= read -r line
+    do
+
+        if [[ "$line" =~ $regex_line_before ]]; then
+            # We found the marker, so the next line needs supressing.
+            echo "$line"
+            is_line_supressed=true
+        else
+            if [[ $is_line_supressed == true ]]; then
+                if [[ "$line" =~ $regex_line_replaced ]]; then 
+                    # The line to be replaced has the desired contents also.
+                    is_line_supressed=true
+                else 
+                    # The substitutionm shouldn't zap this line as it doesn't match the criteria.
+                    is_line_supressed=false
+                fi
+            fi
+
+            if [[ $is_line_supressed == true ]]; then
+                # Don't echo this line, but we only want to supress one line.
+                is_line_supressed=false
+                echo "${substitute_for}"
+            else
+                # Nothing special about this line, so echo it.
+                echo "$line"
+            fi
+        fi
+
+    done < $source_file > $temp_dir/temp.txt
+
+    cp $temp_dir/temp.txt ${target_file}
+
+    success "updated OK."
+}
+
+temp_dir="$BASEDIR/temp"
+mkdir -p $temp_dir
+
+cd ${BASEDIR}/galasa-maven-plugin
+mvn versions:set -DnewVersion=$component_version
+mvn versions:commit
+
+# replace_line_following ${BASEDIR}/galasa-maven-plugin/pom.xml ${BASEDIR}/galasa-maven-plugin/pom.xml $temp_dir "^.*galasa.maven.plugin.*$" "version" "	<version>$component_version</version>"
+replace_line_following ${BASEDIR}/galasa-maven-plugin/pom.xml ${BASEDIR}/galasa-maven-plugin/pom.xml $temp_dir "^.*dev.galasa.plugin.common.*$" "version" "				<version>$component_version</version>"
 

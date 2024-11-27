@@ -87,7 +87,7 @@ framework:
     codecoverage: true
 
   - artifact: dev.galasa.framework.maven.repository.spi
-    version: 0.21.0
+    version: 0.38.0
     obr:          true
     mvp:          true
     bom:          false

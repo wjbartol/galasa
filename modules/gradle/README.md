@@ -26,8 +26,8 @@ To use the Gradle OBR plugin in a Gradle test project:
     ```groovy
     plugins {
         ...
-        id 'dev.galasa.obr' version '0.33.0'
-        id 'dev.galasa.testcatalog' version '0.33.0'
+        id 'dev.galasa.obr' version '0.38.0'
+        id 'dev.galasa.testcatalog' version '0.38.0'
         ...
     }
 

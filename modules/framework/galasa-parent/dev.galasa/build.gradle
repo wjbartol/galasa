@@ -3,8 +3,6 @@ plugins {
     id 'galasa.framework'
 }
 
-version = '0.38.0'
-
 description = 'Galasa Testers Programmer Interface (TPI)'
 
 // Note: These values are consumed by the parent build process

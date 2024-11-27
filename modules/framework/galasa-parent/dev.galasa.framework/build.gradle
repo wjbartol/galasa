@@ -5,10 +5,6 @@ plugins {
 
 description = 'Galasa Framework'
 
-// Note: The following line is changed by the set-version.sh script.
-// It is also read by other build scrips as required.
-version = "0.38.0"
-
 dependencies {
     api project (':dev.galasa')
 

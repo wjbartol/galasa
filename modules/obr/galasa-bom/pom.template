@@ -42,26 +42,16 @@
     </issueManagement>
 
     <dependencyManagement>
-		<dependencies>
-			<dependency>
-				<groupId>dev.galasa</groupId>
-				<artifactId>dev.galasa.platform</artifactId>
-				<version>0.38.0</version>
-				<type>pom</type>
-				<scope>import</scope>
-			</dependency>
-		</dependencies>
-	</dependencyManagement>
-
-    <dependencies>
+        <dependencies>
 {{range .Artifacts}}
         <dependency>
             <groupId>{{.GroupId}}</groupId>
-            <artifactId>{{.ArtifactId}}</artifactId>{{if .Version}}
-            <version>{{.Version}}</version>{{end}}
+            <artifactId>{{.ArtifactId}}</artifactId>
+            <version>{{.Version}}</version>
         </dependency>
     {{end}}
-    </dependencies>
+        </dependencies>
+	</dependencyManagement>
 
 	<build>
 		<pluginManagement>

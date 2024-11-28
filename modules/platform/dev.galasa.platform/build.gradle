@@ -34,12 +34,12 @@ dependencies {
 
         api 'com.google.code.gson:gson:2.10.1' // If updating, also update in obr/release.yaml.
 
-        api 'com.google.guava:listenablefuture:9999.0-empty-to-avoid-conflict-with-guava'
-
         // api 'com.google.protobuf:protobuf-java:4.28.3' - dangerous. Protobuf versions are all explicit elsewhere right now.
         api 'com.google.protobuf:protobuf-javalite:3.25.5'
+        api 'com.google.protobuf:protobuf-java-util:3.25.3'
 
         api 'com.google.guava:guava:33.2.1-jre'
+        api 'com.google.guava:listenablefuture:9999.0-empty-to-avoid-conflict-with-guava'
 
         api 'com.ibm.db2.jcc:db2jcc:db2jcc4'
 
@@ -67,8 +67,11 @@ dependencies {
 
         api 'commons-logging:commons-logging:1.3.4' // If updating, also update in obr/release.yaml.
 
+        api 'dev.failsafe:failsafe:3.3.2'
+
         api 'dev.galasa:dev.galasa:'+version
         api 'dev.galasa:dev.galasa.framework:'+version
+        api 'dev.galasa:dev.galasa.framework.api.beans:'+version
         api 'dev.galasa:dev.galasa.platform:'+version
         api 'dev.galasa:dev.galasa.plugin.common:'+version
         api 'dev.galasa:dev.galasa.plugin.common.impl:'+version
@@ -85,11 +88,30 @@ dependencies {
         api 'dev.galasa:dev.galasa.wrapping.velocity-engine-core:'+version
         api 'dev.galasa:galasa-testharness:0.18.0'
 
+        api 'io.etcd:jetcd-api:0.8.3'
+        api 'io.etcd:jetcd-common:0.8.3'
+        api 'io.etcd:jetcd-core:0.8.3'
+        api 'io.etcd:jetcd-grpc:0.8.3'
+
         api 'io.gsonfire:gson-fire:1.9.0'
 
         api 'io.kubernetes:client-java:22.0.0'
         api 'io.kubernetes:client-java-api:22.0.0'
         api 'io.kubernetes:client-java-proto:22.0.0'
+
+        api 'io.netty:netty-buffer:4.1.111.Final'
+        api 'io.netty:netty-codec:4.1.111.Final'
+        api 'io.netty:netty-codec-dns:4.1.111.Final'
+        api 'io.netty:netty-codec-http:4.1.111.Final'
+        api 'io.netty:netty-code-http2:4.1.111.Final'
+        api 'io.netty:netty-codec-socks:4.1.111.Final'
+        api 'io.netty:netty-common:4.1.111.Final'
+        api 'io.netty:netty-handler:4.1.111.Final'
+        api 'io.netty:netty-handler-proxy:4.1.111.Final'
+        api 'io.netty:netty-resolver:4.1.111.Final'
+        api 'io.netty:netty-resolver-dns:4.1.111.Final'
+        api 'io.netty:netty-transport:4.1.111.Final'
+        api 'io.netty:netty-transport-native-unix-common:4.1.111.Final'
 
         api 'io.perfmark:perfmark-api:0.26.0'
 
@@ -106,6 +128,9 @@ dependencies {
         api 'io.swagger:swagger-annotations:1.6.14'
 
         api 'io.swagger.codegen.v3:swagger-codegen-cli:3.0.41'
+
+        api 'io.vertx:vertx-core:4.5.9'
+        api 'io.vertx:vertx-grpc:4.5.9'
 
         api 'jakarta.activation:jakarta.activation-api:2.1.3'
 

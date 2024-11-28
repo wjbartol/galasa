@@ -4,8 +4,6 @@ plugins {
 
 description = 'Galasa zOS File Manager - zOS/MF Implementation'
 
-version = '0.38.0'
-
 dependencies {
     api      project(':galasa-managers-zos-parent:dev.galasa.zosmf.manager')
     implementation 'com.google.code.gson:gson'

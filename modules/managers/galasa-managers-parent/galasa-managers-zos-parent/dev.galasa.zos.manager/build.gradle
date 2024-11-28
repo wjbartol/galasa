@@ -4,8 +4,6 @@ plugins {
 
 description = 'Galasa zOS Manager'
 
-version = '0.38.0'
-
 dependencies {
     api project     (':galasa-managers-comms-parent:dev.galasa.ipnetwork.manager')
     implementation  'io.prometheus:simpleclient'

@@ -136,3 +136,7 @@ bump_version $BASEDIR/galasa-extensions-parent/dev.galasa.extensions.common/buil
 # The framework version is the first one in the file.
 cat $BASEDIR/release.yaml | sed "s/version:.*/version: $component_version/1" > $temp_dir/release.yaml
 cp $temp_dir/release.yaml $BASEDIR/release.yaml
+
+# There is a bundle in the extensions which needs a bump also.
+cat $BASEDIR/galasa-extensions-parent/buildSrc/src/main/groovy/galasa.extensions.gradle | sed "s/dev.galasa:dev.galasa:.*'/dev.galasa:dev.galasa:$component_version'/1" > $temp_dir/galasa.extensions.gradle
+cp $temp_dir/galasa.extensions.gradle $BASEDIR/galasa-extensions-parent/buildSrc/src/main/groovy/galasa.extensions.gradle

@@ -11,6 +11,11 @@ plugins {
 // can pick it up later.
 version = "0.38.0"
 
+allprojects {
+    group = 'dev.galasa'
+    version = "0.38.0"
+}
+
 // A configuration to publish the merge exec into
 configurations {
     archives
@@ -179,7 +184,7 @@ task buildReleaseYaml() {
         afterEvaluate {
             doLast {
                 // Some projects don't have a version property... as they are parent projects mostly.
-                if (version != 'unspecified') {
+                if ((version != 'unspecified') && (projectName != '')) {
                     def f = manifestFile
                     f.append("\n\n  - artifact: $projectName")
                     f.append("\n    version: $version")

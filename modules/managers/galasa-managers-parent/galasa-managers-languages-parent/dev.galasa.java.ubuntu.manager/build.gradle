@@ -4,8 +4,6 @@ plugins {
 
 description = 'Galasa Java Ubuntu Manager'
 
-version = '0.38.0'
-
 dependencies {
     api project(':galasa-managers-unix-parent:dev.galasa.linux.manager')
     api project(':galasa-managers-languages-parent:dev.galasa.java.manager')

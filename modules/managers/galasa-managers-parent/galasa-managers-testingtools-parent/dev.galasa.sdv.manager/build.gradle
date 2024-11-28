@@ -7,8 +7,6 @@ plugins {
 
 description = 'Galasa SDV Manager'
 
-version = '0.38.0'
-
 checkstyle {
     configFile = file("config/checkstyle/checkstyle.xml") 
     toolVersion = "10.14.2"

@@ -151,7 +151,7 @@ managers:
     codecoverage: false
 
   - artifact: dev.galasa.liberty.manager
-    version: 0.21.0
+    version: 0.38.0
     obr:          false
     mvp:          false
     bom:          false
@@ -286,7 +286,7 @@ managers:
     codecoverage: false
 
   - artifact: dev.galasa.eclipseruntime.manager
-    version: 0.18.0
+    version: 0.38.0
     obr:          false
     mvp:          false
     bom:          false
@@ -295,7 +295,7 @@ managers:
     codecoverage: false
 
   - artifact: dev.galasa.eclipseruntime.ubuntu.manager
-    version: 0.18.0
+    version: 0.38.0
     obr:          false
     mvp:          false
     bom:          false

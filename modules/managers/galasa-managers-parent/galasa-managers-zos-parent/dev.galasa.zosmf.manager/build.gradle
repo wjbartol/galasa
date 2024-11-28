@@ -4,8 +4,6 @@ plugins {
 
 description = 'Galasa zOS/MF Manager'
 
-version = '0.38.0'
-
 dependencies {
     api            project(':galasa-managers-zos-parent:dev.galasa.zos.manager')
     api            project(':galasa-managers-comms-parent:dev.galasa.http.manager')

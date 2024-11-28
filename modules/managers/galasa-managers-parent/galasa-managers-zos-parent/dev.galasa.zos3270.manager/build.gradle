@@ -4,8 +4,6 @@ plugins {
 
 description = 'Galasa zOS 3270 Terminal Manager'
 
-version = '0.38.0'
-
 dependencies {
     api            project(':galasa-managers-zos-parent:dev.galasa.zos3270.common')
     api            project(':galasa-managers-zos-parent:dev.galasa.zos.manager')

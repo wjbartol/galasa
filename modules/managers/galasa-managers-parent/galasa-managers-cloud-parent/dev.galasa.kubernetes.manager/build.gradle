@@ -4,8 +4,6 @@ plugins {
 
 description = 'Galasa Kubernetes Manager'
 
-version = '0.38.0'
-
 dependencies {
     api project(':galasa-managers-cloud-parent:dev.galasa.cloud.manager')
     implementation 'dev.galasa:dev.galasa.wrapping.gson'

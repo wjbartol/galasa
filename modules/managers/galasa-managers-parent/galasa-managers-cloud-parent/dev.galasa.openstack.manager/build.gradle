@@ -4,8 +4,6 @@ plugins {
 
 description = 'Galasa Openstack Manager'
 
-version = '0.38.0'
-
 dependencies {
     api            project(':galasa-managers-comms-parent:dev.galasa.ipnetwork.manager')
     implementation project(':galasa-managers-unix-parent:dev.galasa.linux.manager')

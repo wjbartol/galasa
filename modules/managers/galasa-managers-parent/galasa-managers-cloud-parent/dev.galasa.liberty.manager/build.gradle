@@ -4,8 +4,6 @@ plugins {
 
 description = 'Galasa Liberty Manager'
 
-version = '0.21.0'
-
 dependencies {
 }
 

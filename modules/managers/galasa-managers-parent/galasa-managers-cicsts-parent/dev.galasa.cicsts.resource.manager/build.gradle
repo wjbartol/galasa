@@ -4,8 +4,6 @@ plugins {
 
 description = 'Galasa CICS/TS Resource Manager'
 
-version = '0.38.0'
-
 dependencies {
     api            project (':galasa-managers-cicsts-parent:dev.galasa.cicsts.manager')
     implementation project (':galasa-managers-zos-parent:dev.galasa.zosliberty.manager')

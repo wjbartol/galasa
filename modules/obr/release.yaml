@@ -79,8 +79,6 @@ external:
   - group: dev.galasa
     artifact: dev.galasa.wrapping.com.auth0.jwt
     obr: true
-    mvp: true
-    isolated: true
 
   - group: dev.galasa
     artifact: dev.galasa.wrapping.gson
@@ -129,8 +127,6 @@ external:
   - group: dev.galasa
     artifact: dev.galasa.wrapping.kafka.clients
     obr: true
-    mvp: true
-    isolated: true
 
   - group: io.prometheus
     artifact: simpleclient

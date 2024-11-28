@@ -17,8 +17,8 @@ dependencies {
 // which gathers-up all the packaging metadata about all the OSGi bundles in this component.
 ext.projectName=project.name
 ext.includeInOBR          = true
-ext.includeInMVP          = true
-ext.includeInIsolated     = true
+ext.includeInMVP          = false
+ext.includeInIsolated     = false
 ext.includeInBOM          = true
 ext.includeInCodeCoverage = true
 ext.includeInJavadoc      = true

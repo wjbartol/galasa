@@ -156,10 +156,10 @@ api:
   - artifact: dev.galasa.framework.api.beans
     version: 0.38.0
     obr:          true
-    mvp:          true
+    mvp:          false
     bom:          true
     javadoc:      true
-    isolated:     true
+    isolated:     false
     codecoverage: true
 
   - artifact: dev.galasa.framework.api.bootstrap
@@ -210,10 +210,10 @@ api:
   - artifact: dev.galasa.framework.api.openapi
     version: 0.38.0
     obr:          true
-    mvp:          true
+    mvp:          false
     bom:          true
     javadoc:      false
-    isolated:     true
+    isolated:     false
     codecoverage: false
 
   - artifact: dev.galasa.framework.api.openapi.servlet

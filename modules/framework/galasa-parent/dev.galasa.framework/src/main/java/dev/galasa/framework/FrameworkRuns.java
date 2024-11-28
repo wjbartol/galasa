@@ -242,7 +242,28 @@ public class FrameworkRuns implements IFrameworkRuns {
         } else {
             otherRunProperties.put(runPropertyPrefix + ".group", UUID.randomUUID().toString());
         }
-        otherRunProperties.put(runPropertyPrefix + ".requestor", requestor.toLowerCase());
+        
+        //Putting this in as a feature flag, checking if CPS property is set
+        //If set to true then it will allow it to have mixed characters, for e.g,
+        // Galasadelivery@ibm.com. Else it would set everything to lowercase by default
+
+        boolean isMixedCaseRequestorAllowed = false;
+        try {
+            String propValue ;
+            propValue = cps.getProperty("runs.requestor", "is.mixed.case");
+            if ("true".equals(propValue)) {
+                isMixedCaseRequestorAllowed = true;
+            }
+        } catch(ConfigurationPropertyStoreException ex){
+            // swallow the exception.
+        }
+        String storedRequestor;
+        if (isMixedCaseRequestorAllowed) {
+            storedRequestor = requestor ;
+        } else {
+            storedRequestor = requestor.toLowerCase();
+        }
+        otherRunProperties.put(runPropertyPrefix + ".requestor", storedRequestor);
 
         if (sharedEnvironmentPhase != null) {
             otherRunProperties.put(runPropertyPrefix + ".shared.environment", "true");

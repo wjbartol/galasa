@@ -7,7 +7,6 @@ package dev.galasa.auth.couchdb.internal;
 
 import static org.assertj.core.api.Assertions.*;
 import java.time.Instant;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 

@@ -7,8 +7,7 @@ plugins {
 dependencies {
     api platform('dev.galasa:dev.galasa.platform:0.38.0')
     api 'dev.galasa:dev.galasa'
-
-    implementation platform('dev.galasa:dev.galasa.platform:0.38.0')
+    
     implementation 'dev.galasa:dev.galasa.framework'
     implementation 'commons-logging:commons-logging'
     implementation 'org.osgi:org.osgi.core'

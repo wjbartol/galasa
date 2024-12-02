@@ -66,6 +66,7 @@ EOF
 
 module_names=(\
     "buildutils" \
+    "platform" \
     "wrapping" \
     "gradle" \
     "maven" \
@@ -136,6 +137,18 @@ function get_changed_modules_and_set_in_environment() {
     h1 "Finding changed modules and setting environment variables that can be used in the GitHub Actions workflows..."
 
     for module in "${unique_modules_found_in_pr[@]}"; do
+        if [[ "$module" == "platform" ]]; then
+            echo "PLATFORM_CHANGED=true" >> $GITHUB_OUTPUT
+            # Also rebuild modules that depend on the Platform...
+            echo "WRAPPING_CHANGED=true" >> $GITHUB_OUTPUT
+            echo "GRADLE_CHANGED=true" >> $GITHUB_OUTPUT
+            echo "MAVEN_CHANGED=true" >> $GITHUB_OUTPUT
+            echo "FRAMEWORK_CHANGED=true" >> $GITHUB_OUTPUT
+            # echo "EXTENSIONS_CHANGED=true" >> $GITHUB_OUTPUT # Not done yet
+            echo "MANAGERS_CHANGED=true" >> $GITHUB_OUTPUT
+            echo "OBR_CHANGED=true" >> $GITHUB_OUTPUT
+            continue
+        fi
         if [[ "$module" == "buildutils" ]]; then
             echo "BUILDUTILS_CHANGED=true" >> $GITHUB_OUTPUT
             continue
@@ -173,6 +186,7 @@ function get_changed_modules_and_set_in_environment() {
 
 # Set outputs to false as default value.
 echo "BUILDUTILS_CHANGED=false" >> $GITHUB_OUTPUT
+echo "PLATFORM_CHANGED=false" >> $GITHUB_OUTPUT
 echo "WRAPPING_CHANGED=false" >> $GITHUB_OUTPUT
 echo "GRADLE_CHANGED=false" >> $GITHUB_OUTPUT
 echo "MAVEN_CHANGED=false" >> $GITHUB_OUTPUT

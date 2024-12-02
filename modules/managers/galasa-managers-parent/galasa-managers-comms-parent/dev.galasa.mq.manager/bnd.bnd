@@ -1,9 +1,7 @@
 -snapshot: ${tstamp}
 Bundle-Name: MQ Manager
 Export-Package: !dev.galasa.mq.internal*,\
-        dev.galasa.mq*,\
-        javax.jms*,\
-        javax.management*
+        dev.galasa.mq*
 Import-Package: !javax.validation.constraints,\
         dev.galasa,\
         dev.galasa.framework.spi,\
@@ -18,6 +16,6 @@ Import-Package: !javax.validation.constraints,\
         javax.security.cert
 Embed-Transitive: true
 Embed-Dependency: *;scope=compile
--includeresource: com.ibm.mq.allclient-9.2.3.0.jar; lib:=true,\
-    javax.jms-api-2.0.1.jar; lib:=true
+-includeresource: com.ibm.mq.allclient-*.jar; lib:=true,\
+    javax.jms-api-*.jar; lib:=true
     

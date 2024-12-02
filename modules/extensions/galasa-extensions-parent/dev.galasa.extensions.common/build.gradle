@@ -1,18 +1,24 @@
 plugins {
     id 'biz.aQute.bnd.builder'
     id 'galasa.extensions'
+
+    id 'java-test-fixtures'
 }
 
 description = 'Galasa extensions common code'
 
-version = '0.38.0'
-
 dependencies {
-    implementation ('org.apache.httpcomponents:httpclient-osgi:4.5.13')
-    implementation ('org.apache.httpcomponents:httpcore-osgi:4.4.14')
-    implementation ('com.google.code.gson:gson:2.10.1')
+    implementation ('dev.galasa:dev.galasa.wrapping.httpclient-osgi')
+    implementation ('org.apache.httpcomponents:httpcore-osgi')
+    implementation ('com.google.code.gson:gson')
 
-    testImplementation(project(':dev.galasa.extensions.mocks'))
+    testFixturesImplementation platform('dev.galasa:dev.galasa.platform:0.38.0')
+
+    testFixturesImplementation 'dev.galasa:dev.galasa.wrapping.httpclient-osgi'
+    testFixturesImplementation 'org.apache.httpcomponents:httpcore-osgi'
+    testFixturesImplementation 'dev.galasa:dev.galasa.framework'
+    testFixturesImplementation 'javax.validation:validation-api'
+    testFixturesImplementation 'org.assertj:assertj-core:3.16.1'
 }
 
 // Note: These values are consumed by the parent build process

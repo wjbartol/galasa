@@ -7,19 +7,18 @@ plugins {
 
 description = 'Framework API - Common Packages'
 
-version = '0.38.0'
-
 dependencies {
     implementation project(':dev.galasa.framework')
     implementation project(':dev.galasa.framework.api.beans')
-    implementation 'dev.galasa:com.auth0.jwt:4.4.1'
+    implementation 'dev.galasa:dev.galasa.wrapping.com.auth0.jwt'
 
-    testFixturesImplementation 'javax.servlet:javax.servlet-api:3.1.0'
+    testFixturesImplementation platform('dev.galasa:dev.galasa.platform:0.38.0')
+    testFixturesImplementation 'javax.servlet:javax.servlet-api'
     testFixturesImplementation 'org.assertj:assertj-core:3.16.1'
-    testFixturesImplementation 'com.google.code.gson:gson:2.10.1'
+    testFixturesImplementation 'dev.galasa:dev.galasa.wrapping.gson'
     testFixturesImplementation(project(':dev.galasa.framework'))
     testFixturesImplementation(project(':dev.galasa.framework.api.beans'))
-    testFixturesImplementation 'javax.validation:validation-api:2.0.1.Final'
+    testFixturesImplementation 'javax.validation:validation-api'
 
 }
 

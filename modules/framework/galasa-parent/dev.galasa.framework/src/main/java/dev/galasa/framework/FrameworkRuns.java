@@ -242,7 +242,7 @@ public class FrameworkRuns implements IFrameworkRuns {
         } else {
             otherRunProperties.put(runPropertyPrefix + ".group", UUID.randomUUID().toString());
         }
-        otherRunProperties.put(runPropertyPrefix + ".requestor", requestor.toLowerCase());
+        otherRunProperties.put(runPropertyPrefix + ".requestor", requestor);
 
         if (sharedEnvironmentPhase != null) {
             otherRunProperties.put(runPropertyPrefix + ".shared.environment", "true");

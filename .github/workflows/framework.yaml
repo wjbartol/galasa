@@ -8,10 +8,6 @@ name: Framework Main Build
 on:
   workflow_call:
     inputs:
-      changed:
-        description: 'True if this module has been changed and should be rebuilt'
-        required: true
-        type: string
       jacoco_enabled:
         description: 'True if Jacoco code coverage should be enabled (set to "false" for release builds)'
         required: false
@@ -22,18 +18,6 @@ on:
         required: false
         default: 'true'
         type: string
-      wrapping-artifact-id:
-        description: 'The Workflow Run ID of the last workflow containing artifacts for the wrapping module'
-        required: true
-        type: string
-      gradle-artifact-id:
-        description: 'The Workflow Run ID of the last workflow containing artifacts for the gradle module'
-        required: true
-        type: string
-      maven-artifact-id:
-        description: 'The Workflow Run ID of the last workflow containing artifacts for the maven module'
-        required: true
-        type: string
 
 env:
   REGISTRY: ghcr.io
@@ -42,19 +26,8 @@ env:
     
 jobs:
 
-  log-unchanged:
-    name: Framework is unchanged
-    if: ${{ inputs.changed == 'false' }}
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Log this module is unchanged
-        run: |
-          echo "The framework module is unchanged"
-
   log-github-ref:
     name: Log the GitHub ref this workflow is running on (Branch or tag that received dispatch)
-    if: ${{ inputs.changed == 'true' }}
     runs-on: ubuntu-latest
     steps:
       - name: Log GitHub ref of workflow
@@ -63,7 +36,6 @@ jobs:
 
   build-framework:
     name: Build Framework using openapi2beans and gradle
-    if: ${{ inputs.changed == 'true' }}
     runs-on: ubuntu-latest
 
     steps:
@@ -90,8 +62,13 @@ jobs:
         run: |
           docker run --rm -v ${{ github.workspace }}:/var/workspace ghcr.io/${{ env.NAMESPACE }}/openapi2beans:main generate --yaml var/workspace/${{ env.YAML_LOCATION }} --output var/workspace/${{ env.OUTPUT_LOCATION }} --package ${{ env.PACKAGE }}
 
-      # For any modules that were changed in this push,
-      # download their artifacts from this workflow run.
+      - name: Download platform from this workflow
+        id: download-platform
+        continue-on-error: true
+        uses: actions/download-artifact@v4
+        with:
+          name: platform
+          path: modules/artifacts
 
       - name: Download wrapping artifacts from this workflow
         id: download-wrapping
@@ -116,36 +93,6 @@ jobs:
         with:
           name: maven
           path: modules/artifacts
-
-      # For any modules that weren't changed in this push,
-      # download artifacts from the last successful workflow.
-
-      - name: Download wrapping artifacts from last successful workflow
-        if: ${{ steps.download-wrapping.outcome == 'failure' }}
-        uses: actions/download-artifact@v4
-        with:
-          name: wrapping
-          path: modules/artifacts
-          github-token: ${{ github.token }}
-          run-id: ${{ inputs.wrapping-artifact-id }}
-
-      - name: Download gradle artifacts from last successful workflow
-        if: ${{ steps.download-gradle.outcome == 'failure' }}
-        uses: actions/download-artifact@v4
-        with:
-          name: gradle
-          path: modules/artifacts
-          github-token: ${{ github.token }}
-          run-id: ${{ inputs.gradle-artifact-id }}
-
-      - name: Download maven artifacts from last successful workflow
-        if: ${{ steps.download-maven.outcome == 'failure' }}
-        uses: actions/download-artifact@v4
-        with:
-          name: maven
-          path: modules/artifacts
-          github-token: ${{ github.token }}
-          run-id: ${{ inputs.maven-artifact-id }}
 
       - name: Build Framework source code
         working-directory: modules/framework
@@ -181,7 +128,6 @@ jobs:
 
   build-rest-api-documentation:
     name: Build REST API documentation using openapi2beans and gradle
-    if: ${{ inputs.changed == 'true' }}
     runs-on: ubuntu-latest
 
     steps:
@@ -249,4 +195,4 @@ jobs:
         env: 
           SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
         run : |
-          docker run --rm ghcr.io/galasa-dev/galasabld-ibm:main slackpost workflows --repo "framework" --workflowName "${{ github.workflow }}" --workflowRunNum "${{ github.run_id }}" --ref "${{ env.BRANCH }}" --hook "${{ env.SLACK_WEBHOOK }}"
+          docker run --rm ghcr.io/galasa-dev/galasabld-ibm:main slackpost workflows --repo "galasa" --module "framework" --workflowName "${{ github.workflow }}" --workflowRunNum "${{ github.run_id }}" --ref "${{ env.BRANCH }}" --hook "${{ env.SLACK_WEBHOOK }}"

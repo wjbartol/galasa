@@ -40,8 +40,8 @@
         <url>https://github.com/galasa-dev/projectmanagement/issues</url>
         <system>GitHub</system>
     </issueManagement>
-    
-	<dependencyManagement>
+
+    <dependencyManagement>
         <dependencies>
 {{range .Artifacts}}
         <dependency>

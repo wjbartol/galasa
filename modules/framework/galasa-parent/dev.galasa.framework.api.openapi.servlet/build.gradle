@@ -5,8 +5,6 @@ plugins {
 
 description = 'Galasa API - OpenAPI Servlet'
 
-version = '0.36.0'
-
 configurations {
     openApiSpec
     openApiSpec.transitive = false
@@ -15,7 +13,7 @@ configurations {
 dependencies {
     implementation project(':dev.galasa.framework')
     implementation project(':dev.galasa.framework.api.common')
-    implementation 'org.yaml:snakeyaml:2.0'
+    implementation 'org.yaml:snakeyaml'
 
     openApiSpec project(':dev.galasa.framework.api.openapi')
 

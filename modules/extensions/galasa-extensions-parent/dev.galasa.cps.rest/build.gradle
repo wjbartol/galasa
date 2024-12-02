@@ -5,21 +5,17 @@ plugins {
 
 description = 'Galasa CPS access over http - Provides the CPS stores via the public REST interface over http'
 
-version = '0.38.0'
-
 dependencies {
 
     // Not required for compile,  but required to force the download of the jars to embed by bnd
-    implementation ('dev.galasa:gson:2.10.1')
-    implementation ('dev.galasa:dev.galasa.framework.api.beans:0.33.0')
+    implementation ('dev.galasa:dev.galasa.wrapping.gson')
+    implementation ('dev.galasa:dev.galasa.framework.api.beans')
     implementation (project(':dev.galasa.extensions.common'))
-    implementation 'commons-io:commons-io:2.16.1'
+    implementation 'commons-io:commons-io'
     // https://mvnrepository.com/artifact/org.apache.httpcomponents/httpclient
-    implementation 'org.apache.httpcomponents:httpclient:4.5.14'
+    implementation 'org.apache.httpcomponents:httpclient'
 
-    testImplementation 'junit:junit:4.13.1'
-    testImplementation(project(':dev.galasa.extensions.mocks'))
-    testImplementation 'org.assertj:assertj-core:3.16.1'
+    testImplementation(testFixtures(project(':dev.galasa.extensions.common')))
 }
 
 // Note: These values are consumed by the parent build process

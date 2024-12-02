@@ -21,9 +21,13 @@ import dev.galasa.framework.spi.creds.FrameworkEncryptionService;
 import io.kubernetes.client.openapi.apis.CoreV1Api;
 import io.kubernetes.client.openapi.models.V1ConfigMap;
 import io.kubernetes.client.openapi.models.V1Container;
+import io.kubernetes.client.openapi.models.V1NodeSelectorRequirement;
+import io.kubernetes.client.openapi.models.V1NodeSelectorTerm;
 import io.kubernetes.client.openapi.models.V1ObjectMeta;
 import io.kubernetes.client.openapi.models.V1Pod;
 import io.kubernetes.client.openapi.models.V1PodSpec;
+import io.kubernetes.client.openapi.models.V1PreferredSchedulingTerm;
+import io.kubernetes.client.openapi.models.V1Toleration;
 import io.kubernetes.client.openapi.models.V1Volume;
 import io.kubernetes.client.openapi.models.V1VolumeMount;
 
@@ -50,7 +54,7 @@ public class TestPodSchedulerTest {
             // Do nothing...
         }
     }
-    
+
     private V1ConfigMap createMockConfigMap() {
         V1ConfigMap configMap = new V1ConfigMap();
 
@@ -64,7 +68,8 @@ public class TestPodSchedulerTest {
         data.put("node_arch", "arch");
         data.put("run_poll", "5");
         data.put("encryption_keys_secret_name", "service-encryption-keys-secret");
-        
+        data.put("galasa_node_preferred_affinity", "galasa-engines=schedule");
+        data.put("galasa_node_tolerations", "galasa-engines=Exists:NoSchedule,galasa-engines2=Exists:NoSchedule");
         configMap.setData(data);
 
         return configMap;
@@ -80,6 +85,7 @@ public class TestPodSchedulerTest {
         checkPodMetadata(pod, expectedRunName, expectedPodName, settings);
         checkPodContainer(pod, expectedEncryptionKeysMountPath, settings);
         checkPodVolumes(pod, settings);
+        checkPodSpec(pod, settings);
     }
 
     @SuppressWarnings("null")
@@ -87,7 +93,7 @@ public class TestPodSchedulerTest {
         V1ObjectMeta expectedMetadata = new V1ObjectMeta()
             .labels(Map.of("galasa-run", expectedRunName, "galasa-engine-controller", settings.getEngineLabel()))
             .name(expectedPodName);
-        
+
         // Check the pod's metadata is as expected
         assertThat(pod).isNotNull();
         assertThat(pod.getApiVersion()).isEqualTo("v1");
@@ -96,6 +102,56 @@ public class TestPodSchedulerTest {
         V1ObjectMeta actualMetadata = pod.getMetadata();
         assertThat(actualMetadata.getLabels()).containsExactlyInAnyOrderEntriesOf(expectedMetadata.getLabels());
         assertThat(actualMetadata.getName()).isEqualTo(expectedPodName);
+    }
+
+    private V1PreferredSchedulingTerm createSchedulingTerm(String nodePreferredAffinity) {
+
+        String[] nodePreferredAffinitySplit = nodePreferredAffinity.split("=");
+
+        V1PreferredSchedulingTerm preferred = new V1PreferredSchedulingTerm();
+        preferred.setWeight(1);
+
+        V1NodeSelectorTerm selectorTerm = new V1NodeSelectorTerm();
+        preferred.setPreference(selectorTerm);
+
+        V1NodeSelectorRequirement requirement = new V1NodeSelectorRequirement();
+        selectorTerm.addMatchExpressionsItem(requirement);
+        requirement.setKey(nodePreferredAffinitySplit[0]);
+        requirement.setOperator("In");
+        requirement.addValuesItem(nodePreferredAffinitySplit[1]);
+
+        return preferred;
+    }
+
+    @SuppressWarnings("null")
+    private void checkPodSpec(V1Pod pod, Settings settings) {
+
+        // Check the pod's spec is as expected
+        V1PodSpec podSpec = pod.getSpec();
+        assertThat(podSpec).isNotNull();
+
+        // Check the podspec's node affinity is as expected
+        V1PreferredSchedulingTerm preferredSchedulingTerm = createSchedulingTerm(settings.getNodePreferredAffinity());
+        List<V1PreferredSchedulingTerm> terms = podSpec.getAffinity().getNodeAffinity().getPreferredDuringSchedulingIgnoredDuringExecution();
+
+        assertThat(terms.contains(preferredSchedulingTerm));
+
+        // Check the podspec's node tolerances are as expected
+        String[] nodeTolerationsStringList = settings.getNodeTolerations().split(",");
+
+        for(String nodeTolerationsString : nodeTolerationsStringList) {
+            String tolerationKey = nodeTolerationsString.split("=")[0];
+            String tolerationOperator = nodeTolerationsString.split("=")[1].split(":")[0];
+            String tolerationEffect = nodeTolerationsString.split("=")[1].split(":")[1];
+
+            V1Toleration testToleration = new V1Toleration();
+
+            testToleration.setKey(tolerationKey);
+            testToleration.setOperator(tolerationOperator);
+            testToleration.setEffect(tolerationEffect);
+
+            assertThat(podSpec.getTolerations()).contains(testToleration);
+        }
     }
 
     @SuppressWarnings("null")
@@ -146,7 +202,7 @@ public class TestPodSchedulerTest {
         V1ConfigMap mockConfigMap = createMockConfigMap();
         MockSettings settings = new MockSettings(mockConfigMap, controller, null);
         settings.init();
-        
+
         TestPodScheduler runPoll = new TestPodScheduler(mockEnvironment, mockDss, settings, null, mockFrameworkRuns);
 
         String runName = "run1";
@@ -159,5 +215,6 @@ public class TestPodSchedulerTest {
         // Then...
         String expectedEncryptionKeysMountPath = "/encryption";
         assertPodDetailsAreCorrect(pod, runName, podName, expectedEncryptionKeysMountPath, settings);
+
     }
 }

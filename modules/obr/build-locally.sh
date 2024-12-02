@@ -21,6 +21,8 @@ export ORIGINAL_DIR=$(pwd)
 cd "${BASEDIR}/.."
 WORKSPACE_DIR=$(pwd)
 
+cd "${BASEDIR}/../.."
+REPO_ROOT=$(pwd)
 
 #-----------------------------------------------------------------------------------------
 #
@@ -41,26 +43,17 @@ blue=$(tput setaf 25)
 # Headers and Logging
 #
 #-----------------------------------------------------------------------------------------
-underline() { printf "${underline}${bold}%s${reset}\n" "$@"
-}
-h1() { printf "\n${underline}${bold}${blue}%s${reset}\n" "$@"
-}
-h2() { printf "\n${underline}${bold}${white}%s${reset}\n" "$@"
-}
-debug() { printf "${white}[.] %s${reset}\n" "$@"
-}
-info()  { printf "${white}[➜] %s${reset}\n" "$@"
-}
-success() { printf "${white}[${green}✔${white}] ${green}%s${reset}\n" "$@"
-}
-error() { printf "${white}[${red}✖${white}] ${red}%s${reset}\n" "$@"
-}
-warn() { printf "${white}[${tan}➜${white}] ${tan}%s${reset}\n" "$@"
-}
-bold() { printf "${bold}%s${reset}\n" "$@"
-}
-note() { printf "\n${underline}${bold}${blue}Note:${reset} ${blue}%s${reset}\n" "$@"
-}
+underline() { printf "${underline}${bold}%s${reset}\n" "$@" ;}
+h1() { printf "\n${underline}${bold}${blue}%s${reset}\n" "$@" ;}
+h2() { printf "\n${underline}${bold}${white}%s${reset}\n" "$@" ;}
+debug() { printf "${white}%s${reset}\n" "$@" ;}
+info() { printf "${white}➜ %s${reset}\n" "$@" ;}
+success() { printf "${green}✔ %s${reset}\n" "$@" ;}
+error() { printf "${red}✖ %s${reset}\n" "$@" ;}
+warn() { printf "${tan}➜ %s${reset}\n" "$@" ;}
+bold() { printf "${bold}%s${reset}\n" "$@" ;}
+note() { printf "\n${underline}${bold}${blue}Note:${reset} ${blue}%s${reset}\n" "$@" ;}
+
 
 #-----------------------------------------------------------------------------------------
 # Functions
@@ -69,12 +62,14 @@ function usage {
     info "Syntax: build-locally.sh [OPTIONS]"
     cat << EOF
 Options are:
+-s | --detectsecrets true|false : Do we want to detect secrets in the entire repo codebase ? Default is 'true'. Valid values are 'true' or 'false'
 -h | --help : Display this help text
 
 Environment Variables:
 SOURCE_MAVEN :
     Used to indicate where parts of the OBR can be obtained.
-    Optional. Defaults to https://development.galasa.dev/main/maven-repo/obr/
+    Optional. Could be set to something like: https://development.galasa.dev/main/maven-repo/obr/
+    Defaults to file://~/.m2/repository
 
 LOGS_DIR :
     Controls where logs are placed.
@@ -103,11 +98,14 @@ function check_exit_code () {
 # Process parameters
 #-----------------------------------------------------------------------------------------
 exportbuild_type=""
-
+detectsecrets="true"
 while [ "$1" != "" ]; do
     case $1 in
         -h | --help )           usage
                                 exit
+                                ;;
+        -s | --detectsecrets )  detectsecrets="$2"
+                                shift
                                 ;;
         * )                     error "Unexpected argument $1"
                                 usage
@@ -122,6 +120,11 @@ if [[ -z $GPG_PASSPHRASE ]]; then
     exit 1
 fi
 
+if [[ "${detectsecrets}" != "true" ]] && [[ "${detectsecrets}" != "false" ]]; then
+    error "--detectsecrets flag must be 'true' or 'false'. Was $detectesecrets"
+    exit 1
+fi
+
 #-----------------------------------------------------------------------------------------
 # Main logic.
 #-----------------------------------------------------------------------------------------
@@ -133,7 +136,11 @@ h1 "Building ${project}"
 
 # Over-rode SOURCE_MAVEN if you want to build from a different maven repo...
 if [[ -z ${SOURCE_MAVEN} ]]; then
-    export SOURCE_MAVEN=https://development.galasa.dev/main/maven-repo/obr/
+    cd ~/.m2/repository
+    local_maven_repo_folder=$(pwd)
+    cd - 
+    export SOURCE_MAVEN="file://$local_maven_repo_folder"
+    # export SOURCE_MAVEN=https://development.galasa.dev/main/maven-repo/obr/
     info "SOURCE_MAVEN repo defaulting to ${SOURCE_MAVEN}."
     info "Set this environment variable if you want to over-ride this value."
 else
@@ -246,13 +253,14 @@ function check_dependencies_present {
 
     export framework_manifest_path=${BASEDIR}/dependency-download/build/dependencies/dev.galasa.framework.manifest.yaml
     export managers_manifest_path=${BASEDIR}/dependency-download/build/dependencies/dev.galasa.managers.manifest.yaml
+    export extensions_manifest_path=${BASEDIR}/dependency-download/build/dependencies/dev.galasa.extensions.manifest.yaml
     # export framework_manifest_path=${WORKSPACE_DIR}/framework/release.yaml
     # export managers_manifest_path=${WORKSPACE_DIR}/managers/release.yaml
 
     declare -a required_files=(
     ${WORKSPACE_DIR}/${project}/dev.galasa.uber.obr/pom.template
     ${framework_manifest_path}
-    ${WORKSPACE_DIR}/extensions/release.yaml
+    ${extensions_manifest_path}
     ${managers_manifest_path}
     ${WORKSPACE_DIR}/obr/release.yaml
     )
@@ -281,7 +289,7 @@ function construct_bom_pom_xml {
 
     cmd="${GALASA_BUILD_TOOL_PATH} template \
     --releaseMetadata ${framework_manifest_path} \
-    --releaseMetadata ${WORKSPACE_DIR}/extensions/release.yaml \
+    --releaseMetadata ${extensions_manifest_path} \
     --releaseMetadata ${managers_manifest_path} \
     --releaseMetadata ${WORKSPACE_DIR}/obr/release.yaml \
     --template pom.template \
@@ -311,7 +319,7 @@ function construct_uber_obr_pom_xml {
 
     cmd="${GALASA_BUILD_TOOL_PATH} template \
     --releaseMetadata ${framework_manifest_path} \
-    --releaseMetadata ${WORKSPACE_DIR}/extensions/release.yaml \
+    --releaseMetadata ${extensions_manifest_path} \
     --releaseMetadata ${managers_manifest_path} \
     --releaseMetadata ${WORKSPACE_DIR}/obr/release.yaml \
     --template pom.template \
@@ -388,9 +396,9 @@ function generate_javadoc_pom_xml {
     cd ${WORKSPACE_DIR}/obr/javadocs
 
     ${GALASA_BUILD_TOOL_PATH} template \
-    --releaseMetadata ${WORKSPACE_DIR}/framework/release.yaml \
-    --releaseMetadata ${WORKSPACE_DIR}/extensions/release.yaml \
-    --releaseMetadata ${WORKSPACE_DIR}/managers/release.yaml \
+    --releaseMetadata ${framework_manifest_path} \
+    --releaseMetadata ${extensions_manifest_path} \
+    --releaseMetadata ${managers_manifest_path} \
     --releaseMetadata ${WORKSPACE_DIR}/obr/release.yaml \
     --template pom.template \
     --output pom.xml \
@@ -456,6 +464,18 @@ function check_secrets {
     success "secrets baseline timestamp content has been removed ok"
 }
 
+function check_secrets_unless_supressed() {
+    # Check if the script is being called directly or from another script
+    if [[ -z "${IN_CHAIN_MODE}" ]]; then
+        info "Script invoked directly, running detect-secrets.sh script"
+
+        # Run the detect-secrets.sh in root
+        cd "${WORKSPACE_DIR}/.."
+        TOOL_DIR=$(pwd)
+        $TOOL_DIR/tools/detect-secrets.sh
+    fi
+}
+
 # #------------------------------------------------------------------------------------
 # h2 "Packaging the javadoc into a docker file"
 # #------------------------------------------------------------------------------------
@@ -479,6 +499,9 @@ h1 "Building the javadoc using the OBR..."
 generate_javadoc_pom_xml
 build_javadoc_pom
 
-check_secrets
+if [[ "$detectsecrets" == "true" ]]; then
+    $REPO_ROOT/tools/detect-secrets.sh 
+    check_exit_code $? "Failed to detect secrets"
+fi
 
 success "Project ${project} built - OK - log is at ${log_file}"

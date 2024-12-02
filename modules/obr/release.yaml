@@ -26,21 +26,13 @@ external:
     mvp: true
     isolated: true
 
-  - group: com.sun.activation
-    artifact: jakarta.activation
-    version: 2.0.0
-    obr: true
-    mvp: true
-    isolated: true
-
   - group: com.sun.xml.bind
     artifact: jaxb-osgi
-    version: 3.0.0
     obr: true
 
   - group: commons-codec
     artifact: commons-codec
-    version: 1.15
+    version: 1.16.1
     obr: true
     bom: true
     mvp: true
@@ -48,7 +40,6 @@ external:
 
   - group: commons-collections
     artifact: commons-collections
-    version: 3.2.2
     obr: true
     mvp: true
     isolated: true
@@ -63,82 +54,127 @@ external:
 
   - group: commons-lang
     artifact: commons-lang
-    version: 2.6
     obr: true
     mvp: true
     isolated: true
 
+  # commons-logging is not included in the OBR because it is exported in
+  # the log4j2.bridge bundle and that bundle is directly installed into 
+  # the Felix framework at runtime.
+  # Adding it into the OBR causes run logs to no longer be captured correctly!
   - group: commons-logging
     artifact: commons-logging
-    version: 1.2
+    version: 1.3.4
     obr: false
     bom: true
     mvp: true
     isolated: true
 
   - group: dev.galasa
-    artifact: com.jcraft.jsch
-    version: 0.1.55
+    artifact: dev.galasa.wrapping.com.jcraft.jsch
     obr: true
     mvp: true
     isolated: true
 
   - group: dev.galasa
-    artifact: com.auth0.jwt
-    version: 4.4.1
+    artifact: dev.galasa.wrapping.com.auth0.jwt
     obr: true
+
+  - group: dev.galasa
+    artifact: dev.galasa.wrapping.gson
+    version: 0.38.0
+    obr: true
+    bom: true
     mvp: true
     isolated: true
 
-  - group: dev.galasa
-    artifact: jta
-    version: 2.0.1
+  - artifact: dev.galasa.wrapping.httpclient-osgi
+    version: 0.38.0
     obr: true
-    mvp: true
+    bom: true
     isolated: true
+    mvp: true
 
   - group: dev.galasa
     artifact: dev.galasa.wrapping.io.grpc.java
-    version: 0.38.0
     obr: true
     mvp: true
     isolated: true
 
   - group: dev.galasa
-    artifact: kafka.clients
-    version: 3.7.0
+    artifact: dev.galasa.wrapping.io.kubernetes.client-java
     obr: true
     mvp: true
     isolated: true
 
+  - group: dev.galasa
+    artifact: dev.galasa.wrapping.protobuf-java
+    obr: true
+    mvp: true
+    isolated: true
+
+  - group: dev.galasa
+    artifact: dev.galasa.wrapping.jta
+    obr: true
+    mvp: true
+    isolated: true
+
+  - artifact: dev.galasa.wrapping.velocity-engine-core
+    obr: true
+    mvp: true
+    isolated: true
+
+  - group: dev.galasa
+    artifact: dev.galasa.wrapping.kafka.clients
+    obr: true
+
   - group: io.prometheus
     artifact: simpleclient
-    version: 0.6.0
     obr: true
     mvp: true
     isolated: true
 
   - group: io.prometheus
     artifact: simpleclient_common
-    version: 0.6.0
-    obr: true
-    isolated: true
-
-  - group: io.prometheus
-    artifact: simpleclient_httpserver
-    version: 0.6.0
     obr: true
     isolated: true
 
   - group: io.prometheus
     artifact: simpleclient_hotspot
-    version: 0.6.0
     obr: true
+    isolated: true
+
+  - group: io.prometheus
+    artifact: simpleclient_httpserver
+    obr: true
+    isolated: true
+
+  - group: io.prometheus
+    artifact: simpleclient_tracer_common
+    obr: true
+    mvp: true
+    isolated: true
+
+  - group: io.prometheus
+    artifact: simpleclient_tracer_otel
+    obr: true
+    mvp: true
+    isolated: true
+
+  - group: io.prometheus
+    artifact: simpleclient_tracer_otel_agent
+    obr: true
+    mvp: true
+    isolated: true
+
+  - group: jakarta.activation
+    artifact: jakarta.activation-api
+    obr: true
+    mvp: true
     isolated: true
 
   - group: jakarta.xml.bind
     artifact: jakarta.xml.bind-api
-    version: 3.0.0
     obr: true
     mvp: true
     isolated: true
@@ -153,28 +189,25 @@ external:
 
   - group: org.apache.bcel
     artifact: bcel
-    version: 6.7.0
     obr: true
     mvp: true
     isolated: true
 
   - group: org.apache.commons
     artifact: commons-collections4
-    version: 4.4
     obr: true
     mvp: true
     isolated: true
 
   - group: org.apache.commons
     artifact: commons-compress
-    version: 1.26.0
     obr: true
     mvp: true
     isolated: true
 
   - group: org.apache.commons
     artifact: commons-lang3
-    version: 3.14.0
+    version: 3.17.0
     obr: true
     bom: true
     mvp: true
@@ -182,63 +215,47 @@ external:
 
   - group: org.apache.derby
     artifact: derbyclient
-    version: 10.14.2.0
     obr: true
 
   - group: org.apache.felix
     artifact: org.apache.felix.configadmin
-    version: 1.9.16
     obr: true
     mvp: true
     isolated: true
 
   - group: org.apache.felix
+    artifact: org.apache.felix.fileinstall
+    obr: true
+    isolated: true
+
+  - group: org.apache.felix
     artifact: org.apache.felix.gogo.command
-    version: 1.1.0
     obr: true
     mvp: true
     isolated: true
 
   - group: org.apache.felix
     artifact: org.apache.felix.gogo.runtime
-    version: 1.1.2
     obr: true
     mvp: true
     isolated: true
 
   - group: org.apache.felix
     artifact: org.apache.felix.gogo.shell
-    version: 1.1.2
-    obr: true
-    mvp: true
-    isolated: true
-
-  - group: org.apache.felix
-    artifact: org.apache.felix.http.servlet-api
-    version: 2.1.0
     obr: true
     mvp: true
     isolated: true
 
   - group: org.apache.felix
     artifact: org.apache.felix.http.jetty
-    version: 5.0.0
     obr: true
     isolated: true
 
   - group: org.apache.felix
-    artifact: org.apache.felix.fileinstall
-    version: 3.6.4
+    artifact: org.apache.felix.http.servlet-api
     obr: true
-    isolated: true
-
-  - group: org.apache.httpcomponents
-    artifact: httpclient-osgi
-    version: 4.5.13
-    obr: true
-    bom: true
-    isolated: true
     mvp: true
+    isolated: true
 
   - group: org.apache.httpcomponents
     artifact: httpcore-osgi
@@ -248,9 +265,20 @@ external:
     isolated: true
     mvp: true
 
-  - group: org.apache.velocity
-    artifact: velocity-engine-core
-    version: 2.3
+  - group: org.apache.logging.log4j
+    artifact: log4j-api
+    obr: true
+    mvp: true
+    isolated: true
+
+  - group: org.apache.logging.log4j
+    artifact: log4j-core
+    obr: true
+    mvp: true
+    isolated: true
+
+  - group: org.apache.logging.log4j
+    artifact: log4j-slf4j-impl
     obr: true
     mvp: true
     isolated: true
@@ -263,57 +291,32 @@ external:
     mvp: true
     isolated: true
 
+  - group: org.bouncycastle
+    artifact: bcpkix-jdk18on
+    obr: true
+
+  - group: org.bouncycastle
+    artifact: bcprov-jdk18on
+    obr: true
+
+  - group: org.bouncycastle
+    artifact: bcutil-jdk18on
+    obr: true
+
   - group: org.osgi
     artifact: org.osgi.service.component.annotations
     version: 1.3.0
     bom: true
 
-  - group: org.yaml
-    artifact: snakeyaml
-    version: 2.0
-    obr: true
-    isolated: true
-    mvp: true
-
-  - group: org.bouncycastle
-    artifact: bcpkix-jdk18on
-    version: 1.79
-    obr: true
-
-  - group: org.bouncycastle
-    artifact: bcprov-jdk18on
-    version: 1.79
-    obr: true
-
-  - group: org.bouncycastle
-    artifact: bcutil-jdk18on
-    version: 1.79
-    obr: true
-
   - group: org.slf4j
     artifact: slf4j-api
-    version: 1.7.30
+    version: 1.7.36
     obr: true
     mvp: true
     isolated: true
 
-  - group: org.apache.logging.log4j
-    artifact: log4j-api
-    version: 2.24.1
+  - group: org.yaml
+    artifact: snakeyaml
     obr: true
-    mvp: true
     isolated: true
-
-  - group: org.apache.logging.log4j
-    artifact: log4j-core
-    version: 2.24.1
-    obr: true
     mvp: true
-    isolated: true
-
-  - group: org.apache.logging.log4j
-    artifact: log4j-slf4j-impl
-    version: 2.24.1
-    obr: true
-    mvp: true
-    isolated: true

@@ -118,10 +118,8 @@ Below is a table with the currently available Galasa Managers as seen documented
 | Text Scan | Other Managers |
 | z/OS Liberty Angel | - | 
 | z/OS Liberty | - | 
-| z/OS Security | - |
 
 
 **Managers set to be removed from Open Source Galasa:**
 * Phoenix
-* SEM
 * VTP

@@ -8,10 +8,6 @@ name: Gradle Main Build
 on:
   workflow_call:
     inputs:
-      changed:
-        description: 'True if this module has been changed and should be rebuilt'
-        required: true
-        type: string
       jacoco_enabled:
         description: 'True if Jacoco code coverage should be enabled (set to "false" for release builds)'
         required: false
@@ -28,19 +24,8 @@ env:
 
 jobs:
 
-  log-unchanged:
-    name: Gradle is unchanged
-    if: ${{ inputs.changed == 'false' }}
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Log this module is unchanged
-        run: |
-          echo "The gradle module is unchanged"
-
   log-github-ref:
     name: Log the GitHub ref this workflow is running on (Branch or tag that received dispatch)
-    if: ${{ inputs.changed == 'true' }}
     runs-on: ubuntu-latest
     steps:
       - name: Log GitHub ref of workflow
@@ -49,7 +34,6 @@ jobs:
 
   build-gradle:
     name: Build 'gradle' source code
-    if: ${{ inputs.changed == 'true' }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Code
@@ -67,6 +51,14 @@ jobs:
           gradle-version: 8.9
           cache-disabled: true
 
+      - name: Download platform from this workflow
+        id: download-platform
+        continue-on-error: true
+        uses: actions/download-artifact@v4
+        with:
+          name: platform
+          path: modules/artifacts
+
       - name: Build Gradle source code
         working-directory: modules/gradle
         env:
@@ -78,7 +70,7 @@ jobs:
           set -o pipefail
           gradle check publish --info \
           --no-daemon --console plain \
-          -PsourceMaven=https://repo.maven.apache.org/maven2/ \
+          -PsourceMaven=${{ github.workspace }}/modules/artifacts \
           -PcentralMaven=https://repo.maven.apache.org/maven2/ \
           -PtargetMaven=${{ github.workspace }}/modules/gradle/repo \
           -PjacocoEnabled=${{ inputs.jacoco_enabled }} \
@@ -108,4 +100,4 @@ jobs:
         env: 
           SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
         run : |
-          docker run --rm ghcr.io/galasa-dev/galasabld-ibm:main slackpost workflows --repo "gradle" --workflowName "${{ github.workflow }}" --workflowRunNum "${{ github.run_id }}" --ref "${{ env.BRANCH }}" --hook "${{ env.SLACK_WEBHOOK }}"
+          docker run --rm ghcr.io/galasa-dev/galasabld-ibm:main slackpost workflows --repo "galasa" --module "gradle" --workflowName "${{ github.workflow }}" --workflowRunNum "${{ github.run_id }}" --ref "${{ env.BRANCH }}" --hook "${{ env.SLACK_WEBHOOK }}"

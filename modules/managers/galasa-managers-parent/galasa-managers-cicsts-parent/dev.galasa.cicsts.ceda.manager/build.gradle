@@ -4,8 +4,6 @@ plugins {
 
 description = 'Galasa CICS/TS CEDA Manager'
 
-version = '0.29.0'
-
 dependencies {
     api            project (':galasa-managers-cicsts-parent:dev.galasa.cicsts.manager')
     implementation project (':galasa-managers-zos-parent:dev.galasa.zos3270.manager')

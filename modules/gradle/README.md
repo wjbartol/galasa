@@ -26,8 +26,8 @@ To use the Gradle OBR plugin in a Gradle test project:
     ```groovy
     plugins {
         ...
-        id 'dev.galasa.obr' version '0.33.0'
-        id 'dev.galasa.testcatalog' version '0.33.0'
+        id 'dev.galasa.obr' version '0.38.0'
+        id 'dev.galasa.testcatalog' version '0.38.0'
         ...
     }
 
@@ -149,4 +149,3 @@ To publish the test catalog to a live Galasa ecosystem, you will need the follow
 Use the `.build-locally.sh` script to invoke a build.
 
 See the notes at the top of the script for a list of environment variables which can be over-ridden to control build behaviour.
-

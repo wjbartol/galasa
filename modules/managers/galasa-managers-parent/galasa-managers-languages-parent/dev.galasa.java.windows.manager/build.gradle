@@ -4,8 +4,6 @@ plugins {
 
 description = 'Galasa Java Windows Manager'
 
-version = '0.21.0'
-
 dependencies {
     api project(':galasa-managers-windows-parent:dev.galasa.windows.manager')
     api project(':galasa-managers-languages-parent:dev.galasa.java.manager')

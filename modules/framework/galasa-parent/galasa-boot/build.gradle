@@ -15,8 +15,6 @@ configurations {
 
 }
 
-version = '0.38.0'
-
 jar {
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
     manifest {
@@ -43,25 +41,22 @@ jar {
 }
 
 dependencies {
-
     implementation project (':dev.galasa.framework.maven.repository')
+    implementation 'org.apache.felix:org.apache.felix.scr'
+
     embedImplementation project (':dev.galasa.framework.maven.repository.spi')
-
     embedImplementation 'org.apache.felix:org.apache.felix.framework:7.0.5'
-    embedImplementation 'org.apache.felix:org.apache.felix.bundlerepository:2.0.2'
-    implementation 'org.apache.felix:org.apache.felix.scr:2.1.14'
-
+    embedImplementation 'org.apache.felix:org.apache.felix.bundlerepository:2.0.10'
     embedImplementation 'commons-cli:commons-cli:1.4'
     embedImplementation 'commons-io:commons-io:2.16.1'
 
-    bundleDependency 'org.apache.felix:org.apache.felix.bundlerepository:2.0.2'
+    bundleDependency 'org.apache.felix:org.apache.felix.bundlerepository:2.0.10'
     bundleDependency 'org.apache.felix:org.apache.felix.scr:2.1.14'
     bundleDependency 'org.apache.logging.log4j:log4j-api:2.24.1'
     bundleDependency 'org.apache.logging.log4j:log4j-core:2.24.1'
     bundleDependency project (':dev.galasa.framework.log4j2.bridge')
     bundleDependency project (':dev.galasa.framework.maven.repository')
     bundleDependency project (':dev.galasa.framework.maven.repository.spi')
-    
 }
 
 // Note: These values are consumed by the parent build process

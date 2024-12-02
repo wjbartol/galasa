@@ -4,8 +4,6 @@ plugins {
 
 description = 'Galasa Cloud Manager'
 
-version = '0.22.0'
-
 dependencies {
 }
 

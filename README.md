@@ -1,5 +1,5 @@
 # Galasa
-This is a home for all of the Galasa code
+This is a home for all of the Galasa Java code.
 
 ## Code structure
 - [`modules`](./modules/) - The code
@@ -7,7 +7,7 @@ This is a home for all of the Galasa code
 
 ## building locally
 
-Use the `build-locally.sh` script. `--help` shows you the options.
+Use the `./tools/build-locally.sh` script. `--help` shows you the options.
 
 Basic usage to build everything: `build-locally.sh`
 

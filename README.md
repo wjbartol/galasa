@@ -1,5 +1,5 @@
 # Galasa
-This is a home for all of the code Java Galasa code.
+This is a home for all of the Galasa Java code.
 
 ## Code structure
 - [`modules`](./modules/) - The code

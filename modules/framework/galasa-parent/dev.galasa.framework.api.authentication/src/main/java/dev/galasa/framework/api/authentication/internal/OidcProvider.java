@@ -156,7 +156,7 @@ public class OidcProvider implements IOidcProvider {
      * the received response.
      */
     public HttpResponse<String> sendAuthorizationGet(String clientId, String callbackUrl, HttpSession session) throws IOException, InterruptedException {
-        String state = RandomStringUtils.randomAlphanumeric(32);
+        String state = RandomStringUtils.insecure().nextAlphanumeric(32);
         String queryParams = "?response_type=code"
             + "&client_id=" + URLEncoder.encode(clientId, StandardCharsets.UTF_8)
             + "&redirect_uri=" + URLEncoder.encode(callbackUrl, StandardCharsets.UTF_8)

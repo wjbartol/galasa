@@ -34,8 +34,6 @@ import dev.galasa.http.StandAloneHttpClient;
  *   
  */
 public class DockerContainerResourceMonitor implements Runnable {
-    private final IFramework framework;
-    private final IResourceManagement resourceManagement;
     private final IConfigurationPropertyStoreService cps;
     private final IDynamicStatusStoreService dss;
 
@@ -46,8 +44,6 @@ public class DockerContainerResourceMonitor implements Runnable {
     private Map<String,IHttpClient> dockerEngines = new HashMap<>();
 
     public DockerContainerResourceMonitor(IFramework framework, IResourceManagement resourceManagement, IConfigurationPropertyStoreService cps, IDynamicStatusStoreService dss) {
-        this.framework = framework;
-        this.resourceManagement = resourceManagement;
         this.cps = cps;
         this.dss = dss;
 

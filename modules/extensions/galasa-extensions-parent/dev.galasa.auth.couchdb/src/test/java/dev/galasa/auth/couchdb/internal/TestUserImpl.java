@@ -117,7 +117,6 @@ public class TestUserImpl {
 
     @Test
     public void testCanCloneUserDocFromIUser() throws Exception {
-        MockIUser doc1 = new MockIUser("myLoginId",null);
 
         UserImpl docInput = new UserImpl();
 

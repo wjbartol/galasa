@@ -7,11 +7,6 @@ package dev.galasa.selenium;
 
 import java.util.List;
 
-import org.openqa.selenium.chrome.ChromeOptions;
-import org.openqa.selenium.edge.EdgeOptions;
-import org.openqa.selenium.ie.InternetExplorerOptions;
-import org.openqa.selenium.opera.OperaOptions;
-
 public interface IWebDriver extends ISeleniumManager {
     /**
      * Allocate a new WebPage

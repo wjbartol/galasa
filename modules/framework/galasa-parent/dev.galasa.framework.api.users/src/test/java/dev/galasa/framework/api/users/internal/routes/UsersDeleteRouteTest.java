@@ -21,7 +21,6 @@ import dev.galasa.framework.api.common.EnvironmentVariables;
 import dev.galasa.framework.api.common.HttpMethod;
 import dev.galasa.framework.api.common.InternalUser;
 import dev.galasa.framework.api.common.mocks.MockEnvironment;
-import dev.galasa.framework.api.common.mocks.MockFramework;
 import dev.galasa.framework.api.common.mocks.MockHttpServletRequest;
 import dev.galasa.framework.api.common.mocks.MockHttpServletResponse;
 import dev.galasa.framework.api.common.mocks.MockTimeService;
@@ -108,7 +107,6 @@ public class UsersDeleteRouteTest extends BaseServletTest {
         MockEnvironment env = new MockEnvironment();
         MockTimeService mockTimeService = new MockTimeService(Instant.now());
         MockAuthStoreService authStoreService = new MockAuthStoreService(mockTimeService);
-        MockFramework framework = new MockFramework(authStoreService);
 
         String baseUrl = "http://my.server/api";
 

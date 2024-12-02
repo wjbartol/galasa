@@ -15,10 +15,7 @@ import dev.galasa.framework.spi.IConfigurationPropertyStoreService;
 
 public class MockEventProducerFactory implements IEventProducerFactory {
 
-    private MockEnvironment env;
-
     public MockEventProducerFactory(MockEnvironment env) {
-        this.env = env;
     }
 
     @Override

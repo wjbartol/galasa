@@ -42,16 +42,16 @@ public class TestResultNamesRoute extends RasServletTest{
 		List<IRunResult> mockInputRunResults = new ArrayList<IRunResult>();
 		// Build the results the DB will return.
 		for(int c =0 ; c < resSize; c++){
-			String runName = RandomStringUtils.randomAlphanumeric(5);
-			String testShortName = RandomStringUtils.randomAlphanumeric(5);
-			String requestor = RandomStringUtils.randomAlphanumeric(8);
-			String runId = RandomStringUtils.randomAlphanumeric(16);
+			String runName = RandomStringUtils.insecure().nextAlphanumeric(5);
+			String testShortName = RandomStringUtils.insecure().nextAlphanumeric(5);
+			String requestor = RandomStringUtils.insecure().nextAlphanumeric(8);
+			String runId = RandomStringUtils.insecure().nextAlphanumeric(16);
 			TestStructure testStructure = new TestStructure();
 			testStructure.setRunName(runName);
 			testStructure.setRequestor(requestor);
 			testStructure.setTestShortName(testShortName);
-			testStructure.setBundle(RandomStringUtils.randomAlphanumeric(16));
-			testStructure.setTestName(testShortName + "." + RandomStringUtils.randomAlphanumeric(8));
+			testStructure.setBundle(RandomStringUtils.insecure().nextAlphanumeric(16));
+			testStructure.setTestName(testShortName + "." + RandomStringUtils.insecure().nextAlphanumeric(8));
 			testStructure.setQueued(Instant.now());
 			testStructure.setStartTime(Instant.now());
 			testStructure.setEndTime(Instant.now());
@@ -67,8 +67,8 @@ public class TestResultNamesRoute extends RasServletTest{
                 case 4:	testStructure.setResult("Ignored");
                     break;
             }
-			Path artifactRoot = Paths.get(RandomStringUtils.randomAlphanumeric(12));
-			String log = RandomStringUtils.randomAlphanumeric(6);
+			Path artifactRoot = Paths.get(RandomStringUtils.insecure().nextAlphanumeric(12));
+			String log = RandomStringUtils.insecure().nextAlphanumeric(6);
 			IRunResult result = new MockRunResult( runId, testStructure, artifactRoot , log);
 			mockInputRunResults.add(result);
 		}
@@ -443,16 +443,16 @@ public class TestResultNamesRoute extends RasServletTest{
 		//Given..
 		List<IRunResult> mockInputRunResults = new ArrayList<IRunResult>();
 		// Build the results the DB will return.
-			String runName = RandomStringUtils.randomAlphanumeric(5);
-			String testShortName = RandomStringUtils.randomAlphanumeric(5);
-			String requestor = RandomStringUtils.randomAlphanumeric(8);
-			String runId = RandomStringUtils.randomAlphanumeric(16);
+			String runName = RandomStringUtils.insecure().nextAlphanumeric(5);
+			String testShortName = RandomStringUtils.insecure().nextAlphanumeric(5);
+			String requestor = RandomStringUtils.insecure().nextAlphanumeric(8);
+			String runId = RandomStringUtils.insecure().nextAlphanumeric(16);
 			TestStructure testStructure = new TestStructure();
 			testStructure.setRunName(runName);
 			testStructure.setRequestor(requestor);
 			testStructure.setTestShortName(testShortName);
-			testStructure.setBundle(RandomStringUtils.randomAlphanumeric(16));
-			testStructure.setTestName(testShortName + "." + RandomStringUtils.randomAlphanumeric(8));
+			testStructure.setBundle(RandomStringUtils.insecure().nextAlphanumeric(16));
+			testStructure.setTestName(testShortName + "." + RandomStringUtils.insecure().nextAlphanumeric(8));
 			testStructure.setQueued(Instant.now());
 			testStructure.setStartTime(Instant.now());
 			testStructure.setEndTime(Instant.now());

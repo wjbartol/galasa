@@ -39,7 +39,7 @@ public class TestRequestorsRoute extends RasServletTest{
 		List<IRunResult> mockInputRunResults = new ArrayList<IRunResult>();
 		// Build the results the DB will return.
 		for(int c =0 ; c < resSize; c++){
-			String runId = RandomStringUtils.randomAlphanumeric(16);
+			String runId = RandomStringUtils.insecure().nextAlphanumeric(16);
 			TestStructure testStructure = new TestStructure();
 			switch (c % 5){
                 case 0: testStructure.setRequestor("galasa");

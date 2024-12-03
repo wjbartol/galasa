@@ -37,7 +37,7 @@ public class FrameworkEncryptionServiceTest {
     }
 
     private SecretKeySpec generateEncryptionKey() throws NoSuchAlgorithmException {
-        byte[] keyBytes = RandomStringUtils.randomAlphanumeric(32).getBytes();
+        byte[] keyBytes = RandomStringUtils.insecure().nextAlphanumeric(32).getBytes();
         return new SecretKeySpec(keyBytes, "AES");
     }
 

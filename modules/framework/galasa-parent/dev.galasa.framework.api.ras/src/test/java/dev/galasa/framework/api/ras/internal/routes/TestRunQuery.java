@@ -82,23 +82,23 @@ public class TestRunQuery extends RasServletTest {
 	}
 
     private IRunResult createTestRun(String runId, Instant queuedTime, Instant startTime, Instant endTime) {
-        String runName = RandomStringUtils.randomAlphanumeric(5);
-        String testShortName = RandomStringUtils.randomAlphanumeric(5);
-        String requestor = RandomStringUtils.randomAlphanumeric(8);
-        String bundleName = RandomStringUtils.randomAlphanumeric(16);
+        String runName = RandomStringUtils.insecure().nextAlphanumeric(5);
+        String testShortName = RandomStringUtils.insecure().nextAlphanumeric(5);
+        String requestor = RandomStringUtils.insecure().nextAlphanumeric(8);
+        String bundleName = RandomStringUtils.insecure().nextAlphanumeric(16);
 
         TestStructure testStructure = new TestStructure();
         testStructure.setRunName(runName);
         testStructure.setRequestor(requestor);
         testStructure.setTestShortName(testShortName);
         testStructure.setBundle(bundleName);
-        testStructure.setTestName(testShortName + "." + RandomStringUtils.randomAlphanumeric(8));
+        testStructure.setTestName(testShortName + "." + RandomStringUtils.insecure().nextAlphanumeric(8));
         testStructure.setQueued(queuedTime);
         testStructure.setStartTime(startTime);
         testStructure.setEndTime(endTime);
 
         Path artifactsRoot = new MockPath("/", mockFileSystem);
-        String log = RandomStringUtils.randomAlphanumeric(6);
+        String log = RandomStringUtils.insecure().nextAlphanumeric(6);
         return new MockRunResult(runId, testStructure, artifactsRoot, log);
     }
 
@@ -107,7 +107,7 @@ public class TestRunQuery extends RasServletTest {
 		int passCount = 0;
 		// Build the results the DB will return.
 		for(int c =0 ; c < resSize; c++){
-            String runId = RandomStringUtils.randomAlphanumeric(16);
+            String runId = RandomStringUtils.insecure().nextAlphanumeric(16);
             Instant baseTime = Instant.now().minus(hoursDeducted, ChronoUnit.HOURS).minus(c, ChronoUnit.MINUTES);
             IRunResult mockRun = createTestRun(runId, baseTime, baseTime, baseTime);
 

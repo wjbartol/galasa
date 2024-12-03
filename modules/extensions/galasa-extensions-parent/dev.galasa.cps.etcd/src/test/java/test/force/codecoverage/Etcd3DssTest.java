@@ -488,6 +488,7 @@ public class Etcd3DssTest {
         ByteSequence bsKey = ByteSequence.from("foo", UTF_8);
         ByteSequence bsValue = ByteSequence.from("bar", UTF_8);
 
+        @SuppressWarnings("unchecked")
         CompletableFuture<PutResponse> response = Mockito.mock(CompletableFuture.class);
         when(mockKvCLient.put(bsKey, bsValue)).thenReturn(response);
         try {
@@ -515,6 +516,7 @@ public class Etcd3DssTest {
         kvs.put("foo", "bar");
         kvs.put("foo-er", "bar-er");
 
+        @SuppressWarnings("unchecked")
         CompletableFuture<TxnResponse> response = Mockito.mock(CompletableFuture.class);
         Txn mocktxn = Mockito.mock(Txn.class);
         when(mockKvCLient.txn()).thenReturn(mocktxn);
@@ -545,6 +547,7 @@ public class Etcd3DssTest {
         String oldValue = "notBar";
         String newValue = "bar";
 
+        @SuppressWarnings("unchecked")
         CompletableFuture<TxnResponse> response = Mockito.mock(CompletableFuture.class);
         Txn mocktxn = Mockito.mock(Txn.class);
         when(mockKvCLient.txn()).thenReturn(mocktxn);
@@ -582,6 +585,7 @@ public class Etcd3DssTest {
         otherKvs.put("marco", "pollo");
         otherKvs.put("Tom", "Jerry");
 
+        @SuppressWarnings("unchecked")
         CompletableFuture<TxnResponse> response = Mockito.mock(CompletableFuture.class);
         Txn mocktxn = Mockito.mock(Txn.class);
         when(mockKvCLient.txn()).thenReturn(mocktxn);
@@ -612,6 +616,7 @@ public class Etcd3DssTest {
         Boolean caught = false;
         ByteSequence bsKey = ByteSequence.from("foo", UTF_8);
 
+        @SuppressWarnings("unchecked")
         CompletableFuture<GetResponse> response = Mockito.mock(CompletableFuture.class);
         when(mockKvCLient.get(bsKey)).thenReturn(response);
         try {
@@ -636,6 +641,7 @@ public class Etcd3DssTest {
         Boolean caught = false;
         ByteSequence bsKey = ByteSequence.from("foo", UTF_8);
 
+        @SuppressWarnings("unchecked")
         CompletableFuture<GetResponse> response = Mockito.mock(CompletableFuture.class);
         when(mockKvCLient.get(Mockito.eq(bsKey), any(GetOption.class))).thenReturn(response);
         try {
@@ -660,6 +666,7 @@ public class Etcd3DssTest {
         Boolean caught = false;
         ByteSequence bsKey = ByteSequence.from("foo", UTF_8);
 
+        @SuppressWarnings("unchecked")
         CompletableFuture<DeleteResponse> response = Mockito.mock(CompletableFuture.class);
         when(mockKvCLient.delete(Mockito.eq(bsKey))).thenReturn(response);
         try {
@@ -686,6 +693,7 @@ public class Etcd3DssTest {
         keys.add("foo");
         keys.add("bar");
 
+        @SuppressWarnings("unchecked")
         CompletableFuture<TxnResponse> response = Mockito.mock(CompletableFuture.class);
         Txn mocktxn = Mockito.mock(Txn.class);
         when(mockKvCLient.txn()).thenReturn(mocktxn);
@@ -716,6 +724,7 @@ public class Etcd3DssTest {
         Boolean caught = false;
         ByteSequence bsPrefixKey = ByteSequence.from("foo", UTF_8);
 
+        @SuppressWarnings("unchecked")
         CompletableFuture<DeleteResponse> response = Mockito.mock(CompletableFuture.class);
         when(mockKvCLient.delete(Mockito.eq(bsPrefixKey), any(DeleteOption.class))).thenReturn(response);
         try {

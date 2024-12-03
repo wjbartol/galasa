@@ -18,3 +18,21 @@ The `set-version.sh` script allows you to set the version of the Galasa througho
 Use the `--help` flag to see what options are supported.
 
 Basic usage: `set-version.sh --version 0.39.0`
+
+## Using vscode
+When using vscode to develop this code, we recommend the following settings are added to your `settings.json` file:
+
+```
+"java.jdt.ls.vmargs": "-Xmx1024m",
+"java.import.gradle.arguments" : "-PtargetMaven=~/.m2/repository",
+
+"java.import.gradle.version": "8.9",
+"java.configuration.runtimes": [
+    {
+        "name": "JavaSE-17",
+        "path": "/path/to/java/sdk/folder" , // eg: /Users/mcobbett/.sdkman/candidates/java/17.0.12-tem
+        "default": true,
+    },
+],
+"java.import.gradle.wrapper.enabled": false,
+```

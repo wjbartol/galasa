@@ -32,7 +32,7 @@ public class ZosBatchJobnameImpl implements IZosBatchJobname {
         } catch (ZosBatchManagerException e) {
             throw new ZosBatchException("Problem getting batch jobname prefix", e);
         }
-        this.name = jobNamePrefix + RandomStringUtils.randomAlphanumeric(8-jobNamePrefix.length()).toUpperCase();
+        this.name = jobNamePrefix + RandomStringUtils.insecure().nextAlphanumeric(8-jobNamePrefix.length()).toUpperCase();
     }
     
     @Override

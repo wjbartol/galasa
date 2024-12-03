@@ -5,23 +5,22 @@ plugins {
 }
 
 dependencies {
-    implementation platform('dev.galasa:dev.galasa.platform:0.38.0')
-
-    api            'dev.galasa:dev.galasa'
+    api platform('dev.galasa:dev.galasa.platform:0.38.0')
+    api 'dev.galasa:dev.galasa'
+    
     implementation 'dev.galasa:dev.galasa.framework'
     implementation 'commons-logging:commons-logging'
     implementation 'org.osgi:org.osgi.core'
     implementation 'org.osgi:org.osgi.service.component.annotations'
-    compileOnly    'javax.validation:validation-api'
+    compileOnly 'javax.validation:validation-api'
 
     testImplementation platform('dev.galasa:dev.galasa.platform:0.38.0')
-
     testImplementation 'junit:junit'
     testImplementation 'org.mockito:mockito-core:4.6.1' // Platform has 3.1.0
     testImplementation 'org.awaitility:awaitility'
     testImplementation 'org.assertj:assertj-core:3.16.1'
     testImplementation 'dev.galasa:galasa-testharness'
-    testCompileOnly    'javax.validation:validation-api'
+    testCompileOnly 'javax.validation:validation-api'
 }
 
 jacoco {

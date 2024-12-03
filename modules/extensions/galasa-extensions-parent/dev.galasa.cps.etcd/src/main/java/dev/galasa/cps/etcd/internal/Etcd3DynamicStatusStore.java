@@ -48,6 +48,7 @@ import io.etcd.jetcd.op.CmpTarget;
 import io.etcd.jetcd.op.Op;
 import io.etcd.jetcd.options.DeleteOption;
 import io.etcd.jetcd.options.GetOption;
+import io.etcd.jetcd.options.OptionsUtil;
 import io.etcd.jetcd.options.PutOption;
 import io.etcd.jetcd.options.WatchOption;
 import io.etcd.jetcd.watch.WatchEvent;
@@ -262,7 +263,10 @@ public class Etcd3DynamicStatusStore implements IDynamicStatusStore {
     @Override
     public @NotNull Map<String, String> getPrefix(@NotNull String keyPrefix) throws DynamicStatusStoreException {
         ByteSequence bsPrefix = ByteSequence.from(keyPrefix, UTF_8);
-        GetOption options = GetOption.newBuilder().withPrefix(bsPrefix).build();
+
+        ByteSequence prefixEnd = OptionsUtil.prefixEndOf(bsPrefix);
+        GetOption options = GetOption.builder().withRange(prefixEnd).build();
+
         CompletableFuture<GetResponse> getFuture = kvClient.get(bsPrefix, options);
         Map<String, String> keyValues = new HashMap<>();
 
@@ -340,7 +344,9 @@ public class Etcd3DynamicStatusStore implements IDynamicStatusStore {
     @Override
     public void deletePrefix(@NotNull String keyPrefix) throws DynamicStatusStoreException {
         ByteSequence bsKey = ByteSequence.from(keyPrefix, UTF_8);
-        DeleteOption options = DeleteOption.newBuilder().withPrefix(bsKey).build();
+
+        ByteSequence prefixEnd = OptionsUtil.prefixEndOf(bsKey);
+        DeleteOption options = DeleteOption.builder().withRange(prefixEnd).build();
         CompletableFuture<DeleteResponse> deleteFuture = kvClient.delete(bsKey, options);
 
         try {
@@ -366,7 +372,8 @@ public class Etcd3DynamicStatusStore implements IDynamicStatusStore {
     public UUID watchPrefix(IDynamicStatusStoreWatcher watcher, String keyPrefix) throws DynamicStatusStoreException {
         ByteSequence bsKey = ByteSequence.from(keyPrefix, UTF_8);
         PassthroughWatcher passWatcher = new PassthroughWatcher(watcher);
-        WatchOption watchOption = WatchOption.newBuilder().withPrefix(bsKey).build();
+        ByteSequence prefixEnd = OptionsUtil.prefixEndOf(bsKey);
+        WatchOption watchOption = WatchOption.builder().withRange(prefixEnd).build();
         Watcher etcdWatcher = watchClient.watch(bsKey, watchOption, passWatcher);
         passWatcher.setEtcdWatcher(etcdWatcher);
         watchers.put(passWatcher.getID(), passWatcher);
@@ -595,10 +602,9 @@ public class Etcd3DynamicStatusStore implements IDynamicStatusStore {
     }
 
     private Txn performActionsDeletePrefixThen(Txn txn, DssDeletePrefix action) {
-        ByteSequence bsKey = ByteSequence.from(action.getPrefix(), UTF_8);
-        
-        DeleteOption option = DeleteOption.newBuilder().withPrefix(bsKey).build();
-        
+        ByteSequence bsKey = ByteSequence.from(action.getPrefix(), UTF_8);        
+        ByteSequence prefixEnd = OptionsUtil.prefixEndOf(bsKey);
+        DeleteOption option = DeleteOption.builder().withRange(prefixEnd).build();
         txn = txn.Then(Op.delete(bsKey, option));
         
         return txn;

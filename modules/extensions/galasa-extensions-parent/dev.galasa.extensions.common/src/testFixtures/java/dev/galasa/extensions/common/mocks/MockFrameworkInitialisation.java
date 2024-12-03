@@ -29,8 +29,6 @@ import java.net.URI;
 import java.util.*;
 
 public class MockFrameworkInitialisation implements IApiServerInitialisation {
-
-    private MockFramework framework;
     
     protected URI authStoreUri;
     protected URI cpsBootstrapUri;

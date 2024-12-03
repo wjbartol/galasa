@@ -37,7 +37,7 @@ public class TestRunLogRoute extends RasServletTest {
 		List<IRunResult> mockInputRunResults = new ArrayList<IRunResult>();
 
 		// Build the results the DB will return.
-		String requestor = RandomStringUtils.randomAlphanumeric(8);
+		String requestor = RandomStringUtils.insecure().nextAlphanumeric(8);
 
 		TestStructure testStructure = new TestStructure();
 		testStructure.setRunName(runName);

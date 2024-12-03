@@ -27,6 +27,7 @@ import io.etcd.jetcd.KV;
 import io.etcd.jetcd.KeyValue;
 import io.etcd.jetcd.kv.GetResponse;
 import io.etcd.jetcd.options.GetOption;
+import io.etcd.jetcd.options.OptionsUtil;
 
 /**
  * This class impletements the CPS for etcd using the JETCD client.
@@ -81,7 +82,8 @@ public class Etcd3ConfigurationPropertyStore implements IConfigurationPropertySt
         HashMap<String, String> returnValues = new HashMap<>();
         
         ByteSequence bsKey = ByteSequence.from(prefix, UTF_8);
-        GetOption option = GetOption.newBuilder().withPrefix(bsKey).build();
+        ByteSequence prefixEnd = OptionsUtil.prefixEndOf(bsKey);
+        GetOption option = GetOption.builder().withRange(prefixEnd).build();
         CompletableFuture<GetResponse> getFuture = kvClient.get(bsKey, option);  
         try {
             GetResponse response = getFuture.get();
@@ -132,11 +134,12 @@ public class Etcd3ConfigurationPropertyStore implements IConfigurationPropertySt
     @Override
     public Map<String, String> getPropertiesFromNamespace(String namespace) throws ConfigurationPropertyStoreException {
         ByteSequence bsNamespace = ByteSequence.from(namespace + ".", UTF_8);
-        GetOption option = GetOption.newBuilder()
+        ByteSequence prefixEnd = OptionsUtil.prefixEndOf(ByteSequence.from(namespace + ".", UTF_8));
+        GetOption option = GetOption.builder()
                 .withSortField(GetOption.SortTarget.KEY)
                 .withSortOrder(GetOption.SortOrder.DESCEND)
                 .withRange(bsNamespace)
-                .withPrefix(ByteSequence.from(namespace + ".", UTF_8))
+                .withRange(prefixEnd)
                 .build();
 
         CompletableFuture<GetResponse> futureResponse = client.getKVClient().get(bsNamespace, option);
@@ -156,7 +159,7 @@ public class Etcd3ConfigurationPropertyStore implements IConfigurationPropertySt
     @Override
     public List<String> getNamespaces() throws ConfigurationPropertyStoreException {
         ByteSequence empty = ByteSequence.from("\0", UTF_8);
-        GetOption option = GetOption.newBuilder()
+        GetOption option = GetOption.builder()
                 .withSortField(GetOption.SortTarget.KEY)
                 .withSortOrder(GetOption.SortOrder.DESCEND)
                 .withRange(empty)

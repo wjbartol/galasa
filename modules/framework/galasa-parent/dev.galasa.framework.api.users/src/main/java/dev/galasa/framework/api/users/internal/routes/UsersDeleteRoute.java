@@ -17,7 +17,6 @@ import dev.galasa.framework.spi.auth.IInternalAuthToken;
 
 import dev.galasa.framework.api.common.BaseRoute;
 import dev.galasa.framework.api.common.Environment;
-import dev.galasa.framework.api.common.EnvironmentVariables;
 import dev.galasa.framework.api.common.InternalServletException;
 import dev.galasa.framework.api.common.QueryParameters;
 import dev.galasa.framework.api.common.ResponseBuilder;
@@ -33,21 +32,15 @@ public class UsersDeleteRoute extends BaseRoute{
     // Regex to match endpoint /users/{userDocumentId}
     protected static final String path = "\\/([a-zA-Z0-9\\-\\_]+)\\/?";
 
-    private Environment env;
     private IAuthStoreService authStoreService;
     private IAuthService authService;
-    private BeanTransformer beanTransformer;
+
     private Pattern pathPattern;
 
     public UsersDeleteRoute(ResponseBuilder responseBuilder, Environment env,
             IAuthService authService) {
         super(responseBuilder, path);
-        this.env = env;
         this.authService = authService;
-        
-        String baseServletUrl = env.getenv(EnvironmentVariables.GALASA_EXTERNAL_API_URL);
-        
-        this.beanTransformer = new BeanTransformer(baseServletUrl);
         this.authStoreService = authService.getAuthStoreService();
         this.pathPattern = getPathRegex();
     }

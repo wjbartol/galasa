@@ -374,12 +374,6 @@ public class Launcher {
                         + ", --" + VALIDATEECO_OPTION
                         );
     }
-    
-    private void filePathError(String option) {
-
-        commandLineError("The option \"" + option + "\" requires an output file (specify with --" + FILE_OPTION_LONG + " <path> or -" + FILE_OPTION + " <path>)");
-
-    }
 
     private void checkForRemoteMaven(CommandLine commandLine) {
 

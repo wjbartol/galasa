@@ -157,10 +157,6 @@ function build_module() {
     chain=$2
     h1 "Building... module:'$module' chain:'$chain'"
 
-    cd ~/.m2/repository
-    local_maven_repo_folder=$(pwd)
-    cd - 
-
     # platform
     if [[ "$module" == "platform" ]]; then
         h2 "Building $module"
@@ -261,7 +257,6 @@ function build_module() {
     if [[ "$module" == "obr" ]]; then
         h2 "Building $module"
         cd ${PROJECT_DIR}/modules/$module
-        export SOURCE_MAVEN="file:/$local_maven_repo_folder"
         info "Using SOURCE_MAVEN of $SOURCE_MAVEN"
         ${PROJECT_DIR}/modules/$module/build-locally.sh --detectsecrets false
         rc=$? ;  if [[ "${rc}" != "0" ]]; then error "Failed to build module $module. rc=$rc" ; exit 1 ; fi

@@ -36,10 +36,10 @@ managers:
   - artifact: dev.galasa.cicsts.ceci.manager.ivt
     version: 0.38.0
     obr:          true
-    mvp:          false
+    mvp:          true
     bom:          false
     javadoc:      false
-    isolated:     false
+    isolated:     true
     codecoverage: false
 
   - artifact: dev.galasa.cicsts.ceda.manager
@@ -54,10 +54,10 @@ managers:
   - artifact: dev.galasa.cicsts.ceda.manager.ivt
     version: 0.38.0
     obr:          true
-    mvp:          false
+    mvp:          true
     bom:          false
     javadoc:      false
-    isolated:     false
+    isolated:     true
     codecoverage: false
 
   - artifact: dev.galasa.cicsts.cemt.manager
@@ -72,10 +72,10 @@ managers:
   - artifact: dev.galasa.cicsts.cemt.manager.ivt
     version: 0.38.0
     obr:          true
-    mvp:          false
+    mvp:          true
     bom:          false
     javadoc:      false
-    isolated:     false
+    isolated:     true
     codecoverage: false
 
   - artifact: dev.galasa.cicsts.manager
@@ -90,10 +90,10 @@ managers:
   - artifact: dev.galasa.cicsts.manager.ivt
     version: 0.38.0
     obr:          true
-    mvp:          false
+    mvp:          true
     bom:          false
     javadoc:      false
-    isolated:     false
+    isolated:     true
     codecoverage: false
 
   - artifact: dev.galasa.cicsts.resource.manager
@@ -189,10 +189,10 @@ managers:
   - artifact: dev.galasa.http.manager.ivt
     version: 0.38.0
     obr:          true
-    mvp:          false
+    mvp:          true
     bom:          false
     javadoc:      false
-    isolated:     false
+    isolated:     true
     codecoverage: false
 
   - artifact: dev.galasa.ipnetwork.manager
@@ -234,10 +234,10 @@ managers:
   - artifact: dev.galasa.artifact.manager.ivt
     version: 0.38.0
     obr:          true
-    mvp:          false
+    mvp:          true
     bom:          false
     javadoc:      false
-    isolated:     false
+    isolated:     true
     codecoverage: false
 
   - artifact: dev.galasa.core.manager
@@ -252,10 +252,10 @@ managers:
   - artifact: dev.galasa.core.manager.ivt
     version: 0.38.0
     obr:          true
-    mvp:          false
+    mvp:          true
     bom:          false
     javadoc:      false
-    isolated:     false
+    isolated:     true
     codecoverage: false
 
   - artifact: dev.galasa.textscan.manager
@@ -405,10 +405,10 @@ managers:
   - artifact: dev.galasa.sdv.manager.ivt
     version: 0.38.0
     obr:          true
-    mvp:          false
+    mvp:          true
     bom:          false
     javadoc:      false
-    isolated:     false
+    isolated:     true
     codecoverage: false
 
   - artifact: dev.galasa.selenium.manager
@@ -495,10 +495,10 @@ managers:
   - artifact: dev.galasa.zos.manager.ivt
     version: 0.38.0
     obr:          true
-    mvp:          false
+    mvp:          true
     bom:          false
     javadoc:      false
-    isolated:     false
+    isolated:     true
     codecoverage: false
 
   - artifact: dev.galasa.zos3270.common
@@ -522,10 +522,10 @@ managers:
   - artifact: dev.galasa.zos3270.manager.ivt
     version: 0.38.0
     obr:          true
-    mvp:          false
+    mvp:          true
     bom:          false
     javadoc:      false
-    isolated:     false
+    isolated:     true
     codecoverage: false
 
   - artifact: dev.galasa.zosbatch.rseapi.manager

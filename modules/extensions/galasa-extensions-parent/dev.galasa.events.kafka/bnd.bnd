@@ -9,11 +9,12 @@ Import-Package: \
     org.apache.kafka.clients,\
     org.apache.kafka.clients.admin,\
     org.apache.kafka.clients.consumer,\
-    org.apache.kafka.clients.producer,\
+    org.apache.kafka.clients.producer.KafkaProducer,\
+    org.apache.kafka.clients.producer.ProducerRecord,\
     org.apache.kafka.common,\
     org.apache.kafka.common.metrics,\
     org.apache.kafka.common.security.plain,\
-    org.apache.kafka.common.serialization,\
+    org.apache.kafka.common.serialization.StringSerializer,\
     org.apache.kafka.server,\
     org.apache.kafka.shaded,\
     common.message

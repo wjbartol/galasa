@@ -18,7 +18,9 @@ dependencies {
         api 'com.fasterxml.jackson.core:jackson-core:2.16.0' // used by wrapper.
         api 'com.fasterxml.jackson.core:jackson-databind:2.16.0' // used by wrapper.
 
+        api 'com.github.docker-java:docker-java-api:3.2.14' // bnd.bnd only
         api 'com.github.docker-java:docker-java-core:3.2.14'
+        api 'com.github.docker-java:docker-java-transport:3.2.14' // bnd.bnd only
         api 'com.github.docker-java:docker-java-transport-httpclient5:3.2.14'
 
         api 'com.google.android:annotations:4.1.1.4'
@@ -149,6 +151,8 @@ dependencies {
 
         api 'net.bytebuddy:byte-buddy:1.8.15'
 
+        api 'net.java.dev.jna:jna:5.12.1' // bnd.bnd only
+
         api 'org.apache.bcel:bcel:6.7.0'
 
         api 'org.codehaus.plexus:plexus-utils:3.0.24'
@@ -176,6 +180,10 @@ dependencies {
         api 'org.apache.httpcomponents:httpcore:4.4.16'
         api 'org.apache.httpcomponents:httpcore-osgi:4.4.14' // If updating, also update in obr/release.yaml.
         api 'org.apache.httpcomponents:httpmime:4.5.14'
+
+        api 'org.apache.httpcomponents.httpclient:httpclient5:5.0.3' // bnd.bnd only
+
+        api 'org.apache.httpcomponents.core5:httpcore5:5.0.2' // bnd.bnd only
 
         api 'org.apache.kafka:kafka-clients:3.9.0'
         api 'org.apache.kafka:kafka-server-common:3.9.0'
@@ -235,6 +243,7 @@ dependencies {
         api 'org.seleniumhq.selenium:selenium-java:3.141.59'
         api 'org.seleniumhq.selenium:selenium-opera-driver:3.141.59'
         api 'org.seleniumhq.selenium:selenium-remote-driver:3.141.59'
+        api 'org.seleniumhq.selenium:selenium-safari-driver:3.141.59' // bnd.bnd only
         api 'org.seleniumhq.selenium:selenium-support:3.141.59'
 
         api 'org.slf4j:slf4j-api:1.7.36'

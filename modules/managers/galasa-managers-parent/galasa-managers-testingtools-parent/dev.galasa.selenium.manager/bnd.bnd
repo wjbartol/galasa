@@ -62,6 +62,6 @@ Embed-Dependency: *;scope=compile
     selenium-java-*.jar; lib:=true,\
     selenium-opera-driver-*.jar; lib:=true,\
     selenium-remote-driver-*.jar; lib:=true,\
-    selenium-safari-driver-3.141.59.jar; lib:=true,\
+    selenium-safari-driver-*.jar; lib:=true,\
     selenium-support-*.jar; lib:=true
 -fixupmessages: Classes found in the wrong directory: ...;is:=ignore

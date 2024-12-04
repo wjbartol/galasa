@@ -14,7 +14,9 @@ metadata:
 release:
   version: 0.38.0
 
-
+# Dependencies with bom: true need their versions stated explicitly
+# As the galasa-bom is a component consumed by users, its too risky
+# to have the platform provide the versions.
 
 external:
   bundles:

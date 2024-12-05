@@ -15,7 +15,7 @@ jobs:
     name: Build the 'platform' module
     uses: ./.github/workflows/platform.yaml
     secrets: inherit
-        
+
   build-buildutils:
     name: Build the 'buildutils' module
     uses: ./.github/workflows/buildutils.yaml

@@ -106,9 +106,9 @@ publishing {
                         }
                     }
                     scm {
-                        connection = 'scm:git:git:://github.com/galasa-dev/gradle'
-                        developerConnection = 'scm:git:git:://github.com/galasa-dev/gradle'
-                        url = 'https://github.com/galasa-dev/gradle'
+                        connection = 'scm:git:git:://github.com/galasa-dev/galasa'
+                        developerConnection = 'scm:git:git:://github.com/galasa-dev/galasa'
+                        url = 'https://github.com/galasa-dev/galasa'
                     }
                     issueManagement {
                         system = 'GitHub'

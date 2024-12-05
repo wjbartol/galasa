@@ -31,9 +31,9 @@
     </developers>
 
     <scm>
-        <url>https://github.com/galasa-dev/framework</url>
-        <connection>scm:git:git:://github.com/galasa-dev/framework</connection>
-        <developerConnection>scm:git:git:://github.com/galasa-dev/framework</developerConnection>
+        <url>https://github.com/galasa-dev/galasa</url>
+        <connection>scm:git:git:://github.com/galasa-dev/galasa</connection>
+        <developerConnection>scm:git:git:://github.com/galasa-dev/galasa</developerConnection>
     </scm>
 
     <issueManagement>

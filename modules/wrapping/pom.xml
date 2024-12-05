@@ -48,9 +48,9 @@
 	</modules>
 
 	<scm>
-		<url>https://github.com/galasa-dev/wrapping</url>
-		<connection>scm:git:git:://github.com/galasa-dev/wrapping</connection>
-		<developerConnection>scm:git:git:://github.com/galasa-dev/wrapping</developerConnection>
+		<url>https://github.com/galasa-dev/galasa</url>
+		<connection>scm:git:git:://github.com/galasa-dev/galasa</connection>
+		<developerConnection>scm:git:git:://github.com/galasa-dev/galasa</developerConnection>
 	</scm>
 
 	<issueManagement>

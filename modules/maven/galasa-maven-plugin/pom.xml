@@ -30,9 +30,9 @@
 	</developers>
 
 	<scm>
-		<url>https://github.com/galasa-dev/maven</url>
-		<connection>scm:git:git:://github.com/galasa-dev/maven</connection>
-		<developerConnection>scm:git:git:://github.com/galasa-dev/maven</developerConnection>
+		<url>https://github.com/galasa-dev/galasa</url>
+		<connection>scm:git:git:://github.com/galasa-dev/galasa</connection>
+		<developerConnection>scm:git:git:://github.com/galasa-dev/galasa</developerConnection>
 	</scm>
 
 	<issueManagement>

@@ -234,7 +234,7 @@ publishing {
                 licenses {
                     license {
                         name = 'Eclipse Public License - v 2.0'
-                        url = 'https://www.eclipse.org/legal/epl-2.0/t'
+                        url = 'https://www.eclipse.org/legal/epl-2.0'
                     }
                 }
                 url = 'https://galasa.dev'
@@ -247,9 +247,9 @@ publishing {
                     }
                 }
                 scm {
-                    connection = 'scm:git:git:://github.com/galasa-dev/managers'
-                    developerConnection = 'scm:git:git:://github.com/galasa-dev/managers'
-                    url = 'https://github.com/galasa-dev/managers'
+                    connection = 'scm:git:git:://github.com/galasa-dev/galasa'
+                    developerConnection = 'scm:git:git:://github.com/galasa-dev/galasa'
+                    url = 'https://github.com/galasa-dev/galasa'
                 }
                 issueManagement {
                     system = 'GitHub'

@@ -328,9 +328,9 @@ publishing {
                     }
                 }
                 scm {
-                    connection = 'scm:git:git:://github.com/galasa-dev/framework'
-                    developerConnection = 'scm:git:git:://github.com/galasa-dev/framework'
-                    url = 'https://github.com/galasa-dev/framework'
+                    connection = 'scm:git:git:://github.com/galasa-dev/galasa'
+                    developerConnection = 'scm:git:git:://github.com/galasa-dev/galasa'
+                    url = 'https://github.com/galasa-dev/galasa'
                 }
                 issueManagement {
                     system = 'GitHub'

@@ -282,24 +282,38 @@ publishing {
         myPlatform(MavenPublication) {
             from components.javaPlatform
 
-            groupId = 'dev.galasa'
-            artifactId = 'dev.galasa.platform'
-            version = "0.38.0"
+            pom {
+                name = 'Gradle Java Platform for Galasa bundles'
+                groupId = 'dev.galasa'
+                artifactId = 'dev.galasa.platform'
+                version = '0.38.0'
+                description = 'Provides versions to dependencies'
+                licenses {
+                    license {
+                        name = 'Eclipse Public License - v 2.0'
+                        url = 'https://www.eclipse.org/legal/epl-2.0'
+                    }
+                }
+                url = 'https://galasa.dev'
+                developers {
+                    developer {
+                        name = 'Galasa Developer'
+                        email = 'galasadelivery@ibm.com'
+                        organization = 'IBM'
+                        organizationUrl = 'https://www.ibm.com'
+                    }
+                }
+                scm {
+                    connection = 'scm:git:git:://github.com/galasa-dev/galasa'
+                    developerConnection = 'scm:git:git:://github.com/galasa-dev/galasa'
+                    url = 'https://github.com/galasa-dev/galasa'
+                }
+                issueManagement {
+                    system = 'GitHub'
+                    url = 'https://github.com/galasa-dev/projectmanagement/issues'
+                }
+            }
         }
-
-        // mavenBom(MavenPublication) {
-        //     from components.java
-
-        //     groupId = 'com.example'
-        //     artifactId = 'my-dependencies-bom'
-        //     version = '1.0.0'
-
-        //     // Optional: Customize the generated POM file if needed
-        //     pom {
-        //         name = 'My Dependencies BOM'
-        //         description = 'A BOM of dependency versions for Java projects'
-        //     }
-        // }
     }
 
     repositories {

@@ -80,7 +80,7 @@ external:
 
   - group: dev.galasa
     artifact: dev.galasa.wrapping.com.auth0.jwt
-    version: 0.39.0
+    obr: true
 
   - group: dev.galasa
     artifact: dev.galasa.wrapping.gson
@@ -99,7 +99,7 @@ external:
 
   - group: dev.galasa
     artifact: dev.galasa.wrapping.io.grpc.java
-    version: 0.39.0
+    obr: true
     mvp: true
     isolated: true
 

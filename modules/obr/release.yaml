@@ -84,14 +84,14 @@ external:
 
   - group: dev.galasa
     artifact: dev.galasa.wrapping.gson
-    version: 0.38.0
+    version: 0.39.0
     obr: true
     bom: true
     mvp: true
     isolated: true
 
   - artifact: dev.galasa.wrapping.httpclient-osgi
-    version: 0.38.0
+    version: 0.39.0
     obr: true
     bom: true
     isolated: true

@@ -20,7 +20,7 @@ dependencies {
 
     testImplementation(testFixtures(project(':dev.galasa.framework.api.common')))
 
-    testFixturesImplementation platform('dev.galasa:dev.galasa.platform:0.38.0')
+    testFixturesImplementation platform('dev.galasa:dev.galasa.platform:0.39.0')
     testFixturesImplementation 'javax.servlet:javax.servlet-api'
     testFixturesImplementation 'dev.galasa:dev.galasa.wrapping.io.grpc.java'
     testFixturesImplementation 'org.assertj:assertj-core:3.16.1'

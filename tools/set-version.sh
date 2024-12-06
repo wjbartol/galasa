@@ -65,7 +65,7 @@ set-version.sh [OPTIONS]
 Options are:
 -v | --version xxx : Mandatory. Set the version number to something explicitly. 
     Re-builds the release.yaml based on the contents of sub-projects.
-    For example '--version 0.38.0'
+    For example '--version 0.40.0'
 EOF
 }
 

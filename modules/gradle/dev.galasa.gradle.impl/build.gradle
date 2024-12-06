@@ -15,7 +15,7 @@ repositories {
 }
 
 dependencies {
-    implementation platform('dev.galasa:dev.galasa.platform:0.38.0')
+    implementation platform('dev.galasa:dev.galasa.platform:0.39.0')
     implementation 'org.apache.felix:org.apache.felix.bundlerepository'
     implementation 'org.reflections:reflections'
     implementation 'com.google.code.gson:gson'

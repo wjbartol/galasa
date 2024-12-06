@@ -12,7 +12,7 @@ metadata:
 
 
 release:
-  version: 0.38.0
+  version: 0.39.0
 
 # Dependencies with bom: true need their versions stated explicitly
 # As the galasa-bom is a component consumed by users, its too risky
@@ -80,7 +80,7 @@ external:
 
   - group: dev.galasa
     artifact: dev.galasa.wrapping.com.auth0.jwt
-    obr: true
+    version: 0.39.0
 
   - group: dev.galasa
     artifact: dev.galasa.wrapping.gson
@@ -99,7 +99,7 @@ external:
 
   - group: dev.galasa
     artifact: dev.galasa.wrapping.io.grpc.java
-    obr: true
+    version: 0.39.0
     mvp: true
     isolated: true
 

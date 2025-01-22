@@ -1,0 +1,32 @@
+{
+    "name": "Java 17 Dev Container (IBM Semeru)",
+    "build": {
+      "dockerfile": "Dockerfile",
+      "context": "."
+    },
+    
+    "customizations": { 
+        "vscode": {
+            "extensions": [
+            "vscjava.vscode-java-pack",
+            "redhat.java"
+            ],
+            "settings": {
+                "java.jdt.ls.java.home": "/opt/java/openjdk",
+                "terminal.integrated.defaultProfile.linux": "bash",
+                "java.configuration.runtimes": [
+                    {
+                    "name": "JavaSE-17",
+                    "path": "/opt/java/openjdk",
+                    "default": true
+                    }
+                ]
+            }
+        }
+    },
+    "workspaceMount": "source=${localWorkspaceFolder},target=/workspace/,type=bind",
+    "workspaceFolder": "/workspace",
+    "postStartCommand": "git config --global --add safe.directory /workspace",
+    "remoteUser": "root"  // Adjust user if needed
+  }
+  

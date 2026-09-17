@@ -23,7 +23,16 @@ framework:
 
 
   - artifact: dev.galasa.auth.couchdb
-    version: 1.1.2
+    version: 1.1.1
+    obr:          true
+    mvp:          false
+    bom:          false
+    javadoc:      false
+    isolated:     false
+    codecoverage: true
+
+  - artifact: dev.galasa.auth.postgresql
+    version: 1.1.1
     obr:          true
     mvp:          false
     bom:          false
@@ -32,7 +41,16 @@ framework:
     codecoverage: true
 
   - artifact: dev.galasa.cps.etcd
-    version: 1.1.2
+    version: 1.1.1
+    obr:          true
+    mvp:          false
+    bom:          false
+    javadoc:      false
+    isolated:     false
+    codecoverage: true
+
+  - artifact: dev.galasa.cps.postgresql
+    version: 1.1.1
     obr:          true
     mvp:          false
     bom:          false
@@ -41,7 +59,7 @@ framework:
     codecoverage: true
 
   - artifact: dev.galasa.cps.rest
-    version: 1.1.2
+    version: 1.1.1
     obr:          true
     mvp:          false
     bom:          false
@@ -50,7 +68,7 @@ framework:
     codecoverage: true
 
   - artifact: dev.galasa.creds.os
-    version: 1.1.2
+    version: 1.1.1
     obr:          true
     mvp:          true
     bom:          false
@@ -58,8 +76,17 @@ framework:
     isolated:     true
     codecoverage: true
 
+  - artifact: dev.galasa.dss.postgresql
+    version: 1.1.1
+    obr:          true
+    mvp:          false
+    bom:          false
+    javadoc:      false
+    isolated:     false
+    codecoverage: true
+
   - artifact: dev.galasa.events.kafka
-    version: 1.1.2
+    version: 1.1.1
     obr:          true
     mvp:          false
     bom:          false
@@ -68,7 +95,7 @@ framework:
     codecoverage: true
 
   - artifact: dev.galasa.extensions.common
-    version: 1.1.2
+    version: 1.1.1
     obr:          true
     mvp:          false
     bom:          false
@@ -77,7 +104,16 @@ framework:
     codecoverage: true
 
   - artifact: dev.galasa.extensions.common.couchdb
-    version: 1.1.2
+    version: 1.1.1
+    obr:          true
+    mvp:          false
+    bom:          false
+    javadoc:      false
+    isolated:     false
+    codecoverage: true
+
+  - artifact: dev.galasa.extensions.common.postgresql
+    version: 1.1.1
     obr:          true
     mvp:          false
     bom:          false
@@ -86,7 +122,16 @@ framework:
     codecoverage: true
 
   - artifact: dev.galasa.ras.couchdb
-    version: 1.1.2
+    version: 1.1.1
+    obr:          true
+    mvp:          false
+    bom:          false
+    javadoc:      false
+    isolated:     false
+    codecoverage: true
+
+  - artifact: dev.galasa.ras.postgresql
+    version: 1.1.1
     obr:          true
     mvp:          false
     bom:          false

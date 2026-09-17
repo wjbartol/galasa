@@ -1,0 +1,12 @@
+Bundle-Name: Galasa Common Extension Utilities PostgreSQL
+Bundle-SymbolicName: dev.galasa.extensions.common.postgresql
+Export-Package: dev.galasa.extensions.common.postgresql
+Import-Package: \
+    java.sql, \
+    java.util.logging, \
+    java.util.concurrent, \
+    java.util, \
+    org.postgresql;resolution:=optional, \
+    org.h2;resolution:=optional, \
+    javax.validation.constraints;resolution:=optional, \
+    *

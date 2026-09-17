@@ -1,0 +1,23 @@
+#
+# Copyright contributors to the Galasa project
+#
+# SPDX-License-Identifier: EPL-2.0
+#
+# bootstrap.properties ConfigMap — points the Galasa framework at the PostgreSQL backend.
+# Updated for TASK-034: PostgreSQL OSGi Registration & Kind Cluster Wiring.
+# All four stores (CPS, RAS, DSS, Auth) now use the in-cluster PostgreSQL service.
+# Credentials are embedded in the JDBC URI (galasa_user:galasa_password).
+#
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: bootstrap-file
+  namespace: galasa
+data:
+  bootstrap.properties: |
+    framework.config.store=postgresql:jdbc:postgresql://galasa_user:galasa_password@galasa-postgresql:5432/galasa
+    framework.extra.bundles=dev.galasa.cps.postgresql,dev.galasa.ras.postgresql,dev.galasa.auth.postgresql,dev.galasa.dss.postgresql
+    framework.dynamicstatus.store=postgresql:jdbc:postgresql://galasa_user:galasa_password@galasa-postgresql:5432/galasa
+    framework.result.archive.store=postgresql:jdbc:postgresql://galasa_user:galasa_password@galasa-postgresql:5432/galasa
+    framework.auth.store=postgresql:jdbc:postgresql://galasa_user:galasa_password@galasa-postgresql:5432/galasa

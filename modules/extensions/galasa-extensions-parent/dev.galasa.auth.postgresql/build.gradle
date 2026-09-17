@@ -1,0 +1,30 @@
+plugins {
+    id 'biz.aQute.bnd.builder'
+    id 'galasa.extensions'
+}
+
+description = 'Galasa Auth - PostgreSQL Provider'
+
+version = '1.1.1'
+
+configurations {
+    implementation.transitive = false
+}
+
+dependencies {
+    implementation ('com.google.code.gson:gson')
+    implementation (project(':dev.galasa.extensions.common'))
+    implementation (project(':dev.galasa.extensions.common.postgresql'))
+    testImplementation(testFixtures(project(':dev.galasa.extensions.common')))
+    testImplementation ('com.h2database:h2:2.2.224')
+    testImplementation ('org.assertj:assertj-core:3.24.2')
+    testImplementation ('junit:junit:4.13.2')
+}
+
+ext.projectName=project.name
+ext.includeInOBR          = true
+ext.includeInMVP          = false
+ext.includeInBOM          = false
+ext.includeInIsolated     = false
+ext.includeInCodeCoverage = true
+ext.includeInJavadoc      = false

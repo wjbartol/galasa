@@ -5,12 +5,14 @@
  */
 package dev.galasa.framework.api.internal;
 
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Properties;
+import java.util.Set;
 
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
@@ -140,7 +142,26 @@ public class ApiStartup {
             }
         } else {
             try {
-                // *** Load all bundles that have IResourceManagementProvider service
+                // Check if minimal API profile is active (via env var GALASA_API_PROFILE or property galasa.api.profile)
+                String apiProfile = System.getenv("GALASA_API_PROFILE");
+                if (apiProfile == null && bundleContext != null) {
+                    apiProfile = bundleContext.getProperty("galasa.api.profile");
+                }
+                boolean isMinimalProfile = "minimal".equalsIgnoreCase(apiProfile) || apiProfile == null;
+
+                Set<String> prunedBundles = new HashSet<>(Arrays.asList(
+                    "dev.galasa.framework.api.users",
+                    "dev.galasa.framework.api.rbac",
+                    "dev.galasa.framework.api.secrets",
+                    "dev.galasa.framework.api.testcatalog",
+                    "dev.galasa.framework.api.tags",
+                    "dev.galasa.framework.api.monitors",
+                    "dev.galasa.framework.resource.management",
+                    "dev.galasa.framework.api.openapi",
+                    "dev.galasa.framework.api.openapi.servlet"
+                ));
+
+                // *** Load all bundles that have Servlet service
                 HashSet<String> bundlesToLoad = new HashSet<>();
 
                 for (Repository repository : repositoryAdmin.listRepositories()) {
@@ -159,7 +180,12 @@ public class ApiStartup {
 
                                             for (String service : split) {
                                                 if ("javax.servlet.Servlet".equals(service)) {
-                                                    bundlesToLoad.add(resource.getSymbolicName());
+                                                    String symbolicName = resource.getSymbolicName();
+                                                    if (isMinimalProfile && prunedBundles.contains(symbolicName)) {
+                                                        logger.info("Pruned non-essential API bundle in minimal profile: " + symbolicName);
+                                                    } else {
+                                                        bundlesToLoad.add(symbolicName);
+                                                    }
                                                     continue resourceSearch;
                                                 }
                                             }

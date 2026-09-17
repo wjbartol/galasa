@@ -1,0 +1,12 @@
+Bundle-Name: Galasa CPS - PostgreSQL Provider
+Bundle-SymbolicName: dev.galasa.cps.postgresql
+Bundle-Description: PostgreSQL-backed Configuration Property Store provider for Galasa
+
+Export-Package: dev.galasa.cps.postgresql.internal
+
+Import-Package: \
+    dev.galasa.extensions.common.postgresql,\
+    dev.galasa.framework.spi,\
+    java.sql,\
+    javax.validation.constraints;resolution:=optional,\
+    *

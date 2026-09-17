@@ -1,0 +1,30 @@
+#
+# Copyright contributors to the Galasa project
+#
+# SPDX-License-Identifier: EPL-2.0
+#
+# Engine Controller configuration ConfigMap
+# Concrete version (no template variables) for kind cluster use (TASK-031)
+# Engine image: galasadev/galasa-boot-embedded-amd64:0.19.1
+#
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: config
+  namespace: galasa
+data:
+  # The URI to the Bootstrap properties — resolves inside the cluster
+  bootstrap: "http://api:8080/bootstrap"
+
+  # Maximum number of automation engine pods the engine controller will start
+  max_engines: "5"
+
+  # Label applied to engine pods; also used as the pod name prefix
+  engine_label: "k8s-standard-engine"
+
+  # Engine image (concrete, no template variable)
+  engine_image: "galasadev/galasa-boot-embedded-amd64:0.19.1"
+
+  # Architecture selector: must match the kind node (always amd64 on Linux x86_64)
+  node_arch: "amd64"

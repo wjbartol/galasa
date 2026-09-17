@@ -1,0 +1,55 @@
+#
+# Copyright contributors to the Galasa project
+#
+# SPDX-License-Identifier: EPL-2.0
+#
+# RBAC for the Galasa Engine Controller — allows it to:
+#   - Read ConfigMaps (to fetch the 'config' configmap)
+#   - Create/list/watch/delete Pods (to launch test engine pods)
+#   - List/watch Namespaces
+# Required for kind clusters which default to restrictive RBAC.
+# Concrete version (no template variables) for kind cluster use (TASK-031)
+#
+
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: galasa-engine-controller
+  namespace: galasa
+
+---
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: galasa-engine-controller
+  namespace: galasa
+rules:
+- apiGroups: [""]
+  resources: ["configmaps"]
+  verbs: ["get", "list", "watch"]
+- apiGroups: [""]
+  resources: ["pods"]
+  verbs: ["get", "list", "watch", "create", "delete", "patch"]
+- apiGroups: [""]
+  resources: ["pods/log"]
+  verbs: ["get", "list"]
+- apiGroups: [""]
+  resources: ["namespaces"]
+  verbs: ["get", "list", "watch"]
+
+---
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: galasa-engine-controller
+  namespace: galasa
+subjects:
+- kind: ServiceAccount
+  name: galasa-engine-controller
+  namespace: galasa
+roleRef:
+  kind: Role
+  name: galasa-engine-controller
+  apiGroup: rbac.authorization.k8s.io

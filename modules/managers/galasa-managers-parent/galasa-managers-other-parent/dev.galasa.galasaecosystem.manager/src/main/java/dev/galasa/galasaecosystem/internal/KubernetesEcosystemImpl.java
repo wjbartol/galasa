@@ -127,6 +127,16 @@ public class KubernetesEcosystemImpl extends AbstractEcosystemImpl implements IK
     private InetSocketAddress                simbankDatabasePort;
     private URL                              simbankManagementFacilityUrl;
 
+    public enum ExecutionProfile {
+        MINIMAL,
+        MINIMAL_SIMBANK,
+        STANDARD,
+        FULL
+    }
+
+    private ExecutionProfile executionProfile = ExecutionProfile.FULL;
+    private boolean          simbankEnabled   = false;
+
     private RunIdPrefixImpl                  runIdPrefix;
     
     private IFramework                       framework;
@@ -135,6 +145,86 @@ public class KubernetesEcosystemImpl extends AbstractEcosystemImpl implements IK
         super(manager, tag, null, null);
         this.namespace = namespace;
         this.framework = manager.getFramework();
+
+        String profileProp = System.getProperty("galasaecosystem.profile", System.getenv().getOrDefault("GALASA_ECOSYSTEM_PROFILE", "FULL"));
+        String simbankProp = System.getProperty("galasaecosystem.simbank.enabled", System.getenv().getOrDefault("GALASA_SIMBANK_ENABLED", "false"));
+        
+        try {
+            this.executionProfile = ExecutionProfile.valueOf(profileProp.trim().toUpperCase());
+        } catch (Exception e) {
+            this.executionProfile = ExecutionProfile.FULL;
+        }
+        this.simbankEnabled = Boolean.parseBoolean(simbankProp.trim());
+
+        logger.info("KubernetesEcosystem initialized with profile: " + this.executionProfile + " (simbankEnabled: " + (this.executionProfile == ExecutionProfile.MINIMAL_SIMBANK || this.simbankEnabled) + ")");
+    }
+
+    public ExecutionProfile getExecutionProfile() {
+        return this.executionProfile;
+    }
+
+    public boolean isSimbankEnabled() {
+        return this.executionProfile == ExecutionProfile.MINIMAL_SIMBANK || this.executionProfile == ExecutionProfile.FULL || this.simbankEnabled;
+    }
+
+    protected boolean isResourceEnabled(ResourceType type) {
+        if (this.executionProfile == ExecutionProfile.FULL) {
+            return true;
+        }
+
+        switch (type) {
+            case CPS_EXTERNAL_SERVICE:
+            case CPS_INTERNAL_SERVICE:
+            case CPS_STATEFULSET:
+            case API_EXTERNAL_SERVICE:
+            case API_INTERNAL_SERVICE:
+            case API_DEPLOYMENT:
+            case API_PVC:
+            case ENGINE_EXTERNAL_SERVICE:
+            case ENGINE_INTERNAL_SERVICE:
+            case ENGINE_DEPLOYMENT:
+            case CONFIG_CONFIGMAP:
+            case BOOTSTRAP_CONFIGMAP:
+            case TESTCATALOG_CONFIGMAP:
+                return true;
+
+            case RAS_EXTERNAL_SERVICE:
+            case RAS_INTERNAL_SERVICE:
+            case RAS_STATEFULSET:
+                return this.executionProfile == ExecutionProfile.STANDARD;
+
+            case SIMBANK_TELNET_SERVICE:
+            case SIMBANK_WEBSERVICE_SERVICE:
+            case SIMBANK_DATABASE_SERVICE:
+            case SIMBANK_MANAGEMENT_FACILITY_SERVICE:
+            case SIMBANK_DEPLOYMENT:
+                return this.executionProfile == ExecutionProfile.MINIMAL_SIMBANK || this.simbankEnabled;
+
+            case METRICS_EXTERNAL_SERVICE:
+            case METRICS_INTERNAL_SERVICE:
+            case METRICS_HEALTH_SERVICE:
+            case METRICS_DEPLOYMENT:
+            case RESMON_EXTERNAL_SERVICE:
+            case RESMON_INTERNAL_SERVICE:
+            case RESMON_DEPLOYMENT:
+            case PROMETHEUS_EXTERNAL_SERVICE:
+            case PROMETHEUS_INTERNAL_SERVICE:
+            case PROMETHEUS_PVC:
+            case PROMETHEUS_CONFIGMAP:
+            case PROMETHEUS_DEPLOYMENT:
+            case GRAFANA_EXTERNAL_SERVICE:
+            case GRAFANA_INTERNAL_SERVICE:
+            case GRAFANA_PVC:
+            case GRAFANA_CONFIGMAP:
+            case GRAFANA_DASHBOARD_CONFIGMAP:
+            case GRAFANA_AUTODASHBOARD_CONFIGMAP:
+            case GRAFANA_PROVISIONING_CONFIGMAP:
+            case GRAFANA_DEPLOYMENT:
+                return false;
+
+            default:
+                return true;
+        }
     }
 
     protected void reserveRunIdPrefix() throws InsufficientResourcesAvailableException, GalasaEcosystemManagerException {
@@ -188,10 +278,12 @@ public class KubernetesEcosystemImpl extends AbstractEcosystemImpl implements IK
 
         //*** Search for all the resources we need to create the ecosystem
         for(ResourceType type : ResourceType.values()) {
-            locateYaml(managerYaml, testYaml, type);
+            if (isResourceEnabled(type)) {
+                locateYaml(managerYaml, testYaml, type);
+            }
         }            
 
-        logger.debug("All YAML Kubernetes resources loaded");
+        logger.debug("All YAML Kubernetes resources loaded for profile " + this.executionProfile);
     }
 
 
@@ -336,12 +428,16 @@ public class KubernetesEcosystemImpl extends AbstractEcosystemImpl implements IK
             //*** Wait for the CPS to have completed startup
             logger.info("Waiting for the CPS and RAS to have completed startup");
             waitForMessageInAllPodLogs(ResourceType.CPS_STATEFULSET, "etcd", "serving insecure client requests on [::]:2379", 180);
-            waitForMessageInAllPodLogs(ResourceType.RAS_STATEFULSET, "couchdb", "Apache CouchDB has started on http://any:5986/", 180);
+            if (isResourceEnabled(ResourceType.RAS_STATEFULSET)) {
+                waitForMessageInAllPodLogs(ResourceType.RAS_STATEFULSET, "couchdb", "Apache CouchDB has started on http://any:5986/", 180);
+            }
 
             //*** Set the RAS, CREDS properties in the CPS
             logger.info("Setting up initial properties in the CPS");
             storeCpsProperty("framework.dynamicstatus.store", this.dssUri.toString());
-            storeCpsProperty("framework.resultarchive.store", this.rasUri.toString());
+            if (this.rasUri != null) {
+                storeCpsProperty("framework.resultarchive.store", this.rasUri.toString());
+            }
             storeCpsProperty("framework.credentials.store", this.credsUri.toString());
 
             //*** Create the API and bootstrap servers
@@ -356,12 +452,24 @@ public class KubernetesEcosystemImpl extends AbstractEcosystemImpl implements IK
             build(ResourceType.ENGINE_DEPLOYMENT);
 
             logger.info("Waiting for all the remaining services to start");
-            waitForMessageInAllPodLogs(ResourceType.RESMON_DEPLOYMENT, "resource-monitor", "ResourceManagement.run - Resource Manager has started", 180);
-            waitForMessageInAllPodLogs(ResourceType.ENGINE_DEPLOYMENT, "engine-controller", "K8sController.run - Kubernetes controller has started", 180);
-            waitForMessageInAllPodLogs(ResourceType.METRICS_DEPLOYMENT, "metrics", "MetricsServer.run - Metrics Server has started", 180);
-            waitForMessageInAllPodLogs(ResourceType.PROMETHEUS_DEPLOYMENT, "prometheus", "Server is ready to receive web requests", 180);
-            waitForMessageInAllPodLogs(ResourceType.GRAFANA_DEPLOYMENT, "grafana", "msg=\"HTTP Server Listen\" logger=http.server address=[::]:3000", 180);
-            waitForMessageInAllPodLogs(ResourceType.SIMBANK_DEPLOYMENT, "simbank", "Simplatform main ... Simplatform started", 180);
+            if (isResourceEnabled(ResourceType.RESMON_DEPLOYMENT)) {
+                waitForMessageInAllPodLogs(ResourceType.RESMON_DEPLOYMENT, "resource-monitor", "ResourceManagement.run - Resource Manager has started", 180);
+            }
+            if (isResourceEnabled(ResourceType.ENGINE_DEPLOYMENT)) {
+                waitForMessageInAllPodLogs(ResourceType.ENGINE_DEPLOYMENT, "engine-controller", "K8sController.run - Kubernetes controller has started", 180);
+            }
+            if (isResourceEnabled(ResourceType.METRICS_DEPLOYMENT)) {
+                waitForMessageInAllPodLogs(ResourceType.METRICS_DEPLOYMENT, "metrics", "MetricsServer.run - Metrics Server has started", 180);
+            }
+            if (isResourceEnabled(ResourceType.PROMETHEUS_DEPLOYMENT)) {
+                waitForMessageInAllPodLogs(ResourceType.PROMETHEUS_DEPLOYMENT, "prometheus", "Server is ready to receive web requests", 180);
+            }
+            if (isResourceEnabled(ResourceType.GRAFANA_DEPLOYMENT)) {
+                waitForMessageInAllPodLogs(ResourceType.GRAFANA_DEPLOYMENT, "grafana", "msg=\"HTTP Server Listen\" logger=http.server address=[::]:3000", 180);
+            }
+            if (isResourceEnabled(ResourceType.SIMBANK_DEPLOYMENT)) {
+                waitForMessageInAllPodLogs(ResourceType.SIMBANK_DEPLOYMENT, "simbank", "Simplatform main ... Simplatform started", 180);
+            }
 
             Instant buildEnd = Instant.now();
             long seconds = buildEnd.getEpochSecond() - buildStart.getEpochSecond();
@@ -372,54 +480,62 @@ public class KubernetesEcosystemImpl extends AbstractEcosystemImpl implements IK
             storeCpsProperty("framework.resource.management.dead.heartbeat.timeout", "30");
             storeCpsProperty("framework.resource.management.finished.timeout", "40");
 
-            //*** Set up streams
-            storeCpsProperty("framework.stream.simbank.obr", "mvn:dev.galasa/dev.galasa.simbank.obr/" + this.simplatformVersion + "/obr");
-            storeCpsProperty("framework.stream.simbank.repo", this.simplatformRepository.toString());  
+            if (isResourceEnabled(ResourceType.SIMBANK_DEPLOYMENT)) {
+                //*** Set up streams
+                storeCpsProperty("framework.stream.simbank.obr", "mvn:dev.galasa/dev.galasa.simbank.obr/" + this.simplatformVersion + "/obr");
+                storeCpsProperty("framework.stream.simbank.repo", this.simplatformRepository.toString());  
 
-            //*** Set up SimBank
-            storeCpsProperty("secure.credentials.SIMBANK.username", "IBMUSER");
-            storeCpsProperty("secure.credentials.SIMBANK.password", "SYS1");
+                //*** Set up SimBank
+                storeCpsProperty("secure.credentials.SIMBANK.username", "IBMUSER");
+                storeCpsProperty("secure.credentials.SIMBANK.password", "SYS1");
 
-            storeCpsProperty("zos.dse.tag.SIMBANK.imageid", "SIMBANK");
-            storeCpsProperty("zos.dse.tag.SIMBANK.clusterid", "SIMBANK");
-            storeCpsProperty("zos.image.SIMBANK.ipv4.hostname", this.simbankTelnetPort.getHostString());
-            storeCpsProperty("zos.image.SIMBANK.telnet.port", Integer.toString(this.simbankTelnetPort.getPort()));
-            storeCpsProperty("zos.image.SIMBANK.telnet.tls", "false");
-            storeCpsProperty("zos.image.SIMBANK.credentials", "SIMBANK");
+                storeCpsProperty("zos.dse.tag.SIMBANK.imageid", "SIMBANK");
+                storeCpsProperty("zos.dse.tag.SIMBANK.clusterid", "SIMBANK");
+                if (this.simbankTelnetPort != null) {
+                    storeCpsProperty("zos.image.SIMBANK.ipv4.hostname", this.simbankTelnetPort.getHostString());
+                    storeCpsProperty("zos.image.SIMBANK.telnet.port", Integer.toString(this.simbankTelnetPort.getPort()));
+                }
+                storeCpsProperty("zos.image.SIMBANK.telnet.tls", "false");
+                storeCpsProperty("zos.image.SIMBANK.credentials", "SIMBANK");
 
-            storeCpsProperty("zosmf.image.SIMBANK.servers", "MFSIMBANK");
-            storeCpsProperty("zosmf.server.MFSIMBANK.port", Integer.toString(this.simbankManagementFacilityUrl.getPort()));
-            storeCpsProperty("zosmf.server.MFSIMBANK.https", "false");
-            storeCpsProperty("zosmf.server.MFSIMBANK.image", "SIMBANK");
+                if (this.simbankManagementFacilityUrl != null) {
+                    storeCpsProperty("zosmf.image.SIMBANK.servers", "MFSIMBANK");
+                    storeCpsProperty("zosmf.server.MFSIMBANK.port", Integer.toString(this.simbankManagementFacilityUrl.getPort()));
+                    storeCpsProperty("zosmf.server.MFSIMBANK.https", "false");
+                    storeCpsProperty("zosmf.server.MFSIMBANK.image", "SIMBANK");
+                }
 
-            storeCpsProperty("simbank.dse.instance.name","SIMBANK");
-            storeCpsProperty("simbank.instance.SIMBANK.zos.image","SIMBANK");
-            storeCpsProperty("simbank.instance.SIMBANK.database.port", Integer.toString(this.simbankDatabasePort.getPort()));
-            storeCpsProperty("simbank.instance.SIMBANK.webnet.port", Integer.toString(this.simbankWebUrl.getPort()));
+                storeCpsProperty("simbank.dse.instance.name","SIMBANK");
+                storeCpsProperty("simbank.instance.SIMBANK.zos.image","SIMBANK");
+                if (this.simbankDatabasePort != null && this.simbankWebUrl != null) {
+                    storeCpsProperty("simbank.instance.SIMBANK.database.port", Integer.toString(this.simbankDatabasePort.getPort()));
+                    storeCpsProperty("simbank.instance.SIMBANK.webnet.port", Integer.toString(this.simbankWebUrl.getPort()));
+                }
+            }
             insertLastRunIDIntoDSS();
 
-            logger.info("Kubernetes Ecosystem successfully built on " + this.namespace.getFullId() + " in " + seconds + " seconds");
+            logger.info("Kubernetes Ecosystem successfully built on " + this.namespace.getFullId() + " in " + seconds + " seconds (profile: " + this.executionProfile + ")");
 
             logger.info("--------------------------------------------------------------------------------------------");
             logger.info("Bootstrap URL = " + this.apiUrl.toString() + "/bootstrap");
             logger.info("CPS URI       = " + this.cpsUri.toString());
             logger.info("DSS URI       = " + this.dssUri.toString());
-            logger.info("RAS URI       = " + this.rasUri.toString());
+            if (this.rasUri != null) logger.info("RAS URI       = " + this.rasUri.toString());
             logger.info("CREDS URI     = " + this.credsUri.toString());
             logger.info("API URL       = " + this.apiUrl.toString());
             logger.info("");
-            logger.info("Resource Monitor Metrics URL    = " + this.resmonMetricsUrl);
-            logger.info("Resource Monitor Health URL     = " + this.resmonHealthUrl);
-            logger.info("Metrics Metrics URL             = " + this.metricsMetricsUrl);
-            logger.info("Metrics Health Health URL       = " + this.metricsHealthUrl);
-            logger.info("Engine Controller Metrics URL   = " + this.engineMetricsUrl);
-            logger.info("Engine Controller Health URL    = " + this.engineHealthUrl);
-            logger.info("Prometheus URL                  = " + this.prometheusUrl);
-            logger.info("Grafana URL                     = " + this.grafanaUrl);
-            logger.info("Simbank Telnet Port             = " + this.simbankTelnetPort);
-            logger.info("Simbank Webservice URL          = " + this.simbankWebUrl);
-            logger.info("Simbank Database Port           = " + this.simbankDatabasePort);
-            logger.info("Simbank Management Facility URL = " + this.simbankManagementFacilityUrl);
+            if (this.resmonMetricsUrl != null) logger.info("Resource Monitor Metrics URL    = " + this.resmonMetricsUrl);
+            if (this.resmonHealthUrl != null) logger.info("Resource Monitor Health URL     = " + this.resmonHealthUrl);
+            if (this.metricsMetricsUrl != null) logger.info("Metrics Metrics URL             = " + this.metricsMetricsUrl);
+            if (this.metricsHealthUrl != null) logger.info("Metrics Health Health URL       = " + this.metricsHealthUrl);
+            if (this.engineMetricsUrl != null) logger.info("Engine Controller Metrics URL   = " + this.engineMetricsUrl);
+            if (this.engineHealthUrl != null) logger.info("Engine Controller Health URL    = " + this.engineHealthUrl);
+            if (this.prometheusUrl != null) logger.info("Prometheus URL                  = " + this.prometheusUrl);
+            if (this.grafanaUrl != null) logger.info("Grafana URL                     = " + this.grafanaUrl);
+            if (this.simbankTelnetPort != null) logger.info("Simbank Telnet Port             = " + this.simbankTelnetPort);
+            if (this.simbankWebUrl != null) logger.info("Simbank Webservice URL          = " + this.simbankWebUrl);
+            if (this.simbankDatabasePort != null) logger.info("Simbank Database Port           = " + this.simbankDatabasePort);
+            if (this.simbankManagementFacilityUrl != null) logger.info("Simbank Management Facility URL = " + this.simbankManagementFacilityUrl);
             logger.info("--------------------------------------------------------------------------------------------");
         } catch(GalasaEcosystemManagerException e) {
             try {
@@ -471,6 +587,9 @@ public class KubernetesEcosystemImpl extends AbstractEcosystemImpl implements IK
 
     private void modifyBootstrapConfigMap() {
         Resource bootstrapResource = this.resources.get(ResourceType.BOOTSTRAP_CONFIGMAP);
+        if (bootstrapResource == null) {
+            return;
+        }
         Map<String, Object> yaml = bootstrapResource.getYaml();
         @SuppressWarnings("unchecked")
         Map<String, Object> data = (Map<String, Object>) yaml.get("data");
@@ -488,27 +607,43 @@ public class KubernetesEcosystemImpl extends AbstractEcosystemImpl implements IK
             this.dssUri = new URI("etcd:" + this.dssUrl.toString());
             this.credsUri = new URI("etcd:" + this.credsUrl.toString());
 
-            this.rasUrl = getHttpUrl(ResourceType.RAS_EXTERNAL_SERVICE, 5984);
-            this.rasUri = new URI("couchdb:" + this.rasUrl.toString());
+            if (isResourceEnabled(ResourceType.RAS_EXTERNAL_SERVICE)) {
+                this.rasUrl = getHttpUrl(ResourceType.RAS_EXTERNAL_SERVICE, 5984);
+                this.rasUri = new URI("couchdb:" + this.rasUrl.toString());
+            }
 
             this.apiUrl = getHttpUrl(ResourceType.API_EXTERNAL_SERVICE, 8080);
 
-            this.metricsMetricsUrl = getHttpUrl(ResourceType.METRICS_EXTERNAL_SERVICE, 9010);
-            this.metricsHealthUrl = getHttpUrl(ResourceType.METRICS_HEALTH_SERVICE, 9011);
+            if (isResourceEnabled(ResourceType.METRICS_EXTERNAL_SERVICE)) {
+                this.metricsMetricsUrl = getHttpUrl(ResourceType.METRICS_EXTERNAL_SERVICE, 9010);
+            }
+            if (isResourceEnabled(ResourceType.METRICS_HEALTH_SERVICE)) {
+                this.metricsHealthUrl = getHttpUrl(ResourceType.METRICS_HEALTH_SERVICE, 9011);
+            }
 
-            this.resmonMetricsUrl = getHttpUrl(ResourceType.RESMON_EXTERNAL_SERVICE, 9010);
-            this.resmonHealthUrl = getHttpUrl(ResourceType.RESMON_EXTERNAL_SERVICE, 9011);
+            if (isResourceEnabled(ResourceType.RESMON_EXTERNAL_SERVICE)) {
+                this.resmonMetricsUrl = getHttpUrl(ResourceType.RESMON_EXTERNAL_SERVICE, 9010);
+                this.resmonHealthUrl = getHttpUrl(ResourceType.RESMON_EXTERNAL_SERVICE, 9011);
+            }
 
-            this.engineMetricsUrl = getHttpUrl(ResourceType.ENGINE_EXTERNAL_SERVICE, 9010);
-            this.engineHealthUrl = getHttpUrl(ResourceType.ENGINE_EXTERNAL_SERVICE, 9011);
+            if (isResourceEnabled(ResourceType.ENGINE_EXTERNAL_SERVICE)) {
+                this.engineMetricsUrl = getHttpUrl(ResourceType.ENGINE_EXTERNAL_SERVICE, 9010);
+                this.engineHealthUrl = getHttpUrl(ResourceType.ENGINE_EXTERNAL_SERVICE, 9011);
+            }
 
-            this.prometheusUrl = getHttpUrl(ResourceType.PROMETHEUS_EXTERNAL_SERVICE, 9090);
-            this.grafanaUrl = getHttpUrl(ResourceType.GRAFANA_EXTERNAL_SERVICE, 3000);
+            if (isResourceEnabled(ResourceType.PROMETHEUS_EXTERNAL_SERVICE)) {
+                this.prometheusUrl = getHttpUrl(ResourceType.PROMETHEUS_EXTERNAL_SERVICE, 9090);
+            }
+            if (isResourceEnabled(ResourceType.GRAFANA_EXTERNAL_SERVICE)) {
+                this.grafanaUrl = getHttpUrl(ResourceType.GRAFANA_EXTERNAL_SERVICE, 3000);
+            }
 
-            this.simbankTelnetPort = getPort(ResourceType.SIMBANK_TELNET_SERVICE, 2023);
-            this.simbankWebUrl = getHttpUrl(ResourceType.SIMBANK_WEBSERVICE_SERVICE, 2080);
-            this.simbankDatabasePort = getPort(ResourceType.SIMBANK_DATABASE_SERVICE, 2027);
-            this.simbankManagementFacilityUrl = getHttpUrl(ResourceType.SIMBANK_MANAGEMENT_FACILITY_SERVICE, 2040);
+            if (isResourceEnabled(ResourceType.SIMBANK_TELNET_SERVICE)) {
+                this.simbankTelnetPort = getPort(ResourceType.SIMBANK_TELNET_SERVICE, 2023);
+                this.simbankWebUrl = getHttpUrl(ResourceType.SIMBANK_WEBSERVICE_SERVICE, 2080);
+                this.simbankDatabasePort = getPort(ResourceType.SIMBANK_DATABASE_SERVICE, 2027);
+                this.simbankManagementFacilityUrl = getHttpUrl(ResourceType.SIMBANK_MANAGEMENT_FACILITY_SERVICE, 2040);
+            }
         } catch (KubernetesManagerException | MalformedURLException | URISyntaxException e) {
             throw new GalasaEcosystemManagerException("Problem generating the default URLs", e);
         }
@@ -635,9 +770,17 @@ public class KubernetesEcosystemImpl extends AbstractEcosystemImpl implements IK
     }
 
     private void waitForMessageInAllPodLogs(ResourceType resourceType, String container, String message, long timeoutInSeconds) throws GalasaEcosystemManagerException {
+        if (!isResourceEnabled(resourceType)) {
+            logger.info("Skipping log check for disabled resource " + resourceType.toString());
+            return;
+        }
 
         try {
             Resource resource = this.resources.get(resourceType);
+            if (resource == null) {
+                logger.info("Resource " + resourceType.toString() + " not loaded; skipping log check");
+                return;
+            }
             logger.debug("Looking for message '" + message + "' in all pods of " + resource.toString() + " in container " + container);
 
             IResource k8sResource = resource.getK8sResource();
@@ -686,7 +829,16 @@ public class KubernetesEcosystemImpl extends AbstractEcosystemImpl implements IK
     }
 
     private void build(ResourceType resourceType) throws GalasaEcosystemManagerException {
+        if (!isResourceEnabled(resourceType)) {
+            logger.info("Skipping build for disabled resource " + resourceType.toString());
+            return;
+        }
+
         Resource resource = this.resources.get(resourceType);
+        if (resource == null) {
+            logger.info("Resource " + resourceType.toString() + " not loaded; skipping build");
+            return;
+        }
 
         String yamlText = yaml.dump(resource.getYaml());
 

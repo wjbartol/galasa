@@ -43,6 +43,12 @@
 			<groupId>org.assertj</groupId>
 			<artifactId>assertj-core</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>org.postgresql</groupId>
+			<artifactId>postgresql</artifactId>
+			<version>42.7.3</version>
+			<scope>compile</scope>
+		</dependency>
 	</dependencies>
 
 	<build>
@@ -62,15 +68,23 @@
 				</executions>
 				<configuration>
 					<artifactItems>
-						<artifactItem>
-							<groupId>dev.galasa</groupId>
-							<artifactId>galasa-boot</artifactId>
-							<version>{{.BootRelease}}</version>
-							<overWrite>true</overWrite>
-							<outputDirectory>${project.build.directory}</outputDirectory>
-							<destFileName>boot.jar</destFileName>
-						</artifactItem>
-					</artifactItems>
+							<artifactItem>
+								<groupId>dev.galasa</groupId>
+								<artifactId>galasa-boot</artifactId>
+								<version>{{.BootRelease}}</version>
+								<overWrite>true</overWrite>
+								<outputDirectory>${project.build.directory}</outputDirectory>
+								<destFileName>boot.jar</destFileName>
+							</artifactItem>
+							<artifactItem>
+								<groupId>org.postgresql</groupId>
+								<artifactId>postgresql</artifactId>
+								<version>42.7.3</version>
+								<overWrite>true</overWrite>
+								<outputDirectory>${project.build.directory}</outputDirectory>
+								<destFileName>postgresql-driver.jar</destFileName>
+							</artifactItem>
+						</artifactItems>
 					<outputDirectory>${project.build.directory}</outputDirectory>
 					<overWriteReleases>true</overWriteReleases>
 					<overWriteSnapshots>true</overWriteSnapshots>

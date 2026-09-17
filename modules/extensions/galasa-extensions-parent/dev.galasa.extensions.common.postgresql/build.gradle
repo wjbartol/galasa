@@ -1,0 +1,28 @@
+plugins {
+    id 'biz.aQute.bnd.builder'
+    id 'galasa.extensions'
+}
+
+description = 'Galasa Common Extension Utilities - PostgreSQL'
+
+version = '1.1.1'
+
+configurations {
+    implementation.transitive = false
+}
+
+dependencies {
+    implementation (project(':dev.galasa.extensions.common'))
+    implementation ('org.postgresql:postgresql:42.7.3')
+    testImplementation ('org.assertj:assertj-core:3.24.2')
+    testImplementation ('junit:junit:4.13.2')
+    testImplementation ('com.h2database:h2:2.2.224')
+}
+
+ext.projectName=project.name
+ext.includeInOBR          = true
+ext.includeInMVP          = false
+ext.includeInBOM          = false
+ext.includeInIsolated     = false
+ext.includeInCodeCoverage = true
+ext.includeInJavadoc      = false

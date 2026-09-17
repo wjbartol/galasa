@@ -1,0 +1,99 @@
+#
+# Copyright contributors to the Galasa project
+#
+# SPDX-License-Identifier: EPL-2.0
+#
+# Galasa Engine Controller Deployment + Service
+# Concrete version (no template variables) for kind cluster use (TASK-031)
+# Image: galasadev/galasa-boot-embedded-amd64:0.19.1
+#
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: engine-controller
+  namespace: galasa
+  labels:
+    app: engine-controller
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: engine-controller
+  template:
+    metadata:
+      name: engine-controller
+      labels:
+        app: engine-controller
+    spec:
+      serviceAccountName: galasa-engine-controller
+      nodeSelector:
+        kubernetes.io/arch: amd64
+      containers:
+      - name: engine-controller
+        image: galasadev/galasa-boot-embedded-amd64:0.19.1
+        imagePullPolicy: IfNotPresent
+        command: ["java"]
+        args:
+        - -cp
+        - /galasa/postgresql-driver.jar:/galasa/boot.jar
+        - dev.galasa.boot.Launcher
+        - --obr
+        - file:galasa.obr
+        - --trace
+        - --k8scontroller
+        - --bootstrap
+        - file:/bootstrap.properties
+        env:
+        - name: NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+        volumeMounts:
+        - name: bootstrap
+          mountPath: /bootstrap.properties
+          subPath: bootstrap.properties
+          readOnly: true
+        ports:
+        - containerPort: 9010
+          name: metrics
+        - containerPort: 9011
+          name: health
+        resources:
+          requests:
+            memory: "128Mi"
+            cpu: "50m"
+          limits:
+            memory: "512Mi"
+            cpu: "250m"
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 9011
+          initialDelaySeconds: 90
+          periodSeconds: 60
+          failureThreshold: 5
+      volumes:
+      - name: bootstrap
+        configMap:
+          name: bootstrap-file
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: engine-controller
+  namespace: galasa
+  labels:
+    app: engine-controller
+spec:
+  ports:
+  - port: 9010
+    name: metrics
+    targetPort: 9010
+  - port: 9011
+    name: health
+    targetPort: 9011
+  selector:
+    app: engine-controller

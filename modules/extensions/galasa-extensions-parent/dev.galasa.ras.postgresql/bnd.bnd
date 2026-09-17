@@ -1,0 +1,4 @@
+Bundle-Name: Galasa RAS PostgreSQL Extension Provider
+Bundle-SymbolicName: dev.galasa.ras.postgresql
+Export-Package: dev.galasa.ras.postgresql
+Import-Package: javax.validation.constraints;resolution:=optional, *

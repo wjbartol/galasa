@@ -1,0 +1,57 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: galasa-postgresql
+  labels:
+    app: galasa-postgresql
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: galasa-postgresql
+  template:
+    metadata:
+      labels:
+        app: galasa-postgresql
+    spec:
+      containers:
+      - name: postgresql
+        image: postgres:17-alpine
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 5432
+          name: postgresql
+        env:
+        - name: POSTGRES_DB
+          value: galasa
+        - name: POSTGRES_USER
+          value: galasa_user
+        - name: POSTGRES_PASSWORD
+          value: galasa_password
+        resources:
+          limits:
+            memory: "256Mi"
+            cpu: "250m"
+          requests:
+            memory: "128Mi"
+            cpu: "100m"
+        livenessProbe:
+          exec:
+            command:
+            - pg_isready
+            - -U
+            - galasa_user
+            - -d
+            - galasa
+          initialDelaySeconds: 5
+          periodSeconds: 10
+        readinessProbe:
+          exec:
+            command:
+            - pg_isready
+            - -U
+            - galasa_user
+            - -d
+            - galasa
+          initialDelaySeconds: 5
+          periodSeconds: 5

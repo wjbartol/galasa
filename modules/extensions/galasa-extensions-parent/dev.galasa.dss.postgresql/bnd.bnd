@@ -1,0 +1,12 @@
+Bundle-Name: Galasa DSS - PostgreSQL Provider
+Bundle-SymbolicName: dev.galasa.dss.postgresql
+Bundle-Description: PostgreSQL-backed Dynamic Status Store provider for Galasa
+
+Export-Package: dev.galasa.dss.postgresql.internal
+
+Import-Package: \
+    dev.galasa.extensions.common.postgresql,\
+    dev.galasa.framework.spi,\
+    java.sql,\
+    javax.validation.constraints;resolution:=optional,\
+    *

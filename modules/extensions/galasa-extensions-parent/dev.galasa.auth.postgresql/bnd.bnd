@@ -1,0 +1,5 @@
+Bundle-Name: Galasa Auth PostgreSQL Extension Provider
+Bundle-SymbolicName: dev.galasa.auth.postgresql
+Export-Package: dev.galasa.auth.postgresql,\
+    dev.galasa.auth.postgresql.internal
+Import-Package: javax.validation.constraints;resolution:=optional, *

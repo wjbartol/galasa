@@ -85,10 +85,16 @@ public class ResponseBuilder {
 
     private List<String> getAllowedOriginsAsList(String allowedOriginsStr) {
         List<String> allowedOrigins = new ArrayList<>();
-        if (allowedOriginsStr != null) {
+        if (allowedOriginsStr != null && !allowedOriginsStr.isBlank()) {
             for (String origin : allowedOriginsStr.split(",")) {
-                allowedOrigins.add(origin.trim());
+                String trimmed = origin.trim();
+                if ("*".equals(trimmed)) {
+                    logger.warn("Security Alert: GALASA_ALLOWED_ORIGINS is set to wildcard '*'. Zero-trust CORS hardening recommended for commercial deployments.");
+                }
+                allowedOrigins.add(trimmed);
             }
+        } else {
+            logger.info("GALASA_ALLOWED_ORIGINS is not set. Defaulting to strict CORS origin isolation (no external origins allowed).");
         }
         return allowedOrigins;
     }

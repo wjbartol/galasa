@@ -14,11 +14,16 @@ pluginManagement {
 rootProject.name = "galasa-extensions-parent"
 
 include 'dev.galasa.auth.couchdb'
+include 'dev.galasa.auth.postgresql'
 include 'dev.galasa.creds.os'
 include 'dev.galasa.extensions.common'
 include 'dev.galasa.extensions.common.couchdb'
+include 'dev.galasa.extensions.common.postgresql'
 include 'dev.galasa.cps.etcd'
+include 'dev.galasa.cps.postgresql'
 include 'dev.galasa.cps.rest'
+include 'dev.galasa.dss.postgresql'
 include 'dev.galasa.ras.couchdb'
+include 'dev.galasa.ras.postgresql'
 include 'dev.galasa.events.kafka'
 
